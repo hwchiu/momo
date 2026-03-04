@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { BirthData } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
+import { geocode } from '../lib/geocode';
+import type { GeocodingResult } from '../lib/geocode';
 
 interface BirthDataFormProps {
   onSubmit: (data: BirthData, houseSystem: HouseSystem) => void;
@@ -63,15 +65,54 @@ export function BirthDataForm({
   const [houseSystem, setHouseSystem] = useState<HouseSystem>(defaultHouseSystem);
   // Ayanamsa
   const [ayanamsa, setAyanamsa] = useState('tropical');
+  // Geocoding
+  const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState('');
+
+  /** Convert a decimal-degree value to degrees + whole minutes */
+  function decimalToDMS(decimal: number): { deg: number; min: number } {
+    const abs = Math.abs(decimal);
+    return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
+  }
+
+  const handleGeoSearch = async () => {
+    if (!locationName.trim()) return;
+    setGeoLoading(true);
+    setGeoError('');
+    setGeoResults([]);
+    try {
+      const results = await geocode(locationName);
+      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
+      else setGeoResults(results);
+    } catch {
+      setGeoError('地址查詢失敗，請稍後再試');
+    } finally {
+      setGeoLoading(false);
+    }
+  };
+
+  const handleSelectGeoResult = (result: GeocodingResult) => {
+    const latDMS = decimalToDMS(result.latitude);
+    const lonDMS = decimalToDMS(result.longitude);
+    setLatDeg(latDMS.deg);
+    setLatMin(latDMS.min);
+    setLatDir(result.latitude >= 0 ? 'N' : 'S');
+    setLonDeg(lonDMS.deg);
+    setLonMin(lonDMS.min);
+    setLonDir(result.longitude >= 0 ? 'E' : 'W');
+    setLocationName(result.displayName.split(',')[0]);
+    setGeoResults([]);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Parse date
     const [yearStr, monthStr, dayStr] = dateStr.split('-');
-    const year = parseInt(yearStr, 10);
-    const month = parseInt(monthStr, 10);
-    const day = parseInt(dayStr, 10);
+    let year = parseInt(yearStr, 10);
+    let month = parseInt(monthStr, 10);
+    let day = parseInt(dayStr, 10);
 
     // Parse time
     const [hourStr, minuteStr] = timeStr.split(':');
@@ -81,10 +122,23 @@ export function BirthDataForm({
     // Convert local time to UTC
     // UTC = local time - tzOffset
     const totalMinutes = hour * 60 + minute - Math.round(tzOffset * 60);
-    // Handle day overflow/underflow (simplified: only adjusts minutes within same day calc)
+
+    // Determine day offset caused by crossing midnight
+    let dayOffset = 0;
+    if (totalMinutes < 0) dayOffset = -1;
+    else if (totalMinutes >= 24 * 60) dayOffset = 1;
+
     const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
     hour = Math.floor(utcMinutes / 60);
     minute = utcMinutes % 60;
+
+    // Adjust calendar date if UTC time crossed midnight
+    if (dayOffset !== 0) {
+      const d = new Date(year, month - 1, day + dayOffset);
+      year = d.getFullYear();
+      month = d.getMonth() + 1;
+      day = d.getDate();
+    }
 
     // Convert DMS to decimal degrees
     const lat = (latDeg + latMin / 60) * (latDir === 'S' ? -1 : 1);
@@ -133,13 +187,35 @@ export function BirthDataForm({
           <tr>
             <td className="form-label">地點名稱</td>
             <td>
-              <input
-                type="text"
-                value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
-                className="form-input form-input-wide"
-                placeholder="城市名稱"
-              />
+              <div className="location-wrapper">
+                <input
+                  type="text"
+                  value={locationName}
+                  onChange={(e) => setLocationName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+                  className="form-input form-input-wide"
+                  placeholder="城市名稱"
+                />
+                <button
+                  type="button"
+                  className="submit-btn"
+                  style={{ padding: '3px 10px', fontSize: '12px', marginLeft: '4px' }}
+                  onClick={handleGeoSearch}
+                  disabled={geoLoading}
+                >
+                  {geoLoading ? '查詢中' : '搜尋'}
+                </button>
+                {geoError && <div style={{ fontSize: '11px', color: '#c00', marginTop: '2px' }}>{geoError}</div>}
+                {geoResults.length > 0 && (
+                  <ul className="geo-results">
+                    {geoResults.map((r, i) => (
+                      <li key={i} onClick={() => handleSelectGeoResult(r)}>
+                        {r.displayName}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </td>
           </tr>
           <tr>

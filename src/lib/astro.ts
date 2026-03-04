@@ -175,8 +175,13 @@ function getPlutoLongitude(jde: number): number {
  * Based on the formula:
  *   ASC = atan2(-cos(RAMC), sin(ε) * tan(φ) + cos(ε) * sin(RAMC))
  * where RAMC = local sidereal time in degrees, ε = obliquity, φ = latitude.
+ *
+ * atan2 has two solutions 180° apart (ASC and DSC). We apply a quadrant
+ * correction using the pre-computed midheaven: the ASC must satisfy
+ * (ASC - MC) mod 360 ∈ [0°, 180°]. If the raw result falls outside that
+ * range it is the DSC, so we add 180° to get the true ASC.
  */
-function calculateAscendant(jde: number, latitude: number, longitude: number): number {
+function calculateAscendant(jde: number, latitude: number, longitude: number, midheaven: number): number {
   // Get Greenwich mean sidereal time in seconds
   const gmst = sidereal.mean(jde);
   // Convert to degrees and add longitude to get local sidereal time
@@ -192,7 +197,13 @@ function calculateAscendant(jde: number, latitude: number, longitude: number): n
     Math.sin(ε) * Math.tan(φ) + Math.cos(ε) * Math.sin(ramc),
   );
 
-  return normalizeDeg(asc * DEG);
+  const ascDeg = normalizeDeg(asc * DEG);
+
+  // Quadrant correction: ASC must be in the eastern hemisphere of the chart,
+  // i.e. (ASC - MC) mod 360 must lie in [0°, 180°].
+  // If it falls in (180°, 360°) we have picked the DSC — shift by 180°.
+  const arcFromMC = ((ascDeg - midheaven) % 360 + 360) % 360;
+  return arcFromMC <= 180 ? ascDeg : normalizeDeg(ascDeg + 180);
 }
 
 /**
@@ -769,8 +780,8 @@ export function calculateNatalChart(
 ): NatalChart {
   const jde = birthDataToJDE(birthData);
 
-  const ascendant = calculateAscendant(jde, birthData.latitude, birthData.longitude);
   const midheaven = calculateMidheaven(jde, birthData.longitude);
+  const ascendant = calculateAscendant(jde, birthData.latitude, birthData.longitude, midheaven);
 
   const houses = calculateHouses(
     houseSystem,

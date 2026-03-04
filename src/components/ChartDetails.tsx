@@ -8,8 +8,8 @@ import {
   EXALTATION,
   DETRIMENT,
   FALL,
+  EGYPTIAN_TERMS,
   getTriplicityRulers,
-  getTermRuler,
   getDecanRuler,
   getInnateState,
   getAffiliatedStates,
@@ -521,19 +521,14 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
   );
 }
 
-// Helper: compute term display data for a sign
+// Helper: compute term display data for a sign using actual EGYPTIAN_TERMS boundaries
 function computeTermsForSign(sign: ZodiacSign) {
   const result: { planet: Planet; startDeg: number; endDeg: number }[] = [];
+  const terms = EGYPTIAN_TERMS[sign];
   let prev = 0;
-  // We reconstruct from getTermRuler
-  const boundaries = [6, 12, 18, 24, 30];
-  for (let bi = 0; bi < boundaries.length; bi++) {
-    const deg = prev;
-    const planet = getTermRuler(sign, deg);
-    if (planet) {
-      result.push({ planet, startDeg: prev, endDeg: boundaries[bi] });
-    }
-    prev = boundaries[bi];
+  for (const term of terms) {
+    result.push({ planet: term.planet, startDeg: prev, endDeg: term.endDegree });
+    prev = term.endDegree;
   }
   return result;
 }

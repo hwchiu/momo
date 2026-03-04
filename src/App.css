@@ -427,6 +427,34 @@
   font-size: 12px;
 }
 
+/* ---- Geocode dropdown ---- */
+.location-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.geo-results {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #999;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 100;
+  min-width: 300px;
+}
+
+.geo-results li {
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.geo-results li:hover {
+  background: #e8f0fe;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
   .dignity-tables-grid {
