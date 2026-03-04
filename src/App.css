@@ -1,0 +1,453 @@
+/* ============================================================
+   Almuten.net style — classical Chinese astrology site
+   Font: Noto Sans TC / Microsoft JhengHei / PingFang TC
+   ============================================================ */
+
+/* ---- Base ---- */
+.almuten-app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 12px;
+  background: #fff;
+  color: #222;
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ---- Top nav ---- */
+.top-nav {
+  padding: 6px 0 4px;
+  border-bottom: 1px solid #ccc;
+  font-size: 12px;
+  color: #555;
+}
+
+.nav-link {
+  color: #1a5ca8;
+  text-decoration: none;
+}
+.nav-link:hover {
+  text-decoration: underline;
+}
+.active-lang {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+.nav-sep {
+  margin: 0 6px;
+  color: #aaa;
+}
+
+/* ---- Header ---- */
+.site-header {
+  text-align: center;
+  padding: 18px 0 12px;
+  border-bottom: 2px solid #333;
+  margin-bottom: 14px;
+}
+
+.site-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 4px;
+  letter-spacing: 0.03em;
+}
+
+.site-subtitle {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.site-title-2 {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #666;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+/* ---- Main ---- */
+.site-main {
+  padding-bottom: 24px;
+}
+
+/* ---- Section headings ---- */
+.section-heading {
+  font-size: 1rem;
+  font-weight: bold;
+  background: #e8e8e8;
+  padding: 4px 8px;
+  border-left: 4px solid #666;
+  margin: 16px 0 8px;
+  color: #222;
+}
+
+.section-title {
+  font-size: 0.92rem;
+  font-weight: bold;
+  color: #333;
+  margin: 18px 0 6px;
+  padding: 3px 6px;
+  background: #f0f0f0;
+  border-left: 3px solid #888;
+}
+
+/* ---- Quick chart form ---- */
+.quick-chart-section {
+  margin-bottom: 16px;
+}
+
+.quick-chart-form {
+  padding: 8px 0;
+}
+
+.form-table {
+  border-collapse: collapse;
+  width: auto;
+}
+
+.form-label {
+  font-weight: bold;
+  color: #333;
+  padding: 4px 12px 4px 4px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.form-input {
+  padding: 3px 6px;
+  border: 1px solid #aaa;
+  background: #fafafa;
+  font-family: inherit;
+  font-size: 13px;
+  color: #222;
+  vertical-align: middle;
+}
+
+.form-input:focus {
+  outline: 1px solid #1a5ca8;
+  border-color: #1a5ca8;
+}
+
+.form-input-wide {
+  width: 180px;
+}
+
+.form-input-dms {
+  width: 52px;
+  text-align: right;
+}
+
+.form-select {
+  padding: 3px 4px;
+  border: 1px solid #aaa;
+  background: #fafafa;
+  font-family: inherit;
+  font-size: 13px;
+  color: #222;
+  vertical-align: middle;
+}
+
+.form-select-dir {
+  padding: 3px 2px;
+  border: 1px solid #aaa;
+  background: #fafafa;
+  font-family: inherit;
+  font-size: 13px;
+  color: #222;
+  vertical-align: middle;
+  margin: 0 3px;
+}
+
+.dms-cell {
+  vertical-align: middle;
+}
+
+.dms-sep {
+  font-weight: bold;
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+.form-submit-cell {
+  padding-top: 10px;
+}
+
+.submit-btn {
+  padding: 6px 28px;
+  background: #2c5f9e;
+  color: #fff;
+  border: 1px solid #1a4a80;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #1a4a80;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Chart section ---- */
+.chart-section {
+  margin-top: 12px;
+}
+
+.chart-visual {
+  text-align: center;
+  margin: 12px 0;
+}
+
+/* ---- SVG chart ---- */
+.natal-chart-container {
+  display: inline-block;
+}
+
+.natal-chart-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- Data tables ---- */
+.table-scroll {
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #bbb;
+  padding: 3px 7px;
+  vertical-align: middle;
+}
+
+.table-header th {
+  background: #d8d8d8;
+  font-weight: bold;
+  color: #111;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.row-even {
+  background: #fff;
+}
+
+.row-odd {
+  background: #f4f4f4;
+}
+
+.data-table tr:hover td {
+  background: #eef4ff;
+}
+
+/* ---- Planet / sign glyphs ---- */
+.planet-glyph,
+.sign-glyph {
+  font-size: 1.15em;
+  margin-right: 2px;
+}
+
+.planet-cell {
+  white-space: nowrap;
+}
+
+.longitude-cell {
+  white-space: nowrap;
+  font-family: monospace, 'Noto Sans TC', sans-serif;
+}
+
+.center-cell {
+  text-align: center;
+}
+
+/* ---- Dignity states ---- */
+.dignity-cell {
+  text-align: center;
+  font-weight: bold;
+}
+
+.dignity-廟 {
+  color: #0a6e0a;
+}
+.dignity-旺 {
+  color: #1a5ca8;
+}
+.dignity-落 {
+  color: #c05000;
+}
+.dignity-陷 {
+  color: #c00020;
+}
+
+.affiliated-cell {
+  font-size: 12px;
+  color: #444;
+}
+
+.retrograde-symbol {
+  color: #b00;
+  font-weight: bold;
+}
+
+/* ---- Dignity scores ---- */
+.score-cell {
+  text-align: center;
+  font-weight: bold;
+}
+
+.score-positive {
+  color: #0a6e0a;
+}
+
+.score-negative {
+  color: #c00020;
+}
+
+.score-total {
+  font-size: 1.05em;
+  border-left: 2px solid #999;
+}
+
+/* ---- Dignity tables grid ---- */
+.dignity-tables-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dignity-table-block {
+  min-width: 0;
+}
+
+.dignity-table-title {
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+  padding: 2px 6px;
+  background: #ebebeb;
+  border-left: 3px solid #777;
+}
+
+/* ---- Terms table ---- */
+.terms-table td,
+.terms-table th {
+  font-size: 12px;
+}
+
+.sign-label-cell {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.term-cell {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---- Aspects ---- */
+.aspect-cell {
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ---- Chart summary ---- */
+.chart-summary {
+  margin-bottom: 12px;
+}
+
+.summary-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+}
+
+.summary-table td {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+}
+
+.summary-label {
+  font-weight: bold;
+  color: #444;
+  background: #efefef;
+  white-space: nowrap;
+}
+
+/* ---- State messages ---- */
+.loading-msg {
+  padding: 20px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.error-banner {
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #f0a0a0;
+  padding: 8px 12px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.no-data {
+  color: #888;
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  text-align: center;
+  padding: 10px 0 14px;
+  border-top: 1px solid #ccc;
+  margin-top: 24px;
+  color: #777;
+  font-size: 12px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .dignity-tables-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-title {
+    font-size: 1.3rem;
+  }
+
+  .form-input-wide {
+    width: 140px;
+  }
+
+  .almuten-app {
+    padding: 0 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-title-2 {
+    font-size: 0.85rem;
+  }
+}

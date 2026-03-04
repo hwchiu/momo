@@ -1,0 +1,50 @@
+:root {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
+  line-height: 1.55;
+  font-weight: 400;
+  color: #222;
+  background-color: #f0f0f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+#root {
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #111;
+}
+
+input,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+a {
+  color: #1a5ca8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
