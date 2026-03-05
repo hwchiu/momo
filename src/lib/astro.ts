@@ -227,6 +227,32 @@ function calculateMidheaven(jde: number, longitude: number): number {
 // ---- House system calculation helpers ----
 
 /**
+ * Project a right-ascension offset (RAMC + H) onto the ecliptic.
+ *
+ * The same atan2 formula used for the Ascendant is used for every
+ * intermediate house cusp.  It has two solutions 180° apart; the
+ * correct one for houses in the upper hemisphere (H10→H4 arc going
+ * counter-clockwise, i.e. H11, H12, H1, H2, H3) must satisfy
+ * (cusp − MC) mod 360 ∈ [0°, 180°).
+ */
+function projectToEcliptic(
+  ramcOffset: number,
+  obliquity: number,
+  latitude: number,
+  mc: number,
+): number {
+  const φ = latitude * RAD;
+  const raw = Math.atan2(
+    -Math.cos(ramcOffset),
+    Math.sin(obliquity) * Math.tan(φ) + Math.cos(obliquity) * Math.sin(ramcOffset),
+  );
+  const lonDeg = normalizeDeg(raw * DEG);
+  // Quadrant check: upper-hemisphere cusps must lie in arc [MC, MC+180°)
+  const arcFromMC = ((lonDeg - mc) % 360 + 360) % 360;
+  return arcFromMC < 180 ? lonDeg : normalizeDeg(lonDeg + 180);
+}
+
+/**
  * Common astronomical parameters needed by most house systems.
  */
 interface HouseCalcParams {
@@ -330,11 +356,12 @@ function calculatePorphyryHouses(ascendant: number, midheaven: number): HouseCus
 
 /**
  * Alcabitius: trisect the diurnal semi-arc of the Ascendant in right ascension,
- * then project back to the ecliptic.
+ * then convert each RA trisection point back to ecliptic longitude.
  *
- * The diurnal semi-arc (DSA) is the arc from ASC's RA to MC's RA.
- * We trisect the RAMC→RA_ASC arc for houses 11, 12
- * and the RA_ASC→RA_IC arc for houses 2, 3.
+ * DSA = RA(ASC) − RAMC (equatorial arc from meridian to rising point).
+ * Houses 11, 12 are at RAMC + DSA/3 and RAMC + 2·DSA/3 in RA.
+ * Houses 2, 3 are at RAMC + DSA + NSA/3 and RAMC + DSA + 2·NSA/3 in RA.
+ * Each RA target converts to ecliptic via: λ = atan2(sin(RA), cos(ε)·cos(RA)).
  */
 function calculateAlcabitiusHouses(p: HouseCalcParams): HouseCusp[] {
   const cusps: number[] = new Array(12);
@@ -343,37 +370,31 @@ function calculateAlcabitiusHouses(p: HouseCalcParams): HouseCusp[] {
   cusps[9] = p.midheaven;
   cusps[3] = normalizeDeg(p.midheaven + 180);
 
-  const φ = p.latitude * RAD;
-
-  // Compute the oblique ascension of the ASC
-  const oa = Math.atan2(
-    Math.sin(p.ramc),
-    Math.cos(p.ramc) * Math.cos(p.obliquity) + Math.tan(φ) * Math.sin(p.obliquity),
+  // Right ascension of the ASC (pure ecliptic → equatorial, no latitude)
+  const ascRad = p.ascendant * RAD;
+  const raAscRad = Math.atan2(
+    Math.sin(ascRad) * Math.cos(p.obliquity),
+    Math.cos(ascRad),
   );
-  // Diurnal semi-arc: difference between OA of ASC and RAMC
-  let dsa = normalizeDeg((oa - p.ramc) * DEG);
-  if (dsa > 180) dsa -= 360;
-  const dsaRad = dsa * RAD;
 
-  // Trisect: houses 11, 12 (between MC and ASC)
+  // Diurnal semi-arc in equatorial degrees
+  let dsaDeg = normalizeDeg(raAscRad * DEG - p.ramc * DEG);
+  if (dsaDeg > 180) dsaDeg -= 360;
+  const dsaRad = dsaDeg * RAD;
+  const nsaRad = Math.PI - dsaRad;
+
+  // Convert equatorial RA (radians) to ecliptic longitude (degrees)
+  const raToEcl = (ra: number): number =>
+    normalizeDeg(Math.atan2(Math.sin(ra), Math.cos(p.obliquity) * Math.cos(ra)) * DEG);
+
+  // Houses 11, 12: trisect DSA from MC toward ASC
   for (let i = 1; i <= 2; i++) {
-    const ramcOffset = p.ramc + (i * dsaRad) / 3;
-    const lon = Math.atan2(
-      -Math.cos(ramcOffset),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcOffset),
-    );
-    cusps[9 + i] = normalizeDeg(lon * DEG);
+    cusps[9 + i] = raToEcl(p.ramc + (i * dsaRad) / 3);
   }
 
-  // Trisect: houses 2, 3 (between ASC and IC)
-  const nsaRad = Math.PI - dsaRad; // nocturnal semi-arc
+  // Houses 2, 3: trisect NSA from ASC toward IC
   for (let i = 1; i <= 2; i++) {
-    const ramcOffset = p.ramc + dsaRad + (i * nsaRad) / 3;
-    const lon = Math.atan2(
-      -Math.cos(ramcOffset),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcOffset),
-    );
-    cusps[i] = normalizeDeg(lon * DEG);
+    cusps[i] = raToEcl(p.ramc + dsaRad + (i * nsaRad) / 3);
   }
 
   // Opposite houses
@@ -409,13 +430,16 @@ function calculateRegiomontanusHouses(p: HouseCalcParams): HouseCusp[] {
     const H = offsets[k] * RAD;
     const ramcH = p.ramc + H;
 
-    // Regiomontanus projection: pole of house is on the equator
+    // Regiomontanus projection: pole of house is on the equator.
+    // The tanDecl term adjusts the effective latitude for this house.
     const tanDecl = Math.tan(φ) * Math.cos(H);
-    const lon = Math.atan2(
+    const raw = Math.atan2(
       -Math.cos(ramcH),
       Math.sin(p.obliquity) * tanDecl + Math.cos(p.obliquity) * Math.sin(ramcH),
     );
-    cusps[houseIndices[k]] = normalizeDeg(lon * DEG);
+    const lonDeg = normalizeDeg(raw * DEG);
+    const arcFromMC = ((lonDeg - p.midheaven) % 360 + 360) % 360;
+    cusps[houseIndices[k]] = arcFromMC < 180 ? lonDeg : normalizeDeg(lonDeg + 180);
   }
 
   // Cardinal axes
@@ -463,11 +487,7 @@ function calculateCampanusHouses(p: HouseCalcParams): HouseCusp[] {
       Math.sin(A) * Math.cos(p.obliquity) + Math.tan(φ) * Math.sin(p.obliquity);
 
     const raHouse = p.ramc + Math.atan2(num, denom);
-    const lon = Math.atan2(
-      -Math.cos(raHouse),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(raHouse),
-    );
-    cusps[houseIndices[k]] = normalizeDeg(lon * DEG);
+    cusps[houseIndices[k]] = projectToEcliptic(raHouse, p.obliquity, p.latitude, p.midheaven);
   }
 
   cusps[3] = normalizeDeg(p.midheaven + 180);
@@ -508,11 +528,7 @@ function calculateKochHouses(p: HouseCalcParams): HouseCusp[] {
   for (let i = 1; i <= 2; i++) {
     const fraction = i / 3;
     const ramcOffset = p.ramc + fraction * samc;
-    const lon = Math.atan2(
-      -Math.cos(ramcOffset),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcOffset),
-    );
-    cusps[9 + i] = normalizeDeg(lon * DEG);
+    cusps[9 + i] = projectToEcliptic(ramcOffset, p.obliquity, p.latitude, p.midheaven);
   }
 
   // Houses 2, 3: trisect the nocturnal semi-arc of the MC
@@ -520,11 +536,7 @@ function calculateKochHouses(p: HouseCalcParams): HouseCusp[] {
   for (let i = 1; i <= 2; i++) {
     const fraction = i / 3;
     const ramcOffset = p.ramc + samc + fraction * nsamc;
-    const lon = Math.atan2(
-      -Math.cos(ramcOffset),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcOffset),
-    );
-    cusps[i] = normalizeDeg(lon * DEG);
+    cusps[i] = projectToEcliptic(ramcOffset, p.obliquity, p.latitude, p.midheaven);
   }
 
   cusps[3] = normalizeDeg(p.midheaven + 180);
@@ -550,28 +562,18 @@ function calculatePlacidusHouses(p: HouseCalcParams): HouseCusp[] {
   cusps[3] = normalizeDeg(p.midheaven + 180);
   cusps[6] = normalizeDeg(p.ascendant + 180);
 
-  const φ = p.latitude * RAD;
-
   // Houses 11, 12 (between MC and ASC)
   for (let i = 0; i < 2; i++) {
     const offset = (i + 1) * 30;
     const ramcH = p.ramc + offset * RAD;
-    const lon = Math.atan2(
-      -Math.cos(ramcH),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcH),
-    );
-    cusps[10 + i] = normalizeDeg(lon * DEG);
+    cusps[10 + i] = projectToEcliptic(ramcH, p.obliquity, p.latitude, p.midheaven);
   }
 
   // Houses 2, 3 (between ASC and IC)
   for (let i = 0; i < 2; i++) {
     const offset = (i + 4) * 30;
     const ramcH = p.ramc + offset * RAD;
-    const lon = Math.atan2(
-      -Math.cos(ramcH),
-      Math.sin(p.obliquity) * Math.tan(φ) + Math.cos(p.obliquity) * Math.sin(ramcH),
-    );
-    cusps[1 + i] = normalizeDeg(lon * DEG);
+    cusps[1 + i] = projectToEcliptic(ramcH, p.obliquity, p.latitude, p.midheaven);
   }
 
   cusps[4] = normalizeDeg(cusps[10] + 180);

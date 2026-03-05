@@ -64,11 +64,12 @@ function getDimensions(size: number): ChartDimensions {
 /**
  * Convert ecliptic longitude to chart angle.
  * In a natal chart, the Ascendant is placed at the left (9 o'clock position = 180°).
- * Zodiac runs counter-clockwise.
+ * Zodiac runs counter-clockwise: as longitude increases, angle increases (CCW on screen).
+ * Houses 1-6 appear in the lower half (below horizon), 7-12 in the upper half (above horizon).
  */
 function lonToAngle(lon: number, ascendant: number): number {
   // Ascendant at 180° (left side), counter-clockwise
-  return 180 - (lon - ascendant);
+  return 180 + (lon - ascendant);
 }
 
 function degToRad(deg: number): number {
@@ -108,9 +109,9 @@ function arcPath(
 
   return [
     `M ${start1.x} ${start1.y}`,
-    `A ${outerR} ${outerR} 0 ${largeArc} 1 ${end1.x} ${end1.y}`,
+    `A ${outerR} ${outerR} 0 ${largeArc} 0 ${end1.x} ${end1.y}`,
     `L ${start2.x} ${start2.y}`,
-    `A ${innerR} ${innerR} 0 ${largeArc} 0 ${end2.x} ${end2.y}`,
+    `A ${innerR} ${innerR} 0 ${largeArc} 1 ${end2.x} ${end2.y}`,
     'Z',
   ].join(' ');
 }

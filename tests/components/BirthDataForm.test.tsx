@@ -6,17 +6,14 @@ describe('BirthDataForm', () => {
   it('should render all form fields', () => {
     render(<BirthDataForm onSubmit={vi.fn()} />);
 
-    expect(screen.getByLabelText('年')).toBeInTheDocument();
-    expect(screen.getByLabelText('月')).toBeInTheDocument();
-    expect(screen.getByLabelText('日')).toBeInTheDocument();
-    expect(screen.getByLabelText('時')).toBeInTheDocument();
-    expect(screen.getByLabelText('分')).toBeInTheDocument();
-    expect(screen.getByLabelText('出生地點')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('2026-03-04')).toBeInTheDocument(); // date input
+    expect(screen.getByDisplayValue('04:26')).toBeInTheDocument(); // time input
+    expect(screen.getByPlaceholderText('城市名稱')).toBeInTheDocument();
   });
 
   it('should render the submit button with correct text', () => {
     render(<BirthDataForm onSubmit={vi.fn()} />);
-    expect(screen.getByRole('button', { name: '繪製星盤' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '製作星盤' })).toBeInTheDocument();
   });
 
   it('should show loading state when isLoading is true', () => {
@@ -25,21 +22,20 @@ describe('BirthDataForm', () => {
     expect(button).toBeDisabled();
   });
 
-  it('should show error when submitting without location', () => {
+  it('should update date input value', () => {
+    render(<BirthDataForm onSubmit={vi.fn()} />);
+    const dateInput = screen.getByDisplayValue('2026-03-04') as HTMLInputElement;
+
+    fireEvent.change(dateInput, { target: { value: '1990-06-15' } });
+    expect(dateInput.value).toBe('1990-06-15');
+  });
+
+  it('should call onSubmit when form is submitted', () => {
     const onSubmit = vi.fn();
     render(<BirthDataForm onSubmit={onSubmit} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '繪製星盤' }));
+    fireEvent.submit(screen.getByRole('button', { name: '製作星盤' }).closest('form')!);
 
-    expect(screen.getByText('請先選擇出生地點')).toBeInTheDocument();
-    expect(onSubmit).not.toHaveBeenCalled();
-  });
-
-  it('should update year input value', () => {
-    render(<BirthDataForm onSubmit={vi.fn()} />);
-    const yearInput = screen.getByLabelText('年') as HTMLInputElement;
-
-    fireEvent.change(yearInput, { target: { value: '1995' } });
-    expect(yearInput.value).toBe('1995');
+    expect(onSubmit).toHaveBeenCalledOnce();
   });
 });
