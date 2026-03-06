@@ -71,6 +71,37 @@
   margin-top: 8px;
 }
 
+/* ---- Tab navigation ---- */
+.tab-nav {
+  border-bottom: 2px solid #333;
+  margin-bottom: 14px;
+  padding-top: 8px;
+}
+
+.tab-btn {
+  padding: 6px 20px;
+  background: #e8e8e8;
+  border: 1px solid #bbb;
+  border-bottom: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  margin-right: 4px;
+  color: #444;
+}
+
+.tab-btn.active {
+  background: #fff;
+  border-color: #333;
+  font-weight: bold;
+  margin-bottom: -2px;
+  color: #111;
+}
+
+.tab-btn:hover:not(.active) {
+  background: #d8d8d8;
+}
+
 /* ---- Main ---- */
 .site-main {
   padding-bottom: 24px;
@@ -453,6 +484,294 @@
 
 .geo-results li:hover {
   background: #e8f0fe;
+}
+
+/* ---- Bazi result ---- */
+.bazi-result {
+  margin-top: 8px;
+}
+
+.bazi-today-banner {
+  background: #f5f0e8;
+  border: 1px solid #c8b87a;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #5a3e00;
+  letter-spacing: 0.05em;
+}
+
+.bazi-mingpan-table td,
+.bazi-mingpan-table th {
+  text-align: center;
+  min-width: 70px;
+  padding: 8px 12px;
+}
+
+.bazi-glyph-cell {
+  vertical-align: middle;
+}
+
+.bazi-large-glyph {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+  line-height: 1.2;
+}
+
+.bazi-yinyang {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.bazi-luck-start {
+  font-size: 13px;
+  font-weight: normal;
+  color: #555;
+}
+
+.bazi-elements-stats {
+  padding: 8px 4px;
+}
+
+.bazi-element-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.bazi-element-name {
+  font-size: 1rem;
+  font-weight: bold;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.bazi-element-bar-wrap {
+  flex: 0 0 130px;
+  margin: 0 8px;
+  height: 14px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.bazi-element-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bazi-element-count {
+  font-size: 13px;
+  color: #444;
+  min-width: 20px;
+}
+
+/* ---- Vedic result ---- */
+.vedic-result {
+  margin-top: 8px;
+}
+
+.vedic-result-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.vedic-result-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+}
+
+.vedic-lagna-badge {
+  background: #2c5f9e;
+  color: #fff;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 2px;
+}
+
+.vedic-subtab-nav {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 12px;
+}
+
+.vedic-subtab-btn {
+  padding: 4px 16px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  margin-right: 3px;
+  color: #444;
+}
+
+.vedic-subtab-btn.active {
+  background: #fff;
+  border-color: #999;
+  font-weight: bold;
+  margin-bottom: -1px;
+  color: #111;
+}
+
+.vedic-subtab-btn:hover:not(.active) {
+  background: #e4e4e4;
+}
+
+.vedic-subtab-content {
+  padding-top: 4px;
+}
+
+/* ---- South Indian chart ---- */
+.si-chart-wrap {
+  margin: 8px 0;
+}
+
+.si-chart-table {
+  border-collapse: collapse;
+  background: #1a1a2e;
+  table-layout: fixed;
+}
+
+.si-chart-table td {
+  border: 2px solid #4a4a6a;
+  vertical-align: top;
+}
+
+.si-cell {
+  width: 120px;
+  min-height: 90px;
+  background: #16213e;
+}
+
+.si-cell.si-lagna {
+  background: #0f3460;
+  border-color: #e94560 !important;
+}
+
+.si-cell-inner {
+  padding: 5px 6px;
+  min-height: 80px;
+}
+
+.si-cell-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.si-rashi-name {
+  font-size: 12px;
+  color: #9aa0b0;
+  font-weight: bold;
+}
+
+.si-house-num {
+  font-size: 10px;
+  color: #6a7080;
+  margin-left: auto;
+}
+
+.si-lagna-mark {
+  font-size: 10px;
+  color: #e94560;
+  font-weight: bold;
+}
+
+.si-planets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.si-planet-token {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 1px 3px;
+  border-radius: 2px;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.si-center {
+  background: #0d0d1a;
+  border-color: #4a4a6a;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.si-center-content {
+  padding: 12px 8px;
+}
+
+.si-center-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #c8a960;
+  margin-bottom: 8px;
+}
+
+.si-center-info {
+  font-size: 11px;
+  color: #7a8090;
+  margin-bottom: 4px;
+}
+
+.si-footer {
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.si-legend {
+  font-size: 11px;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* ---- Vedic Dasha ---- */
+.vedic-dasha-section {
+  margin-top: 4px;
+}
+
+.vedic-dasha-now {
+  background: #f5f5dc;
+  border: 1px solid #c8b47a;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #444;
+}
+
+.vedic-dasha-current {
+  background: #fffbe6 !important;
+}
+
+.vedic-dasha-current td {
+  background: #fffbe6 !important;
+}
+
+.vedic-antardasha-row td {
+  background: #fafafa;
+  border-top: none;
+}
+
+.vedic-antardasha-row.vedic-dasha-current td {
+  background: #fffbe6 !important;
+}
+
+.vedic-current-badge {
+  font-size: 11px;
+  color: #c05000;
+  font-weight: bold;
 }
 
 /* ---- Responsive ---- */

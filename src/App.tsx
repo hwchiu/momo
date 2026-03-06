@@ -4,9 +4,19 @@ import type { BirthData, NatalChart as NatalChartData } from './types/astro';
 import { HouseSystem } from './types/astro';
 import { calculateNatalChart } from './lib/astro';
 
+import type { BaziInput, BaziChart as BaziChartData } from './types/bazi';
+import { calculateBazi } from './lib/bazi';
+
+import type { VedicInput, VedicChart as VedicChartData } from './types/vedic';
+import { calculateVedicChart } from './lib/vedic';
+
 import { BirthDataForm } from './components/BirthDataForm';
 import { NatalChart } from './components/NatalChart';
 import { ChartDetails } from './components/ChartDetails';
+import { BaziForm } from './components/BaziForm';
+import { BaziResult } from './components/BaziResult';
+import { VedicForm } from './components/VedicForm';
+import { VedicResult } from './components/VedicResult';
 import './App.css';
 
 // Default birth data: 2026-03-04, 04:26 local (GMT+8), Taipei
@@ -40,11 +50,24 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
+  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic'>('natal');
+
+  // Natal chart state
   const [chart, setChart] = useState<NatalChartData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [renderTime, setRenderTime] = useState<number | null>(null);
   const startTimeRef = useRef<number>(0);
+
+  // Bazi state
+  const [baziChart, setBaziChart] = useState<BaziChartData | null>(null);
+  const [baziLoading, setBaziLoading] = useState(false);
+  const [baziError, setBaziError] = useState<string | null>(null);
+
+  // Vedic state
+  const [vedicChart, setVedicChart] = useState<VedicChartData | null>(null);
+  const [vedicLoading, setVedicLoading] = useState(false);
+  const [vedicError, setVedicError] = useState<string | null>(null);
 
   const runCalculation = useCallback((birthData: BirthData, houseSystem: HouseSystem) => {
     setIsLoading(true);
@@ -83,6 +106,42 @@ function App() {
     [runCalculation],
   );
 
+  const handleBaziSubmit = useCallback((input: BaziInput) => {
+    setBaziLoading(true);
+    setBaziError(null);
+    setTimeout(() => {
+      try {
+        const result = calculateBazi(input);
+        setBaziChart(result);
+      } catch (err) {
+        console.error('Bazi calculation error:', err);
+        setBaziError(
+          err instanceof Error ? `計算八字時發生錯誤：${err.message}` : '計算八字時發生未知錯誤',
+        );
+      } finally {
+        setBaziLoading(false);
+      }
+    }, 50);
+  }, []);
+
+  const handleVedicSubmit = useCallback((input: VedicInput) => {
+    setVedicLoading(true);
+    setVedicError(null);
+    setTimeout(() => {
+      try {
+        const result = calculateVedicChart(input);
+        setVedicChart(result);
+      } catch (err) {
+        console.error('Vedic calculation error:', err);
+        setVedicError(
+          err instanceof Error ? `計算命盤時發生錯誤：${err.message}` : '計算命盤時發生未知錯誤',
+        );
+      } finally {
+        setVedicLoading(false);
+      }
+    }, 50);
+  }, []);
+
   return (
     <div className="almuten-app">
 
@@ -102,38 +161,90 @@ function App() {
         <h2 className="site-title-2">宮神星網 Almuten.net - 線上古典占星圖</h2>
       </header>
 
+      {/* ---- Tab navigation ---- */}
+      <div className="tab-nav">
+        <button
+          className={`tab-btn ${activeTab === 'natal' ? 'active' : ''}`}
+          onClick={() => setActiveTab('natal')}
+        >
+          星盤分析
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'bazi' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bazi')}
+        >
+          風水八字
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'vedic' ? 'active' : ''}`}
+          onClick={() => setActiveTab('vedic')}
+        >
+          印度占星
+        </button>
+      </div>
+
       {/* ---- Main content ---- */}
       <main className="site-main">
 
-        {/* Quick chart section */}
-        <section className="quick-chart-section">
-          <h3 className="section-heading">快速製圖</h3>
-          <BirthDataForm onSubmit={handleSubmit} isLoading={isLoading} />
-        </section>
+        {activeTab === 'natal' && (
+          <>
+            {/* Quick chart section */}
+            <section className="quick-chart-section">
+              <h3 className="section-heading">快速製圖</h3>
+              <BirthDataForm onSubmit={handleSubmit} isLoading={isLoading} />
+            </section>
 
-        {/* Results section */}
-        {error && (
-          <div className="error-banner">{error}</div>
+            {error && <div className="error-banner">{error}</div>}
+            {isLoading && <div className="loading-msg">正在計算星盤，請稍候...</div>}
+
+            {chart && !isLoading && (
+              <section className="chart-section">
+                <h3 className="section-heading">
+                  星盤 &mdash; {chart.birthData.locationName}
+                </h3>
+                <div className="chart-visual">
+                  <NatalChart chart={chart} size={540} />
+                </div>
+                <ChartDetails chart={chart} />
+              </section>
+            )}
+          </>
         )}
 
-        {isLoading && (
-          <div className="loading-msg">正在計算星盤，請稍候...</div>
+        {activeTab === 'bazi' && (
+          <>
+            <section className="quick-chart-section">
+              <h3 className="section-heading">八字排盤</h3>
+              <BaziForm onSubmit={handleBaziSubmit} isLoading={baziLoading} />
+            </section>
+
+            {baziError && <div className="error-banner">{baziError}</div>}
+            {baziLoading && <div className="loading-msg">正在計算八字，請稍候...</div>}
+
+            {baziChart && !baziLoading && (
+              <section className="chart-section">
+                <BaziResult chart={baziChart} />
+              </section>
+            )}
+          </>
         )}
 
-        {chart && !isLoading && (
-          <section className="chart-section">
-            <h3 className="section-heading">
-              星盤 &mdash; {chart.birthData.locationName}
-            </h3>
+        {activeTab === 'vedic' && (
+          <>
+            <section className="quick-chart-section">
+              <h3 className="section-heading">印度占星命盤</h3>
+              <VedicForm onSubmit={handleVedicSubmit} isLoading={vedicLoading} />
+            </section>
 
-            {/* SVG chart */}
-            <div className="chart-visual">
-              <NatalChart chart={chart} size={540} />
-            </div>
+            {vedicError && <div className="error-banner">{vedicError}</div>}
+            {vedicLoading && <div className="loading-msg">正在計算印度命盤，請稍候...</div>}
 
-            {/* Tabular details */}
-            <ChartDetails chart={chart} />
-          </section>
+            {vedicChart && !vedicLoading && (
+              <section className="chart-section">
+                <VedicResult chart={vedicChart} />
+              </section>
+            )}
+          </>
         )}
       </main>
 
