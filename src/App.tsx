@@ -15,7 +15,6 @@ import { calculateSynastry } from './lib/synastry';
 import { calculateNatalChart as calcChart } from './lib/astro';
 
 import { BirthDataForm } from './components/BirthDataForm';
-import { OrbSettings } from './components/OrbSettings';
 import { NatalChart } from './components/NatalChart';
 import { ChartDetails } from './components/ChartDetails';
 import { TransitPanel } from './components/TransitPanel';
@@ -245,8 +244,12 @@ function App() {
             {/* Quick chart section */}
             <section className="quick-chart-section">
               <h3 className="section-heading">快速製圖</h3>
-              <BirthDataForm onSubmit={handleSubmit} isLoading={isLoading} />
-              <OrbSettings orbConfig={orbConfig} onChange={setOrbConfig} />
+              <BirthDataForm
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
+                orbConfig={orbConfig}
+                onOrbChange={setOrbConfig}
+              />
             </section>
 
             {error && <div className="error-banner">{error}</div>}
