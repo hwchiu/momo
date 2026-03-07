@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import type { BirthData } from '../types/astro';
+import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
+import { OrbSettings } from './OrbSettings';
 
 interface BirthDataFormProps {
   onSubmit: (data: BirthData, houseSystem: HouseSystem) => void;
   isLoading?: boolean;
   defaultHouseSystem?: HouseSystem;
+  orbConfig: OrbConfig;
+  onOrbChange: (config: OrbConfig) => void;
 }
 
 // Timezone options
@@ -44,6 +47,8 @@ export function BirthDataForm({
   onSubmit,
   isLoading = false,
   defaultHouseSystem = HouseSystem.Alcabitius,
+  orbConfig,
+  onOrbChange,
 }: BirthDataFormProps) {
   // Date fields
   const [dateStr, setDateStr] = useState('2026-03-04');
@@ -314,6 +319,10 @@ export function BirthDataForm({
             <option value="sidereal_lahiri">恆星黃道 - Lahiri</option>
             <option value="sidereal_fagan">恆星黃道 - Fagan/Bradley</option>
           </select>
+        </div>
+
+        <div className="form-submit-cell">
+          <OrbSettings orbConfig={orbConfig} onChange={onOrbChange} />
         </div>
 
         <div className="form-submit-cell">
