@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-import type { BirthData, NatalChart as NatalChartData } from './types/astro';
-import { HouseSystem } from './types/astro';
+import type { BirthData, NatalChart as NatalChartData, OrbConfig } from './types/astro';
+import { HouseSystem, DEFAULT_ORB_CONFIG } from './types/astro';
 import { calculateNatalChart } from './lib/astro';
 
 import type { BaziInput, BaziChart as BaziChartData } from './types/bazi';
@@ -15,6 +15,7 @@ import { calculateSynastry } from './lib/synastry';
 import { calculateNatalChart as calcChart } from './lib/astro';
 
 import { BirthDataForm } from './components/BirthDataForm';
+import { OrbSettings } from './components/OrbSettings';
 import { NatalChart } from './components/NatalChart';
 import { ChartDetails } from './components/ChartDetails';
 import { TransitPanel } from './components/TransitPanel';
@@ -59,6 +60,11 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 function App() {
   const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic' | 'synastry'>('natal');
 
+  // Shared aspect orb config (natal chart + synastry)
+  const [orbConfig, setOrbConfig] = useState<OrbConfig>(DEFAULT_ORB_CONFIG);
+  // Store last birth data so orb changes can re-trigger calculation
+  const lastNatalRef = useRef<{ birthData: BirthData; houseSystem: HouseSystem } | null>(null);
+
   // Natal chart state
   const [chart, setChart] = useState<NatalChartData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,14 +87,15 @@ function App() {
   const [synastryLoading, setSynastryLoading] = useState(false);
   const [synastryError, setSynastryError] = useState<string | null>(null);
 
-  const runCalculation = useCallback((birthData: BirthData, houseSystem: HouseSystem) => {
+  const runCalculation = useCallback((birthData: BirthData, houseSystem: HouseSystem, orbs: OrbConfig) => {
+    lastNatalRef.current = { birthData, houseSystem };
     setIsLoading(true);
     setError(null);
     startTimeRef.current = performance.now();
 
     setTimeout(() => {
       try {
-        const result = calculateNatalChart(birthData, houseSystem);
+        const result = calculateNatalChart(birthData, houseSystem, orbs);
         setChart(result);
         const elapsed = (performance.now() - startTimeRef.current) / 1000;
         setRenderTime(elapsed);
@@ -108,14 +115,23 @@ function App() {
   // Auto-calculate on page load with default data
   useEffect(() => {
     const { birthData, houseSystem } = getDefaultBirthData();
-    runCalculation(birthData, houseSystem);
+    runCalculation(birthData, houseSystem, orbConfig);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runCalculation]);
+
+  // Re-run calculation when orbs change (if a chart has been calculated)
+  useEffect(() => {
+    if (lastNatalRef.current) {
+      const { birthData, houseSystem } = lastNatalRef.current;
+      runCalculation(birthData, houseSystem, orbConfig);
+    }
+  }, [orbConfig, runCalculation]);
 
   const handleSubmit = useCallback(
     (birthData: BirthData, houseSystem: HouseSystem) => {
-      runCalculation(birthData, houseSystem);
+      runCalculation(birthData, houseSystem, orbConfig);
     },
-    [runCalculation],
+    [runCalculation, orbConfig],
   );
 
   const handleBaziSubmit = useCallback((input: BaziInput) => {
@@ -141,9 +157,9 @@ function App() {
     setSynastryError(null);
     setTimeout(() => {
       try {
-        const chartA = calcChart(input.birthDataA, input.houseSystemA);
-        const chartB = calcChart(input.birthDataB, input.houseSystemB);
-        const result = calculateSynastry(input.nameA, chartA, input.nameB, chartB);
+        const chartA = calcChart(input.birthDataA, input.houseSystemA, orbConfig);
+        const chartB = calcChart(input.birthDataB, input.houseSystemB, orbConfig);
+        const result = calculateSynastry(input.nameA, chartA, input.nameB, chartB, orbConfig);
         setSynastryResult(result);
       } catch (err) {
         console.error('Synastry calculation error:', err);
@@ -154,7 +170,7 @@ function App() {
         setSynastryLoading(false);
       }
     }, 50);
-  }, []);
+  }, [orbConfig]);
 
   const handleVedicSubmit = useCallback((input: VedicInput) => {
     setVedicLoading(true);
@@ -230,6 +246,7 @@ function App() {
             <section className="quick-chart-section">
               <h3 className="section-heading">快速製圖</h3>
               <BirthDataForm onSubmit={handleSubmit} isLoading={isLoading} />
+              <OrbSettings orbConfig={orbConfig} onChange={setOrbConfig} />
             </section>
 
             {error && <div className="error-banner">{error}</div>}

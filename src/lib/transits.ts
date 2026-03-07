@@ -53,6 +53,20 @@ function getPlanetsAtDate(date: Date, natalChart: NatalChart): PlanetPosition[] 
   return calculateNatalChart(bd, HouseSystem.WholeSign).planets;
 }
 
+// ---- Orb configuration ----
+
+export interface TransitOrbConfig {
+  transit: number;     // orb for transit-to-natal aspects (default 2°)
+  progression: number; // orb for progressed-to-natal aspects (default 2°)
+  solarArc: number;    // orb for solar arc-to-natal aspects (default 1°)
+}
+
+export const DEFAULT_TRANSIT_ORB_CONFIG: TransitOrbConfig = {
+  transit: 2,
+  progression: 2,
+  solarArc: 1,
+};
+
 // ---- Types ----
 
 export interface TransitAspect {
@@ -187,9 +201,9 @@ function toPlanetRows(positions: PlanetPosition[]): TransitPlanetRow[] {
 // ---- Public API ----
 
 /**
- * Transits: current planetary positions vs natal (2° orb).
+ * Transits: current planetary positions vs natal.
  */
-export function getTransitChart(natalChart: NatalChart, date: Date): TransitChart {
+export function getTransitChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): TransitChart {
   const noon = new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 12, 0, 0),
   );
@@ -199,15 +213,15 @@ export function getTransitChart(natalChart: NatalChart, date: Date): TransitChar
   const transitPlanetsNext = getPlanetsAtDate(noonNext, natalChart);
 
   const rows = toPlanetRows(transitPlanets);
-  const aspects = findCrossAspects(rows, transitPlanetsNext, natalChart.planets, 2.0);
+  const aspects = findCrossAspects(rows, transitPlanetsNext, natalChart.planets, orbConfig.transit);
 
   return { date: noon, planets: rows, aspects };
 }
 
 /**
- * Secondary Progressions: each elapsed day after birth = 1 year of life (2° orb).
+ * Secondary Progressions: each elapsed day after birth = 1 year of life.
  */
-export function getProgressedChart(natalChart: NatalChart, date: Date): ProgressedChart {
+export function getProgressedChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): ProgressedChart {
   const birthJDE = birthDataToJDE(natalChart.birthData);
   const targetJDE = dateToJDE(date);
   const ageInYears = (targetJDE - birthJDE) / 365.25;
@@ -234,7 +248,7 @@ export function getProgressedChart(natalChart: NatalChart, date: Date): Progress
   const progFullChart = calculateNatalChart(progBD, HouseSystem.WholeSign);
 
   const rows = toPlanetRows(progPlanets);
-  const aspects = findCrossAspects(rows, progPlanetsNext, natalChart.planets, 2.0);
+  const aspects = findCrossAspects(rows, progPlanetsNext, natalChart.planets, orbConfig.progression);
 
   return {
     date,
@@ -247,10 +261,10 @@ export function getProgressedChart(natalChart: NatalChart, date: Date): Progress
 }
 
 /**
- * Solar Arc Directions: all natal planets advanced by (SP Sun - natal Sun) degrees (1° orb).
+ * Solar Arc Directions: all natal planets advanced by (SP Sun - natal Sun) degrees.
  */
-export function getSolarArcChart(natalChart: NatalChart, date: Date): SolarArcChart {
-  const progChart = getProgressedChart(natalChart, date);
+export function getSolarArcChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): SolarArcChart {
+  const progChart = getProgressedChart(natalChart, date, orbConfig);
   const natalSun = natalChart.planets.find((p) => p.planet === Planet.Sun)!;
   const progSun = progChart.planets.find((p) => p.planet === Planet.Sun)!;
 
@@ -272,8 +286,7 @@ export function getSolarArcChart(natalChart: NatalChart, date: Date): SolarArcCh
     };
   });
 
-  // SA-to-natal aspects (tight 1° orb)
-  const aspects = findCrossAspects(saPositions, [], natalChart.planets, 1.0);
+  const aspects = findCrossAspects(saPositions, [], natalChart.planets, orbConfig.solarArc);
 
   return { date, solarArc: Math.abs(solarArc), planets: saPositions, aspects };
 }

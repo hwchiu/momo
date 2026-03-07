@@ -114,7 +114,7 @@ describe('calculateNatalChart', () => {
       expect(aspect.planet1).toBeDefined();
       expect(aspect.planet2).toBeDefined();
       expect(aspect.orb).toBeGreaterThanOrEqual(0);
-      expect(aspect.orb).toBeLessThanOrEqual(8); // max standard orb
+      expect(aspect.orb).toBeLessThanOrEqual(15); // max moiety orb (Sun moiety = 15°)
     }
   });
 

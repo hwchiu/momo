@@ -1273,6 +1273,58 @@
   padding: 12px 0;
 }
 
+/* ---- Orb Settings ---- */
+.orb-settings {
+  margin-top: 8px;
+  border-top: 1px solid #ddd;
+  padding-top: 6px;
+}
+.orb-settings-toggle {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 0;
+  font-family: inherit;
+}
+.orb-settings-toggle:hover { color: #1a5ca8; }
+.orb-settings-panel {
+  margin-top: 6px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  display: inline-block;
+}
+.orb-table {
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.orb-table th {
+  background: #eee;
+  padding: 3px 8px;
+  text-align: left;
+  font-weight: bold;
+}
+.orb-table td { padding: 2px 8px; }
+.orb-input {
+  width: 52px;
+  padding: 2px 4px;
+  font-size: 13px;
+  border: 1px solid #bbb;
+  text-align: center;
+}
+.orb-reset-btn {
+  margin-top: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: #eee;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  font-family: inherit;
+}
+.orb-reset-btn:hover { background: #ddd; }
+
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
   .synastry-persons-grid {

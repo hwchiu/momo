@@ -16,6 +16,7 @@ import type {
   ProfectionResult,
   FirdariaResult,
   FirdariaLord,
+  TransitOrbConfig,
   TransitAspect,
   TransitPlanetRow,
 } from '../lib/transits';
@@ -25,6 +26,7 @@ import {
   getSolarArcChart,
   getProfection,
   getFirdaria,
+  DEFAULT_TRANSIT_ORB_CONFIG,
   formatLon,
 } from '../lib/transits';
 
@@ -207,19 +209,21 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
   const [solarArcResult, setSolarArcResult] = useState<SolarArcChart | null>(null);
   const [profectionResult, setProfectionResult] = useState<ProfectionResult | null>(null);
   const [firdariaResult, setFirdariaResult] = useState<FirdariaResult | null>(null);
+  const [transitOrbs, setTransitOrbs] = useState<TransitOrbConfig>(DEFAULT_TRANSIT_ORB_CONFIG);
+  const [orbPanelOpen, setOrbPanelOpen] = useState(false);
 
   const targetDate = new Date(dateStr + 'T12:00:00Z');
 
   const recalculate = useCallback(() => {
     const d = new Date(dateStr + 'T12:00:00Z');
     setTimeout(() => {
-      setTransitResult(getTransitChart(natalChart, d));
-      setProgressedResult(getProgressedChart(natalChart, d));
-      setSolarArcResult(getSolarArcChart(natalChart, d));
+      setTransitResult(getTransitChart(natalChart, d, transitOrbs));
+      setProgressedResult(getProgressedChart(natalChart, d, transitOrbs));
+      setSolarArcResult(getSolarArcChart(natalChart, d, transitOrbs));
       setProfectionResult(getProfection(natalChart, d));
       setFirdariaResult(getFirdaria(natalChart, d));
     }, 10);
-  }, [natalChart, dateStr]);
+  }, [natalChart, dateStr, transitOrbs]);
 
   useEffect(() => {
     recalculate();
@@ -272,6 +276,58 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
             {TAB_LABELS[m]}
           </button>
         ))}
+      </div>
+
+      {/* Transit orb settings */}
+      <div className="orb-settings" style={{ marginBottom: '8px' }}>
+        <button
+          type="button"
+          className="orb-settings-toggle"
+          onClick={() => setOrbPanelOpen((v) => !v)}
+        >
+          {orbPanelOpen ? '▲' : '▼'} 推運容許度設定
+        </button>
+        {orbPanelOpen && (
+          <div className="orb-settings-panel">
+            <table className="orb-table" cellPadding={2} cellSpacing={0}>
+              <thead>
+                <tr><th>技法</th><th>容許度（°）</th><th>說明</th></tr>
+              </thead>
+              <tbody>
+                {(
+                  [
+                    ['transit',     transitOrbs.transit,     '過境相位容許度',   (v: number) => setTransitOrbs((o) => ({ ...o, transit: v }))],
+                    ['progression', transitOrbs.progression, '二次推運容許度',   (v: number) => setTransitOrbs((o) => ({ ...o, progression: v }))],
+                    ['solarArc',    transitOrbs.solarArc,    '太陽弧容許度',     (v: number) => setTransitOrbs((o) => ({ ...o, solarArc: v }))],
+                  ] as [string, number, string, (v: number) => void][]
+                ).map(([key, val, label, setter]) => (
+                  <tr key={key}>
+                    <td style={{ whiteSpace: 'nowrap' }}>{label}</td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        max={10}
+                        step={0.5}
+                        value={val}
+                        onChange={(e) => setter(parseFloat(e.target.value) || 0)}
+                        className="orb-input"
+                      />
+                    </td>
+                    <td style={{ fontSize: '11px', color: '#888' }}>預設 {DEFAULT_TRANSIT_ORB_CONFIG[key as keyof TransitOrbConfig]}°</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              type="button"
+              className="orb-reset-btn"
+              onClick={() => setTransitOrbs(DEFAULT_TRANSIT_ORB_CONFIG)}
+            >
+              恢復預設值
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ---- Transits tab ---- */}

@@ -8,7 +8,8 @@
  */
 
 import type { NatalChart, PlanetPosition } from '../types/astro';
-import { Planet, AspectType, ASPECT_ORBS, PLANET_INFO, ZodiacSign } from '../types/astro';
+import { Planet, AspectType, PLANET_INFO, ZodiacSign, DEFAULT_ORB_CONFIG } from '../types/astro';
+import type { OrbConfig } from '../types/astro';
 import type { SynastryAspect, SynastryResult, CompositePosition, CompositeHouse, CompatibilityScore } from '../types/synastry';
 
 // ---- Utilities ----
@@ -181,7 +182,7 @@ const ASPECT_ANGLES: AspectType[] = [
   AspectType.Opposition,
 ];
 
-function findCrossAspects(planetsA: PlanetPosition[], planetsB: PlanetPosition[]): SynastryAspect[] {
+function findCrossAspects(planetsA: PlanetPosition[], planetsB: PlanetPosition[], orbConfig: OrbConfig = DEFAULT_ORB_CONFIG): SynastryAspect[] {
   const aspects: SynastryAspect[] = [];
 
   for (const pa of planetsA) {
@@ -189,7 +190,8 @@ function findCrossAspects(planetsA: PlanetPosition[], planetsB: PlanetPosition[]
       const diff = angularDiff(pa.longitude, pb.longitude);
       for (const aspectType of ASPECT_ANGLES) {
         const orb = Math.abs(diff - (aspectType as number));
-        const maxOrb = ASPECT_ORBS[aspectType];
+        // Classical moiety: max orb = (planetA moiety + planetB moiety) / 2
+        const maxOrb = (orbConfig[pa.planet] + orbConfig[pb.planet]) / 2;
         if (orb <= maxOrb) {
           aspects.push({
             planetA: pa.planet,
@@ -412,8 +414,9 @@ export function calculateSynastry(
   chartA: NatalChart,
   nameB: string,
   chartB: NatalChart,
+  orbConfig: OrbConfig = DEFAULT_ORB_CONFIG,
 ): SynastryResult {
-  const aspects = findCrossAspects(chartA.planets, chartB.planets);
+  const aspects = findCrossAspects(chartA.planets, chartB.planets, orbConfig);
   const compositePlanets = calculateCompositePositions(chartA, chartB);
   const compositeHouses = calculateCompositeHouses(chartA, chartB);
   const compositeAscendant = midpointLon(chartA.ascendant, chartB.ascendant);

@@ -180,3 +180,34 @@ export const ASPECT_ORBS: Record<AspectType, number> = {
   [AspectType.Trine]: 8,
   [AspectType.Opposition]: 8,
 };
+
+/**
+ * User-configurable orb settings per planet (classical moiety system).
+ * The max allowed orb between two planets = (planetA_orb + planetB_orb) / 2.
+ */
+export interface OrbConfig {
+  [Planet.Sun]: number;
+  [Planet.Moon]: number;
+  [Planet.Mercury]: number;
+  [Planet.Venus]: number;
+  [Planet.Mars]: number;
+  [Planet.Jupiter]: number;
+  [Planet.Saturn]: number;
+  [Planet.Uranus]: number;
+  [Planet.Neptune]: number;
+  [Planet.Pluto]: number;
+}
+
+/** Classical moiety values (Ptolemaic tradition) */
+export const DEFAULT_ORB_CONFIG: OrbConfig = {
+  [Planet.Sun]:     15,
+  [Planet.Moon]:    12,
+  [Planet.Mercury]:  7,
+  [Planet.Venus]:    7,
+  [Planet.Mars]:     8,
+  [Planet.Jupiter]:  9,
+  [Planet.Saturn]:   9,
+  [Planet.Uranus]:   5,
+  [Planet.Neptune]:  5,
+  [Planet.Pluto]:    5,
+};

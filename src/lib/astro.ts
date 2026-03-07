@@ -34,8 +34,9 @@ import {
   ZodiacSign,
   AspectType,
   HouseSystem,
-  ASPECT_ORBS,
+  DEFAULT_ORB_CONFIG,
 } from '../types/astro';
+import type { OrbConfig } from '../types/astro';
 
 const RAD = Math.PI / 180;
 const DEG = 180 / Math.PI;
@@ -733,7 +734,7 @@ function calculatePlanetPositions(jde: number, houses: HouseCusp[]): PlanetPosit
 /**
  * Calculate aspects between all pairs of planets.
  */
-function calculateAspects(planets: PlanetPosition[]): Aspect[] {
+function calculateAspects(planets: PlanetPosition[], orbConfig: OrbConfig = DEFAULT_ORB_CONFIG): Aspect[] {
   const aspects: Aspect[] = [];
   const aspectTypes = [
     AspectType.Conjunction,
@@ -751,7 +752,8 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
       for (const type of aspectTypes) {
         const exactAngle = type as number;
         const orb = Math.abs(angle - exactAngle);
-        const maxOrb = ASPECT_ORBS[type];
+        // Classical moiety: max orb = (planet1 moiety + planet2 moiety) / 2
+        const maxOrb = (orbConfig[planets[i].planet] + orbConfig[planets[j].planet]) / 2;
 
         if (orb <= maxOrb) {
           aspects.push({
@@ -779,6 +781,7 @@ function calculateAspects(planets: PlanetPosition[]): Aspect[] {
 export function calculateNatalChart(
   birthData: BirthData,
   houseSystem: HouseSystem = HouseSystem.Placidus,
+  orbConfig: OrbConfig = DEFAULT_ORB_CONFIG,
 ): NatalChart {
   const jde = birthDataToJDE(birthData);
 
@@ -795,7 +798,7 @@ export function calculateNatalChart(
   );
 
   const planets = calculatePlanetPositions(jde, houses);
-  const aspects = calculateAspects(planets);
+  const aspects = calculateAspects(planets, orbConfig);
 
   return {
     birthData,
