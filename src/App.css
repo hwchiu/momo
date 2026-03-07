@@ -76,10 +76,13 @@
   border-bottom: 2px solid #333;
   margin-bottom: 14px;
   padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
 }
 
 .tab-btn {
-  padding: 6px 20px;
+  padding: 8px 16px;
   background: #e8e8e8;
   border: 1px solid #bbb;
   border-bottom: none;
@@ -87,7 +90,11 @@
   font-size: 14px;
   font-family: inherit;
   margin-right: 4px;
+  margin-bottom: 0;
   color: #444;
+  min-height: 40px;
+  touch-action: manipulation;
+  white-space: nowrap;
 }
 
 .tab-btn.active {
@@ -137,27 +144,45 @@
   padding: 8px 0;
 }
 
-.form-table {
-  border-collapse: collapse;
-  width: auto;
+/* CSS Grid form layout — replaces old <table> */
+.form-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: center;
+  max-width: 560px;
+}
+
+.form-field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.form-submit-cell {
+  grid-column: 1 / -1;
+  padding-top: 4px;
 }
 
 .form-label {
   font-weight: bold;
   color: #333;
-  padding: 4px 12px 4px 4px;
   white-space: nowrap;
-  vertical-align: middle;
+  font-size: 13px;
+  padding-right: 4px;
 }
 
 .form-input {
-  padding: 3px 6px;
+  padding: 6px 8px;
   border: 1px solid #aaa;
   background: #fafafa;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   color: #222;
-  vertical-align: middle;
+  min-height: 36px;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -166,59 +191,58 @@
 }
 
 .form-input-wide {
-  width: 180px;
+  width: 160px;
+  flex: 1 1 140px;
 }
 
 .form-input-dms {
-  width: 52px;
+  width: 60px;
   text-align: right;
 }
 
 .form-select {
-  padding: 3px 4px;
+  padding: 6px 4px;
   border: 1px solid #aaa;
   background: #fafafa;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   color: #222;
-  vertical-align: middle;
+  min-height: 36px;
+  max-width: 100%;
 }
 
 .form-select-dir {
-  padding: 3px 2px;
+  padding: 6px 4px;
   border: 1px solid #aaa;
   background: #fafafa;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   color: #222;
-  vertical-align: middle;
-  margin: 0 3px;
+  min-height: 36px;
 }
 
 .dms-cell {
-  vertical-align: middle;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .dms-sep {
   font-weight: bold;
-  margin: 0 2px;
-  vertical-align: middle;
-}
-
-.form-submit-cell {
-  padding-top: 10px;
+  margin: 0 1px;
 }
 
 .submit-btn {
-  padding: 6px 28px;
+  padding: 10px 28px;
   background: #2c5f9e;
   color: #fff;
   border: 1px solid #1a4a80;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
   letter-spacing: 0.05em;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -228,6 +252,37 @@
 .submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Geo search inline button */
+.geo-search-btn {
+  padding: 6px 12px;
+  background: #2c5f9e;
+  color: #fff;
+  border: 1px solid #1a4a80;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  min-height: 36px;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.geo-search-btn:hover:not(:disabled) {
+  background: #1a4a80;
+}
+
+.geo-search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.geo-error {
+  width: 100%;
+  font-size: 11px;
+  color: #c00;
+  margin-top: 2px;
 }
 
 /* ---- Chart section ---- */
@@ -461,25 +516,37 @@
 /* ---- Geocode dropdown ---- */
 .location-wrapper {
   position: relative;
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
 }
 
 .geo-results {
   position: absolute;
+  top: 100%;
+  left: 0;
   background: #fff;
   border: 1px solid #999;
   list-style: none;
   margin: 0;
   padding: 0;
   z-index: 100;
-  min-width: 300px;
+  min-width: 240px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .geo-results li {
-  padding: 4px 8px;
+  padding: 8px 10px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   border-bottom: 1px solid #eee;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
 }
 
 .geo-results li:hover {
@@ -1325,38 +1392,174 @@
 }
 .orb-reset-btn:hover { background: #ddd; }
 
-/* ---- Responsive ---- */
-@media (max-width: 640px) {
-  .synastry-persons-grid {
+/* ============================================================
+   Responsive — mobile-first overrides
+   ============================================================ */
+
+/* ---- 768px: tablet ---- */
+@media (max-width: 768px) {
+  .transit-two-col {
     grid-template-columns: 1fr;
   }
-  .composite-angles {
-    flex-direction: column;
-    gap: 6px;
+
+  .bazi-element-bar-wrap {
+    flex: 1 1 80px;
+  }
+
+  .si-cell {
+    width: 80px;
+    min-height: 60px;
+  }
+
+  .si-cell-inner {
+    padding: 3px 4px;
+    min-height: 55px;
+  }
+
+  .si-rashi-name {
+    font-size: 10px;
+  }
+
+  .si-planet-token {
+    font-size: 10px;
+    padding: 1px 2px;
   }
 }
 
-/* ---- Responsive ---- */
+/* ---- 640px: large phone / small tablet ---- */
 @media (max-width: 640px) {
-  .dignity-tables-grid {
-    grid-template-columns: 1fr;
+  .almuten-app {
+    padding: 0 8px;
   }
 
   .site-title {
     font-size: 1.3rem;
   }
 
-  .form-input-wide {
-    width: 140px;
+  .site-subtitle {
+    font-size: 0.9rem;
   }
 
-  .almuten-app {
-    padding: 0 6px;
+  /* Form: stack label above field */
+  .form-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    gap: 4px 0;
+  }
+
+  .form-label {
+    padding-bottom: 0;
+    margin-top: 8px;
+  }
+
+  .form-input-wide {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .form-select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form-submit-cell {
+    grid-column: 1;
+    padding-top: 8px;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+
+  /* Tabs: full-width row */
+  .tab-nav {
+    gap: 0;
+  }
+
+  .tab-btn {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 13px;
+    margin-right: 2px;
+  }
+
+  /* Grids */
+  .dignity-tables-grid,
+  .synastry-persons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .composite-angles {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Profection card */
+  .profection-card {
+    max-width: 100%;
+  }
+
+  .profection-label {
+    min-width: 120px;
+  }
+
+  /* Transit */
+  .transit-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  /* Bazi bar */
+  .bazi-element-bar-wrap {
+    flex: 1 1 60px;
   }
 }
 
+/* ---- 480px: small phone ---- */
 @media (max-width: 480px) {
+  .almuten-app {
+    padding: 0 4px;
+  }
+
+  .site-title {
+    font-size: 1.15rem;
+  }
+
   .site-title-2 {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 10px 4px;
+  }
+
+  /* DMS inputs: make them a bit wider on small phones */
+  .form-input-dms {
+    width: 52px;
+  }
+
+  /* Data tables: smaller font so they fit */
+  .data-table {
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 3px 4px;
+  }
+
+  /* South Indian chart: very compact */
+  .si-cell {
+    width: 60px;
+    min-height: 48px;
+  }
+
+  .si-rashi-name {
+    display: none;
+  }
+
+  .compat-overall-score {
+    font-size: 36px;
   }
 }
