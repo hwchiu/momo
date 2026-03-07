@@ -839,6 +839,253 @@
   min-width: 20px;
 }
 
+/* ---- Bazi enhancements: 藏干 / 十神 / 刑沖合 / 日主 ---- */
+.bazi-hidden-stems {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.bazi-hidden-stem {
+  font-size: 11px;
+  opacity: 0.75;
+}
+.bazi-hidden-main {
+  font-size: 13px;
+  font-weight: bold;
+  opacity: 1;
+}
+.bazi-ten-god {
+  display: inline-block;
+  font-size: 11px;
+  color: #555;
+  background: #f3f4f6;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.bazi-ten-god-daymaster {
+  color: #1a5ca8;
+  background: #e8f0fb;
+  font-weight: bold;
+}
+
+.bazi-no-interaction {
+  color: #666;
+  font-size: 13px;
+  padding: 6px 0;
+}
+.bazi-interactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.bazi-interaction-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 13px;
+}
+
+/* Day master strength box */
+.day-master-box {
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+}
+.day-master-旺 { background: #fff0f0; border-color: #c0392b; }
+.day-master-弱 { background: #eef4ff; border-color: #1a5ca8; }
+.day-master-中和 { background: #f0fff4; border-color: #1a7a1a; }
+
+.day-master-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.day-master-label { font-size: 12px; color: #888; }
+.day-master-stem { font-size: 15px; font-weight: bold; }
+.day-master-tag {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.08);
+}
+.day-master-score { font-size: 12px; color: #888; }
+.day-master-desc { font-size: 13px; color: #444; margin: 4px 0; }
+.day-master-gods { font-size: 13px; }
+
+/* ---- 本命卦 / 八宅 ---- */
+.kua-panel { }
+.kua-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.kua-number {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.kua-num-label { font-size: 12px; color: #888; }
+.kua-num-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1a5ca8;
+  line-height: 1;
+}
+.kua-trigram { font-size: 1.2rem; color: #444; }
+.kua-group-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.kua-group-badge[data-group='東四命'] { background: #e8f4e8; color: #1a7a1a; }
+.kua-group-badge[data-group='西四命'] { background: #fff3cd; color: #856404; }
+
+.kua-table th, .kua-table td { padding: 6px 10px; }
+.kua-dir-type { font-weight: bold; font-size: 13px; }
+.kua-auspicious { color: #1a7a1a; }
+.kua-inauspicious { color: #c0392b; }
+.kua-direction { font-size: 14px; font-weight: bold; }
+.kua-icon-good { color: #1a7a1a; font-size: 14px; }
+.kua-icon-bad { color: #c0392b; font-size: 14px; }
+.kua-dir-desc { font-size: 12px; color: #555; }
+.kua-note { font-size: 12px; color: #888; margin-top: 8px; }
+
+/* ---- 流年飛星 ---- */
+.flying-stars-panel { }
+.flying-stars-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.flying-star-year-input { width: 90px; }
+.flying-star-center-info { font-size: 14px; color: #333; }
+.flying-star-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #856404;
+  margin-bottom: 12px;
+}
+.flying-star-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 420px;
+  margin-bottom: 12px;
+}
+.flying-star-row {
+  display: flex;
+  gap: 4px;
+}
+.flying-star-cell {
+  flex: 1;
+  min-height: 90px;
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 8px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.fs-direction { font-size: 10px; }
+.fs-star-number { font-size: 1.8rem; font-weight: bold; line-height: 1; }
+.fs-star-name { font-size: 10px; }
+.fs-quality { font-size: 11px; font-weight: bold; }
+
+.flying-star-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.fs-legend-item { display: flex; align-items: center; gap: 5px; }
+.fs-legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+.flying-star-stars-guide h4 { margin: 0 0 8px; font-size: 13px; color: #555; }
+.fs-star-list { display: flex; flex-direction: column; gap: 4px; }
+.fs-star-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #444;
+  padding-left: 8px;
+  border-left: 3px solid;
+}
+.fs-star-num { font-weight: bold; font-size: 14px; min-width: 16px; }
+
+/* ---- 擇日工具 ---- */
+.date-select-tool { }
+.date-select-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.date-select-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.date-select-input { min-width: 90px; }
+
+.date-select-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.ds-summary-good { color: #1a7a1a; font-weight: bold; }
+.ds-summary-bad { color: #c0392b; font-weight: bold; }
+.ds-summary-note { color: #888; }
+
+.date-select-table th, .date-select-table td { padding: 5px 8px; }
+.date-row-good { background: #e8f4e8; }
+.date-row-bad { background: #fff0f0; }
+.date-select-note { font-size: 11px; color: #555; max-width: 220px; }
+
+.officer-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.officer-good { background: #d4edda; color: #155724; }
+.officer-bad { background: #f8d7da; color: #721c24; }
+.officer-neutral { background: #f3f4f6; color: #555; }
+
 /* ---- Vedic result ---- */
 .vedic-result {
   margin-top: 8px;
