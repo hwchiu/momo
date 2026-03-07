@@ -1,0 +1,57 @@
+name: Auto-create and merge PR for Claude branches
+
+on:
+  push:
+    branches:
+      - 'claude/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-and-merge-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR and merge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = context.ref.replace('refs/heads/', '');
+
+            // Check if PR already exists
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branch}`,
+              state: 'open',
+            });
+
+            let prNumber;
+
+            if (prs.length > 0) {
+              prNumber = prs[0].number;
+              console.log(`PR already exists: #${prNumber}`);
+            } else {
+              const { data: pr } = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[Claude] ${branch.replace('claude/', '')}`,
+                head: branch,
+                base: 'main',
+                body: 'Auto-generated PR from Claude Code.',
+              });
+              prNumber = pr.number;
+              console.log(`Created PR #${prNumber}: ${pr.html_url}`);
+            }
+
+            // Merge the PR
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              merge_method: 'squash',
+            });
+            console.log(`Merged PR #${prNumber} into main`);

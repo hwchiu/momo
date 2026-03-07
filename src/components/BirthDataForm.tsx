@@ -160,181 +160,168 @@ export function BirthDataForm({
 
   return (
     <form className="quick-chart-form" onSubmit={handleSubmit}>
-      <table className="form-table" cellPadding={3} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="form-label">日期</td>
-            <td>
-              <input
-                type="date"
-                value={dateStr}
-                onChange={(e) => setDateStr(e.target.value)}
-                className="form-input"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">時間</td>
-            <td>
-              <input
-                type="time"
-                value={timeStr}
-                onChange={(e) => setTimeStr(e.target.value)}
-                className="form-input"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">地點名稱</td>
-            <td>
-              <div className="location-wrapper">
-                <input
-                  type="text"
-                  value={locationName}
-                  onChange={(e) => setLocationName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
-                  className="form-input form-input-wide"
-                  placeholder="城市名稱"
-                />
-                <button
-                  type="button"
-                  className="submit-btn"
-                  style={{ padding: '3px 10px', fontSize: '12px', marginLeft: '4px' }}
-                  onClick={handleGeoSearch}
-                  disabled={geoLoading}
-                >
-                  {geoLoading ? '查詢中' : '搜尋'}
-                </button>
-                {geoError && <div style={{ fontSize: '11px', color: '#c00', marginTop: '2px' }}>{geoError}</div>}
-                {geoResults.length > 0 && (
-                  <ul className="geo-results">
-                    {geoResults.map((r, i) => (
-                      <li key={i} onClick={() => handleSelectGeoResult(r)}>
-                        {r.displayName}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">北緯/南緯</td>
-            <td className="dms-cell">
-              <input
-                type="number"
-                min={0}
-                max={90}
-                value={latDeg}
-                onChange={(e) => setLatDeg(parseInt(e.target.value, 10) || 0)}
-                className="form-input form-input-dms"
-              />
-              <span className="dms-sep">°</span>
-              <select
-                value={latDir}
-                onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
-                className="form-select-dir"
-              >
-                <option value="N">N 北</option>
-                <option value="S">S 南</option>
-              </select>
-              <input
-                type="number"
-                min={0}
-                max={59}
-                value={latMin}
-                onChange={(e) => setLatMin(parseInt(e.target.value, 10) || 0)}
-                className="form-input form-input-dms"
-              />
-              <span className="dms-sep">'</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">東經/西經</td>
-            <td className="dms-cell">
-              <input
-                type="number"
-                min={0}
-                max={180}
-                value={lonDeg}
-                onChange={(e) => setLonDeg(parseInt(e.target.value, 10) || 0)}
-                className="form-input form-input-dms"
-              />
-              <span className="dms-sep">°</span>
-              <select
-                value={lonDir}
-                onChange={(e) => setLonDir(e.target.value as 'E' | 'W')}
-                className="form-select-dir"
-              >
-                <option value="E">E 東</option>
-                <option value="W">W 西</option>
-              </select>
-              <input
-                type="number"
-                min={0}
-                max={59}
-                value={lonMin}
-                onChange={(e) => setLonMin(parseInt(e.target.value, 10) || 0)}
-                className="form-input form-input-dms"
-              />
-              <span className="dms-sep">'</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">時區</td>
-            <td>
-              <select
-                value={tzOffset}
-                onChange={(e) => setTzOffset(parseFloat(e.target.value))}
-                className="form-select"
-              >
-                {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value}>
-                    {tz.label}
-                  </option>
+      <div className="form-grid">
+        <label className="form-label">日期</label>
+        <div className="form-field">
+          <input
+            type="date"
+            value={dateStr}
+            onChange={(e) => setDateStr(e.target.value)}
+            className="form-input"
+          />
+        </div>
+
+        <label className="form-label">時間</label>
+        <div className="form-field">
+          <input
+            type="time"
+            value={timeStr}
+            onChange={(e) => setTimeStr(e.target.value)}
+            className="form-input"
+          />
+        </div>
+
+        <label className="form-label">地點名稱</label>
+        <div className="form-field">
+          <div className="location-wrapper">
+            <input
+              type="text"
+              value={locationName}
+              onChange={(e) => setLocationName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+              className="form-input form-input-wide"
+              placeholder="城市名稱"
+            />
+            <button
+              type="button"
+              className="geo-search-btn"
+              onClick={handleGeoSearch}
+              disabled={geoLoading}
+            >
+              {geoLoading ? '查詢中' : '搜尋'}
+            </button>
+            {geoError && <div className="geo-error">{geoError}</div>}
+            {geoResults.length > 0 && (
+              <ul className="geo-results">
+                {geoResults.map((r, i) => (
+                  <li key={i} onClick={() => handleSelectGeoResult(r)}>
+                    {r.displayName}
+                  </li>
                 ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">宮位制度</td>
-            <td>
-              <select
-                value={houseSystem}
-                onChange={(e) => setHouseSystem(e.target.value as HouseSystem)}
-                className="form-select"
-              >
-                {Object.entries(HOUSE_SYSTEM_INFO).map(([key, info]) => (
-                  <option key={key} value={key}>
-                    {info.name}
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">黃道系統</td>
-            <td>
-              <select
-                value={ayanamsa}
-                onChange={(e) => setAyanamsa(e.target.value)}
-                className="form-select"
-              >
-                <option value="tropical">回歸黃道（Tropical）</option>
-                <option value="sidereal_lahiri">恆星黃道 - Lahiri</option>
-                <option value="sidereal_fagan">恆星黃道 - Fagan/Bradley</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td colSpan={2} className="form-submit-cell">
-              <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading ? '計算中...' : '製作星盤'}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <label className="form-label">北緯/南緯</label>
+        <div className="form-field dms-cell">
+          <input
+            type="number"
+            min={0}
+            max={90}
+            value={latDeg}
+            onChange={(e) => setLatDeg(parseInt(e.target.value, 10) || 0)}
+            className="form-input form-input-dms"
+          />
+          <span className="dms-sep">°</span>
+          <select
+            value={latDir}
+            onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
+            className="form-select-dir"
+          >
+            <option value="N">N 北</option>
+            <option value="S">S 南</option>
+          </select>
+          <input
+            type="number"
+            min={0}
+            max={59}
+            value={latMin}
+            onChange={(e) => setLatMin(parseInt(e.target.value, 10) || 0)}
+            className="form-input form-input-dms"
+          />
+          <span className="dms-sep">'</span>
+        </div>
+
+        <label className="form-label">東經/西經</label>
+        <div className="form-field dms-cell">
+          <input
+            type="number"
+            min={0}
+            max={180}
+            value={lonDeg}
+            onChange={(e) => setLonDeg(parseInt(e.target.value, 10) || 0)}
+            className="form-input form-input-dms"
+          />
+          <span className="dms-sep">°</span>
+          <select
+            value={lonDir}
+            onChange={(e) => setLonDir(e.target.value as 'E' | 'W')}
+            className="form-select-dir"
+          >
+            <option value="E">E 東</option>
+            <option value="W">W 西</option>
+          </select>
+          <input
+            type="number"
+            min={0}
+            max={59}
+            value={lonMin}
+            onChange={(e) => setLonMin(parseInt(e.target.value, 10) || 0)}
+            className="form-input form-input-dms"
+          />
+          <span className="dms-sep">'</span>
+        </div>
+
+        <label className="form-label">時區</label>
+        <div className="form-field">
+          <select
+            value={tzOffset}
+            onChange={(e) => setTzOffset(parseFloat(e.target.value))}
+            className="form-select"
+          >
+            {TIMEZONES.map((tz) => (
+              <option key={tz.value} value={tz.value}>
+                {tz.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <label className="form-label">宮位制度</label>
+        <div className="form-field">
+          <select
+            value={houseSystem}
+            onChange={(e) => setHouseSystem(e.target.value as HouseSystem)}
+            className="form-select"
+          >
+            {Object.entries(HOUSE_SYSTEM_INFO).map(([key, info]) => (
+              <option key={key} value={key}>
+                {info.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <label className="form-label">黃道系統</label>
+        <div className="form-field">
+          <select
+            value={ayanamsa}
+            onChange={(e) => setAyanamsa(e.target.value)}
+            className="form-select"
+          >
+            <option value="tropical">回歸黃道（Tropical）</option>
+            <option value="sidereal_lahiri">恆星黃道 - Lahiri</option>
+            <option value="sidereal_fagan">恆星黃道 - Fagan/Bradley</option>
+          </select>
+        </div>
+
+        <div className="form-submit-cell">
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading ? '計算中...' : '製作星盤'}
+          </button>
+        </div>
+      </div>
     </form>
   );
 }
