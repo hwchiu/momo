@@ -1,4 +1,4 @@
-# 宮神星網 Almuten.net — 線上古典占星圖
+# 線上古典占星圖
 
 多功能命盤計算網站，支援西洋占星、印度占星、八字風水與雙人合盤分析。使用者輸入出生資料（日期、時間、地點），系統自動計算行星位置並以 SVG 星盤圖呈現。
 
@@ -143,4 +143,3 @@ App.tsx → calculateNatalChart(birthData, houseSystem)
 
 ---
 
-&copy; 2012–2026 Almuten.net
