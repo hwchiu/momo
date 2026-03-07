@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   create-and-merge-pr:
@@ -55,3 +56,12 @@ jobs:
               merge_method: 'squash',
             });
             console.log(`Merged PR #${prNumber} into main`);
+
+            // Trigger deploy workflow (GITHUB_TOKEN merges don't fire push events)
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'deploy.yml',
+              ref: 'main',
+            });
+            console.log('Triggered deploy.yml on main');
