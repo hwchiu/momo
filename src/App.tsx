@@ -20,6 +20,9 @@ import { ChartDetails } from './components/ChartDetails';
 import { TransitPanel } from './components/TransitPanel';
 import { BaziForm } from './components/BaziForm';
 import { BaziResult } from './components/BaziResult';
+import { KuaPanel } from './components/KuaPanel';
+import { FlyingStarsPanel } from './components/FlyingStarsPanel';
+import { DateSelectTool } from './components/DateSelectTool';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
@@ -285,6 +288,23 @@ function App() {
                 <BaziResult chart={baziChart} />
               </section>
             )}
+
+            {baziChart && !baziLoading && (
+              <section className="quick-chart-section">
+                <h3 className="section-heading">本命卦 · 八宅方位</h3>
+                <KuaPanel chart={baziChart} />
+              </section>
+            )}
+
+            <section className="quick-chart-section">
+              <h3 className="section-heading">流年紫白飛星</h3>
+              <FlyingStarsPanel />
+            </section>
+
+            <section className="quick-chart-section">
+              <h3 className="section-heading">擇日工具</h3>
+              <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
+            </section>
           </>
         )}
 
