@@ -337,37 +337,12 @@ function PersonInput({
 interface SynastryFormProps {
   onSubmit: (input: SynastryInput) => void;
   isLoading: boolean;
-  /** If provided, show a "載入A" button to prefill Person A from the current natal chart */
-  currentChartData?: BirthData;
 }
 
-export function SynastryForm({ onSubmit, isLoading, currentChartData }: SynastryFormProps) {
+export function SynastryForm({ onSubmit, isLoading }: SynastryFormProps) {
   const [personA, setPersonA] = useState<PersonState>(defaultPerson('本命人（A）'));
   const [personB, setPersonB] = useState<PersonState>(defaultPerson('對象（B）'));
   const [formError, setFormError] = useState<string | null>(null);
-
-  const loadCurrentChart = () => {
-    if (!currentChartData) return;
-    const d = currentChartData;
-    // birthData is stored in UTC; load it as UTC (tzOffset=0)
-    const dateStr = `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
-    const timeStr = `${String(d.hour).padStart(2, '0')}:${String(d.minute).padStart(2, '0')}`;
-    const latDMS = decimalToDMS(d.latitude);
-    const lonDMS = decimalToDMS(d.longitude);
-    setPersonA((prev) => ({
-      ...prev,
-      dateStr,
-      timeStr,
-      locationName: d.locationName,
-      latDeg: latDMS.deg,
-      latMin: latDMS.min,
-      latDir: d.latitude >= 0 ? 'N' : 'S',
-      lonDeg: lonDMS.deg,
-      lonMin: lonDMS.min,
-      lonDir: d.longitude >= 0 ? 'E' : 'W',
-      tzOffset: 0,
-    }));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -384,14 +359,6 @@ export function SynastryForm({ onSubmit, isLoading, currentChartData }: Synastry
 
   return (
     <form onSubmit={handleSubmit} className="synastry-form">
-      {currentChartData && (
-        <div className="synastry-load-hint">
-          <button type="button" className="synastry-load-btn" onClick={loadCurrentChart}>
-            ← 從目前星盤載入 A（以 UTC 時間載入）
-          </button>
-        </div>
-      )}
-
       <div className="synastry-persons-grid">
         <PersonInput label="本命人（A）" person={personA} onChange={setPersonA} colorClass="person-a" />
         <PersonInput label="對象（B）" person={personB} onChange={setPersonB} colorClass="person-b" />
