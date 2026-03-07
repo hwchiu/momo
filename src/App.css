@@ -77,8 +77,15 @@
   margin-bottom: 14px;
   padding-top: 8px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tab-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-btn {
@@ -297,12 +304,24 @@
 
 /* ---- SVG chart ---- */
 .natal-chart-container {
-  display: inline-block;
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 .natal-chart-svg {
   max-width: 100%;
   height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Synastry SVG (no dedicated class — target via wrapper) */
+.synastry-chart-wrap svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
 
 /* ---- Data tables ---- */
@@ -609,6 +628,14 @@
 .transit-mode-nav {
   border-bottom: 1px solid #ccc;
   margin-bottom: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.transit-mode-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .transit-mode-btn {
@@ -1117,6 +1144,14 @@
 .vedic-subtab-nav {
   border-bottom: 1px solid #ccc;
   margin-bottom: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.vedic-subtab-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .vedic-subtab-btn {
@@ -1679,6 +1714,16 @@
     font-size: 10px;
     padding: 1px 2px;
   }
+
+  /* orb settings table: allow horizontal scroll */
+  .orb-settings-panel {
+    overflow-x: auto;
+  }
+
+  /* synastry persons: tighter padding */
+  .synastry-person-block {
+    padding: 8px;
+  }
 }
 
 /* ---- 640px: large phone / small tablet ---- */
@@ -1707,6 +1752,12 @@
     margin-top: 8px;
   }
 
+  /* All form inputs/selects take full width when stacked */
+  .form-input {
+    width: 100%;
+    min-height: 44px;
+  }
+
   .form-input-wide {
     width: 100%;
     flex: 1 1 auto;
@@ -1715,6 +1766,15 @@
   .form-select {
     width: 100%;
     max-width: 100%;
+    min-height: 44px;
+  }
+
+  .form-select-dir {
+    min-height: 44px;
+  }
+
+  .geo-search-btn {
+    min-height: 44px;
   }
 
   .form-submit-cell {
@@ -1724,19 +1784,6 @@
 
   .submit-btn {
     width: 100%;
-  }
-
-  /* Tabs: full-width row */
-  .tab-nav {
-    gap: 0;
-  }
-
-  .tab-btn {
-    flex: 1 1 auto;
-    text-align: center;
-    padding: 10px 8px;
-    font-size: 13px;
-    margin-right: 2px;
   }
 
   /* Grids */
@@ -1764,6 +1811,13 @@
     grid-template-columns: 1fr;
   }
 
+  /* Synastry result header: stack badge below title */
+  .synastry-result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
   /* Bazi bar */
   .bazi-element-bar-wrap {
     flex: 1 1 60px;
@@ -1786,12 +1840,14 @@
 
   .tab-btn {
     font-size: 12px;
-    padding: 10px 4px;
+    padding: 10px 10px;
+    white-space: nowrap;
   }
 
-  /* DMS inputs: make them a bit wider on small phones */
+  /* DMS inputs */
   .form-input-dms {
     width: 52px;
+    min-height: 44px;
   }
 
   /* Data tables: smaller font so they fit */
@@ -1814,7 +1870,38 @@
     display: none;
   }
 
+  /* Compatibility panel */
+  .compat-overall {
+    padding: 12px 8px;
+  }
+
   .compat-overall-score {
     font-size: 36px;
+  }
+
+  /* Profection: stack label + value vertically */
+  .profection-card-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .profection-label {
+    min-width: 0;
+  }
+
+  /* Flying star: allow full width */
+  .flying-star-grid {
+    max-width: 100%;
+  }
+
+  /* Transit date controls: tighter */
+  .transit-quick-btns {
+    gap: 2px;
+  }
+
+  .transit-quick-btn {
+    padding: 4px 6px;
+    font-size: 11px;
+    min-height: 36px;
   }
 }
