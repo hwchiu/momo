@@ -264,9 +264,9 @@ function drawHouses(
     .attr('cx', dim.center)
     .attr('cy', dim.center)
     .attr('r', dim.houseInnerRadius)
-    .attr('fill', 'none')
-    .attr('stroke', '#999')
-    .attr('stroke-width', 1);
+    .attr('fill', '#FAFAFA')
+    .attr('stroke', '#555')
+    .attr('stroke-width', 1.5);
 }
 
 /**
