@@ -178,8 +178,8 @@ function drawZodiacRing(
       .attr('y1', inner.y)
       .attr('x2', outer.x)
       .attr('y2', outer.y)
-      .attr('stroke', '#999')
-      .attr('stroke-width', 0.5);
+      .attr('stroke', '#888')
+      .attr('stroke-width', 1);
   }
 }
 
@@ -210,9 +210,9 @@ function drawHouses(
       .attr('y1', inner.y)
       .attr('x2', outer.x)
       .attr('y2', outer.y)
-      .attr('stroke', isCardinal ? '#333' : '#aaa')
+      .attr('stroke', isCardinal ? '#222' : '#777')
       .attr('stroke-width', isCardinal ? 2 : 1)
-      .attr('stroke-dasharray', isCardinal ? 'none' : '4,2');
+      .attr('stroke-dasharray', isCardinal ? 'none' : '5,3');
 
     // House number
     const nextCusp = chart.houses[(i + 1) % 12];
@@ -265,7 +265,7 @@ function drawHouses(
     .attr('cy', dim.center)
     .attr('r', dim.houseInnerRadius)
     .attr('fill', 'none')
-    .attr('stroke', '#ccc')
+    .attr('stroke', '#999')
     .attr('stroke-width', 1);
 }
 
@@ -332,8 +332,8 @@ function drawPlanets(
         .attr('y1', tickInner.y)
         .attr('x2', pos.x)
         .attr('y2', pos.y)
-        .attr('stroke', '#ccc')
-        .attr('stroke-width', 0.5);
+        .attr('stroke', '#aaa')
+        .attr('stroke-width', 1);
     }
 
     // Planet glyph
@@ -404,7 +404,7 @@ function drawAspects(
     const pos2 = polarToXY(dim.center, dim.center, dim.aspectRadius, angle2);
 
     const info = ASPECT_INFO[aspect.type];
-    const opacity = Math.max(0.2, 1 - aspect.orb / 8);
+    const opacity = Math.max(0.5, 1 - aspect.orb / 10);
 
     g.append('line')
       .attr('x1', pos1.x)
@@ -412,9 +412,9 @@ function drawAspects(
       .attr('x2', pos2.x)
       .attr('y2', pos2.y)
       .attr('stroke', info.color)
-      .attr('stroke-width', 1)
+      .attr('stroke-width', aspect.orb < 3 ? 2 : 1.5)
       .attr('stroke-opacity', opacity)
-      .attr('stroke-dasharray', aspect.type === 60 || aspect.type === 120 ? 'none' : '4,3');
+      .attr('stroke-dasharray', aspect.type === 60 || aspect.type === 120 ? 'none' : '5,3');
   }
 }
 
