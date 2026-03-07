@@ -9,7 +9,7 @@
 
 import type { NatalChart, PlanetPosition } from '../types/astro';
 import { Planet, AspectType, ASPECT_ORBS, PLANET_INFO, ZodiacSign } from '../types/astro';
-import type { SynastryAspect, SynastryResult, CompositePosition, CompatibilityScore } from '../types/synastry';
+import type { SynastryAspect, SynastryResult, CompositePosition, CompositeHouse, CompatibilityScore } from '../types/synastry';
 
 // ---- Utilities ----
 
@@ -227,6 +227,22 @@ function calculateCompositePositions(chartA: NatalChart, chartB: NatalChart): Co
   });
 }
 
+function calculateCompositeHouses(chartA: NatalChart, chartB: NatalChart): CompositeHouse[] {
+  return chartA.houses.map((ha) => {
+    const hb = chartB.houses.find((h) => h.house === ha.house);
+    const lon = hb ? midpointLon(ha.longitude, hb.longitude) : ha.longitude;
+    const signIdx = Math.floor(lon / 30) as ZodiacSign;
+    const degInSign = lon % 30;
+    return {
+      house: ha.house,
+      longitude: lon,
+      sign: signIdx,
+      degree: Math.floor(degInSign),
+      minute: Math.floor((degInSign - Math.floor(degInSign)) * 60),
+    };
+  });
+}
+
 // ---- Compatibility scoring ----
 
 /** Pair weight (importance of this aspect for overall score) */
@@ -399,6 +415,7 @@ export function calculateSynastry(
 ): SynastryResult {
   const aspects = findCrossAspects(chartA.planets, chartB.planets);
   const compositePlanets = calculateCompositePositions(chartA, chartB);
+  const compositeHouses = calculateCompositeHouses(chartA, chartB);
   const compositeAscendant = midpointLon(chartA.ascendant, chartB.ascendant);
   const compositeMidheaven = midpointLon(chartA.midheaven, chartB.midheaven);
   const score = calculateCompatibilityScore(aspects);
@@ -410,6 +427,7 @@ export function calculateSynastry(
     chartB,
     aspects,
     compositePlanets,
+    compositeHouses,
     compositeAscendant,
     compositeMidheaven,
     score,

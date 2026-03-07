@@ -22,6 +22,15 @@ export interface CompositePosition {
   minute: number;
 }
 
+/** A house cusp in the composite chart (midpoint method) */
+export interface CompositeHouse {
+  house: number;
+  longitude: number;
+  sign: ZodiacSign;
+  degree: number;
+  minute: number;
+}
+
 /** Per-category compatibility scores and descriptions */
 export interface CompatibilityScore {
   overall: number;        // 0–100
@@ -45,6 +54,7 @@ export interface SynastryResult {
   chartB: NatalChart;
   aspects: SynastryAspect[];
   compositePlanets: CompositePosition[];
+  compositeHouses: CompositeHouse[];
   compositeAscendant: number;
   compositeMidheaven: number;
   score: CompatibilityScore;

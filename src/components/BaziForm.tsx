@@ -9,31 +9,35 @@ interface BaziFormProps {
 
 function getToday() {
   const d = new Date();
-  return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function getShichen(hour: number): string {
   return BRANCHES[Math.floor((hour + 1) / 2) % 12] + '時';
 }
 
-const YEARS = Array.from({ length: 181 }, (_, i) => 1920 + i); // 1920-2100
-const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
-const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-
 export function BaziForm({ onSubmit, isLoading = false }: BaziFormProps) {
-  const today = getToday();
-  const [year, setYear] = useState(today.year);
-  const [month, setMonth] = useState(today.month);
-  const [day, setDay] = useState(today.day);
-  const [hour, setHour] = useState(12);
-  const [minute, setMinute] = useState(0);
+  const [dateStr, setDateStr] = useState(getToday);
+  const [timeStr, setTimeStr] = useState('12:00');
   const [gender, setGender] = useState<'male' | 'female'>('male');
+
+  const currentHour = parseInt(timeStr.split(':')[0], 10) || 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ year, month, day, hour, minute, gender });
+    const [yearStr, monthStr, dayStr] = dateStr.split('-');
+    const [hourStr, minuteStr] = timeStr.split(':');
+    onSubmit({
+      year: parseInt(yearStr, 10),
+      month: parseInt(monthStr, 10),
+      day: parseInt(dayStr, 10),
+      hour: parseInt(hourStr, 10),
+      minute: parseInt(minuteStr, 10),
+      gender,
+    });
   };
 
   return (
@@ -41,83 +45,28 @@ export function BaziForm({ onSubmit, isLoading = false }: BaziFormProps) {
       <table className="form-table" cellPadding={3} cellSpacing={0}>
         <tbody>
           <tr>
-            <td className="form-label">年</td>
+            <td className="form-label">日期</td>
             <td>
-              <select
-                value={year}
-                onChange={(e) => setYear(parseInt(e.target.value, 10))}
-                className="form-select"
-              >
-                {YEARS.map((y) => (
-                  <option key={y} value={y}>
-                    {y} 年
-                  </option>
-                ))}
-              </select>
+              <input
+                type="date"
+                value={dateStr}
+                onChange={(e) => setDateStr(e.target.value)}
+                className="form-input"
+              />
             </td>
           </tr>
           <tr>
-            <td className="form-label">月</td>
+            <td className="form-label">時間</td>
             <td>
-              <select
-                value={month}
-                onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-                className="form-select"
-              >
-                {MONTHS.map((m) => (
-                  <option key={m} value={m}>
-                    {m} 月
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">日</td>
-            <td>
-              <select
-                value={day}
-                onChange={(e) => setDay(parseInt(e.target.value, 10))}
-                className="form-select"
-              >
-                {DAYS.map((d) => (
-                  <option key={d} value={d}>
-                    {d} 日
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">時</td>
-            <td>
-              <select
-                value={hour}
-                onChange={(e) => setHour(parseInt(e.target.value, 10))}
-                className="form-select"
-              >
-                {HOURS.map((h) => (
-                  <option key={h} value={h}>
-                    {h} 時（{getShichen(h)}）
-                  </option>
-                ))}
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">分</td>
-            <td>
-              <select
-                value={minute}
-                onChange={(e) => setMinute(parseInt(e.target.value, 10))}
-                className="form-select"
-              >
-                {MINUTES.map((m) => (
-                  <option key={m} value={m}>
-                    {m} 分
-                  </option>
-                ))}
-              </select>
+              <input
+                type="time"
+                value={timeStr}
+                onChange={(e) => setTimeStr(e.target.value)}
+                className="form-input"
+              />
+              <span style={{ marginLeft: '8px', fontSize: '12px', color: '#666' }}>
+                （{getShichen(currentHour)}，地方時）
+              </span>
             </td>
           </tr>
           <tr>

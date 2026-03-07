@@ -189,7 +189,7 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
             </td>
           </tr>
           <tr>
-            <td className="form-label">Ayanamsha</td>
+            <td className="form-label">歲差系統</td>
             <td>
               <select value={ayanamsha} onChange={(e) => setAyanamsha(e.target.value as VedicAyanamsha)} className="form-select">
                 {(Object.entries(AYANAMSHA_NAMES) as [VedicAyanamsha, string][]).map(([k, v]) => (

@@ -2,7 +2,7 @@ import { it, expect } from 'vitest';
 import { calculateNatalChart } from '../../src/lib/astro';
 import { HouseSystem } from '../../src/types/astro';
 
-// Almuten.net reference: 2026-03-04 23:41 GMT+8 → UTC 15:41
+// reference: 2026-03-04 23:41 GMT+8 → UTC 15:41
 // Taipei: 25°03'N, 121°30'E, Alcabitius
 
 const ALMUTEN_PLANETS: Record<string, {lon: number, house: number, rx?: boolean}> = {
@@ -42,7 +42,7 @@ function lonToStr(lon: number): string {
   return `${d}°${SIGNS[s]}${String(m).padStart(2,'0')}'`;
 }
 
-it('compares our engine with Almuten.net reference', () => {
+it('compares our engine with reference', () => {
   // UTC: 2026-03-04 15:41
   const chart = calculateNatalChart({
     year: 2026, month: 3, day: 4,
@@ -54,7 +54,7 @@ it('compares our engine with Almuten.net reference', () => {
   const planetOrder = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
   
   console.log('\n=== 行星位置對比 ===');
-  console.log('行星       我們的結果          Almuten參考          差距(°) 落宮比較');
+  console.log('行星       我們的結果          參考          差距(°) 落宮比較');
   
   for (const p of chart.planets) {
     const ref = ALMUTEN_PLANETS[p.planet];
@@ -68,7 +68,7 @@ it('compares our engine with Almuten.net reference', () => {
   }
   
   console.log('\n=== 宮位對比 ===');
-  console.log('宮位  我們的結果        Almuten參考        差距(°)');
+  console.log('宮位  我們的結果        參考        差距(°)');
   for (let i = 0; i < 12; i++) {
     const ours = chart.houses[i].longitude;
     const ref = ALMUTEN_HOUSES[i];

@@ -188,9 +188,9 @@ function App() {
 
       {/* ---- Header ---- */}
       <header className="site-header">
-        <h1 className="site-title">宮神星網 Almuten.net</h1>
+        <h1 className="site-title">測試網站</h1>
         <p className="site-subtitle">線上古典占星圖</p>
-        <h2 className="site-title-2">宮神星網 Almuten.net - 線上古典占星圖</h2>
+        <h2 className="site-title-2">momo momo - 線上古典占星圖</h2>
       </header>
 
       {/* ---- Tab navigation ---- */}
@@ -313,7 +313,7 @@ function App() {
         {renderTime !== null && (
           <span>Page rendered in {renderTime.toFixed(3)} seconds &nbsp;|&nbsp; </span>
         )}
-        <span>&copy; 2012-2026 Almuten.net</span>
+        <span>&copy; 2012-2026 momo.hwchiu </span>
       </footer>
     </div>
   );

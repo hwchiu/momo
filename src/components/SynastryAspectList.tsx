@@ -1,17 +1,20 @@
 /**
  * SynastryAspectList — filterable, sortable cross-chart aspect table.
- * Shows planet pair, aspect type, orb, nature tag, and Chinese interpretation.
+ * Shows planet, sign, house, aspect type, orb, nature, and interpretation in one unified table.
  */
 
 import { useState } from 'react';
-import { PLANET_INFO, ASPECT_INFO } from '../types/astro';
+import { PLANET_INFO, ASPECT_INFO, ZODIAC_SIGNS } from '../types/astro';
 import { Planet, AspectType } from '../types/astro';
+import type { NatalChart } from '../types/astro';
 import type { SynastryAspect } from '../types/synastry';
 
 interface Props {
   aspects: SynastryAspect[];
   nameA: string;
   nameB: string;
+  chartA: NatalChart;
+  chartB: NatalChart;
 }
 
 const PLANET_OPTIONS: Array<{ value: string; label: string }> = [
@@ -49,7 +52,7 @@ const NATURE_COLORS: Record<string, string> = {
   neutral: '#8B6914',
 };
 
-export function SynastryAspectList({ aspects, nameA, nameB }: Props) {
+export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Props) {
   const [filterPlanet, setFilterPlanet] = useState('all');
   const [filterNature, setFilterNature] = useState('all');
   const [filterAspect, setFilterAspect] = useState('all');
@@ -102,7 +105,7 @@ export function SynastryAspectList({ aspects, nameA, nameB }: Props) {
         <span className="aspect-count">共 {sorted.length} 個相位</span>
       </div>
 
-      {/* Aspect table */}
+      {/* Unified planet + sign + house + aspect table */}
       {sorted.length === 0 ? (
         <p className="no-data">沒有符合篩選條件的相位</p>
       ) : (
@@ -110,12 +113,21 @@ export function SynastryAspectList({ aspects, nameA, nameB }: Props) {
           <table className="data-table" cellPadding={4} cellSpacing={0}>
             <thead>
               <tr className="table-header">
-                <th>{nameA}（A）</th>
+                <th colSpan={3} style={{ borderRight: '2px solid #bbb' }}>{nameA}（A）</th>
+                <th colSpan={2} style={{ borderRight: '2px solid #bbb' }}>相位</th>
+                <th colSpan={3} style={{ borderRight: '2px solid #bbb' }}>{nameB}（B）</th>
+                <th>性質 / 詮釋</th>
+              </tr>
+              <tr className="table-header" style={{ fontSize: '11px' }}>
+                <th>行星</th>
+                <th>星座 · 度數</th>
+                <th style={{ borderRight: '2px solid #bbb' }}>宮位</th>
                 <th>相位</th>
-                <th>{nameB}（B）</th>
-                <th>容許度</th>
-                <th>性質</th>
-                <th>詮釋</th>
+                <th style={{ borderRight: '2px solid #bbb' }}>容許度</th>
+                <th>行星</th>
+                <th>星座 · 度數</th>
+                <th style={{ borderRight: '2px solid #bbb' }}>宮位</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -125,6 +137,22 @@ export function SynastryAspectList({ aspects, nameA, nameB }: Props) {
                 const aspInfo = ASPECT_INFO[asp.type];
                 const isOpen = expanded.has(i);
 
+                const posA = chartA.planets.find((p) => p.planet === asp.planetA);
+                const posB = chartB.planets.find((p) => p.planet === asp.planetB);
+
+                const fmtPos = (pos: typeof posA) => {
+                  if (!pos) return { sign: '-', deg: '-', house: '-' };
+                  const si = ZODIAC_SIGNS[pos.sign];
+                  return {
+                    sign: `${si.glyph} ${si.name}`,
+                    deg: `${pos.degree}° ${String(pos.minute).padStart(2, '0')}'${pos.retrograde ? ' ℞' : ''}`,
+                    house: `第 ${pos.house} 宮`,
+                  };
+                };
+
+                const fA = fmtPos(posA);
+                const fB = fmtPos(posB);
+
                 return (
                   <tr
                     key={i}
@@ -132,24 +160,49 @@ export function SynastryAspectList({ aspects, nameA, nameB }: Props) {
                     onClick={() => toggleExpand(i)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td className="planet-cell">
+                    {/* A: planet */}
+                    <td className="planet-cell" style={{ color: '#1a5ca8' }}>
                       <span className="planet-glyph">{pAInfo.glyph}</span> {pAInfo.name}
                     </td>
-                    <td className="aspect-cell" style={{ color: aspInfo.color }}>
+                    {/* A: sign + degree */}
+                    <td className="center-cell" style={{ color: '#1a5ca8', whiteSpace: 'nowrap' }}>
+                      <div>{fA.sign}</div>
+                      <div style={{ fontSize: '11px' }}>{fA.deg}</div>
+                    </td>
+                    {/* A: house */}
+                    <td className="center-cell" style={{ color: '#1a5ca8', borderRight: '2px solid #ddd', fontWeight: 'bold' }}>
+                      {fA.house}
+                    </td>
+                    {/* aspect */}
+                    <td className="aspect-cell" style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}>
                       {aspInfo.symbol} {aspInfo.name}
                     </td>
-                    <td className="planet-cell">
+                    {/* orb */}
+                    <td className="center-cell" style={{ borderRight: '2px solid #ddd', fontSize: '12px' }}>
+                      {asp.orb.toFixed(2)}°
+                    </td>
+                    {/* B: planet */}
+                    <td className="planet-cell" style={{ color: '#c0392b' }}>
                       <span className="planet-glyph">{pBInfo.glyph}</span> {pBInfo.name}
                     </td>
-                    <td className="center-cell">{asp.orb.toFixed(2)}°</td>
-                    <td className="center-cell" style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                      {NATURE_LABELS[asp.nature]}
+                    {/* B: sign + degree */}
+                    <td className="center-cell" style={{ color: '#c0392b', whiteSpace: 'nowrap' }}>
+                      <div>{fB.sign}</div>
+                      <div style={{ fontSize: '11px' }}>{fB.deg}</div>
                     </td>
+                    {/* B: house */}
+                    <td className="center-cell" style={{ color: '#c0392b', borderRight: '2px solid #ddd', fontWeight: 'bold' }}>
+                      {fB.house}
+                    </td>
+                    {/* nature + interpretation */}
                     <td className="interpretation-cell">
+                      <span style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', fontSize: '11px', marginRight: '4px' }}>
+                        {NATURE_LABELS[asp.nature]}
+                      </span>
                       {isOpen ? (
                         <span className="interp-text">{asp.interpretation}</span>
                       ) : (
-                        <span className="interp-preview">{asp.interpretation.slice(0, 28)}… 展開</span>
+                        <span className="interp-preview">{asp.interpretation.slice(0, 24)}… ▼</span>
                       )}
                     </td>
                   </tr>

@@ -344,6 +344,109 @@ export function getProfection(natalChart: NatalChart, date: Date): ProfectionRes
   };
 }
 
+// ---- Firdaria (法達) — Arabic planetary time-lord system ----
+
+/** A planet or lunar node acting as Firdaria lord */
+export type FirdariaLord = Planet | 'NorthNode' | 'SouthNode';
+
+export interface FirdariaSubPeriod {
+  lord: Planet;     // classical planet lord for this sub-period
+  startDate: Date;
+  endDate: Date;
+}
+
+export interface FirdariaPeriod {
+  lord: FirdariaLord;
+  years: number;
+  startDate: Date;
+  endDate: Date;
+  subPeriods: FirdariaSubPeriod[];
+}
+
+export interface FirdariaResult {
+  isDay: boolean;
+  allPeriods: FirdariaPeriod[];      // all 9 periods in the current 75-year cycle
+  currentPeriod: FirdariaPeriod;
+  currentSubPeriod: FirdariaSubPeriod;
+}
+
+// Day chart: Sun (10y), Venus (8y), Mercury (13y), Moon (9y), Saturn (11y), Jupiter (12y), Mars (7y), ☊ (3y), ☋ (2y)
+const DAY_FIRDARIA: Array<[FirdariaLord, number]> = [
+  [Planet.Sun, 10], [Planet.Venus, 8], [Planet.Mercury, 13], [Planet.Moon, 9],
+  [Planet.Saturn, 11], [Planet.Jupiter, 12], [Planet.Mars, 7],
+  ['NorthNode', 3], ['SouthNode', 2],
+];
+
+// Night chart: Moon (9y), Saturn (11y), Jupiter (12y), Mars (7y), Sun (10y), Venus (8y), Mercury (13y), ☊ (3y), ☋ (2y)
+const NIGHT_FIRDARIA: Array<[FirdariaLord, number]> = [
+  [Planet.Moon, 9], [Planet.Saturn, 11], [Planet.Jupiter, 12], [Planet.Mars, 7],
+  [Planet.Sun, 10], [Planet.Venus, 8], [Planet.Mercury, 13],
+  ['NorthNode', 3], ['SouthNode', 2],
+];
+
+const DAY_SEQ7: Planet[] = [Planet.Sun, Planet.Venus, Planet.Mercury, Planet.Moon, Planet.Saturn, Planet.Jupiter, Planet.Mars];
+const NIGHT_SEQ7: Planet[] = [Planet.Moon, Planet.Saturn, Planet.Jupiter, Planet.Mars, Planet.Sun, Planet.Venus, Planet.Mercury];
+
+/** Sub-lords for a main period: 7 classical planets starting from the main lord */
+function getFirdariaSubLords(mainLord: FirdariaLord, isDay: boolean): Planet[] {
+  const seq7 = isDay ? DAY_SEQ7 : NIGHT_SEQ7;
+  const startIdx = typeof mainLord === 'string' ? 0 : Math.max(0, seq7.indexOf(mainLord as Planet));
+  return Array.from({ length: 7 }, (_, i) => seq7[(startIdx + i) % 7]);
+}
+
+function addYearsMs(date: Date, years: number): Date {
+  return new Date(date.getTime() + years * 365.25 * 86400000);
+}
+
+/**
+ * Firdaria: Arabic planetary time-lords.
+ * Day/night sect determines sequence; 75-year cycle repeats through life.
+ */
+export function getFirdaria(natalChart: NatalChart, date: Date): FirdariaResult {
+  const birthDate = new Date(Date.UTC(
+    natalChart.birthData.year, natalChart.birthData.month - 1, natalChart.birthData.day,
+    natalChart.birthData.hour, natalChart.birthData.minute,
+  ));
+
+  // Day chart: Sun in houses 7–12 (above horizon)
+  const sunPos = natalChart.planets.find((p) => p.planet === Planet.Sun);
+  const isDay = sunPos ? sunPos.house >= 7 : true;
+
+  const sequence = isDay ? DAY_FIRDARIA : NIGHT_FIRDARIA;
+  const cycleYears = 75;
+
+  const ageMs = date.getTime() - birthDate.getTime();
+  const ageInYears = ageMs / (365.25 * 86400000);
+  const cycleNumber = Math.floor(Math.max(0, ageInYears) / cycleYears);
+  const cycleStartDate = addYearsMs(birthDate, cycleNumber * cycleYears);
+
+  // Build all 9 main periods for the current cycle
+  const allPeriods: FirdariaPeriod[] = [];
+  let cursor = new Date(cycleStartDate);
+
+  for (const [lord, years] of sequence) {
+    const periodStart = new Date(cursor);
+    const periodEnd = addYearsMs(periodStart, years);
+    const subLords = getFirdariaSubLords(lord, isDay);
+    const subYears = years / 7;
+    const subPeriods: FirdariaSubPeriod[] = subLords.map((subLord, i) => ({
+      lord: subLord,
+      startDate: addYearsMs(periodStart, i * subYears),
+      endDate: addYearsMs(periodStart, (i + 1) * subYears),
+    }));
+    allPeriods.push({ lord, years, startDate: periodStart, endDate: periodEnd, subPeriods });
+    cursor = periodEnd;
+  }
+
+  const currentPeriod = allPeriods.find((p) => date >= p.startDate && date < p.endDate)
+    ?? allPeriods[allPeriods.length - 1];
+  const currentSubPeriod =
+    currentPeriod.subPeriods.find((sp) => date >= sp.startDate && date < sp.endDate)
+    ?? currentPeriod.subPeriods[currentPeriod.subPeriods.length - 1];
+
+  return { isDay, allPeriods, currentPeriod, currentSubPeriod };
+}
+
 // ---- Helpers for display (exported for TransitPanel) ----
 
 /** Format longitude as "♑ 13° 24'" */

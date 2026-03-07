@@ -14,6 +14,8 @@ import type {
   ProgressedChart,
   SolarArcChart,
   ProfectionResult,
+  FirdariaResult,
+  FirdariaLord,
   TransitAspect,
   TransitPlanetRow,
 } from '../lib/transits';
@@ -22,6 +24,7 @@ import {
   getProgressedChart,
   getSolarArcChart,
   getProfection,
+  getFirdaria,
   formatLon,
 } from '../lib/transits';
 
@@ -29,7 +32,7 @@ interface TransitPanelProps {
   natalChart: NatalChart;
 }
 
-type Mode = 'transits' | 'progressions' | 'solar_arc' | 'profection';
+type Mode = 'transits' | 'progressions' | 'solar_arc' | 'profection' | 'firdaria';
 
 function todayStr() {
   const d = new Date();
@@ -203,6 +206,7 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
   const [progressedResult, setProgressedResult] = useState<ProgressedChart | null>(null);
   const [solarArcResult, setSolarArcResult] = useState<SolarArcChart | null>(null);
   const [profectionResult, setProfectionResult] = useState<ProfectionResult | null>(null);
+  const [firdariaResult, setFirdariaResult] = useState<FirdariaResult | null>(null);
 
   const targetDate = new Date(dateStr + 'T12:00:00Z');
 
@@ -213,6 +217,7 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
       setProgressedResult(getProgressedChart(natalChart, d));
       setSolarArcResult(getSolarArcChart(natalChart, d));
       setProfectionResult(getProfection(natalChart, d));
+      setFirdariaResult(getFirdaria(natalChart, d));
     }, 10);
   }, [natalChart, dateStr]);
 
@@ -227,6 +232,7 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
     progressions: '二次推運',
     solar_arc: '太陽弧',
     profection: '流年法',
+    firdaria: '法達',
   };
 
   return (
@@ -324,6 +330,171 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
           <ProfectionDisplay result={profectionResult} natalChart={natalChart} dateStr={dateStr} />
         </div>
       )}
+
+      {/* ---- Firdaria tab ---- */}
+      {mode === 'firdaria' && firdariaResult && (
+        <div className="transit-content">
+          <FirdariaDisplay result={firdariaResult} targetDate={targetDate} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Firdaria Display ----
+
+function fmtDate(d: Date): string {
+  return `${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+
+function fmtFirdariaLord(lord: FirdariaLord): { glyph: string; name: string } {
+  if (lord === 'NorthNode') return { glyph: '☊', name: '北交點' };
+  if (lord === 'SouthNode') return { glyph: '☋', name: '南交點' };
+  return { glyph: PLANET_INFO[lord].glyph, name: PLANET_INFO[lord].name };
+}
+
+function FirdariaDisplay({
+  result,
+  targetDate,
+}: {
+  result: FirdariaResult;
+  targetDate: Date;
+}) {
+  const { isDay, allPeriods, currentPeriod, currentSubPeriod } = result;
+  const mainInfo = fmtFirdariaLord(currentPeriod.lord);
+  const subInfo = fmtFirdariaLord(currentSubPeriod.lord);
+
+  // Sub-period progress within the main period
+  const subProgress = Math.min(100, Math.round(
+    ((targetDate.getTime() - currentSubPeriod.startDate.getTime()) /
+     (currentSubPeriod.endDate.getTime() - currentSubPeriod.startDate.getTime())) * 100,
+  ));
+
+  return (
+    <div>
+      {/* Summary card */}
+      <div className="profection-card">
+        <div className="profection-card-row">
+          <span className="profection-label">盤型</span>
+          <span className="profection-value">{isDay ? '日間盤（太陽在地平線上）' : '夜間盤（太陽在地平線下）'}</span>
+        </div>
+        <div className="profection-card-row">
+          <span className="profection-label">當前大限主星</span>
+          <span className="profection-value" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+            <span className="planet-glyph">{mainInfo.glyph}</span> {mainInfo.name}
+            <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>
+              {fmtDate(currentPeriod.startDate)} — {fmtDate(currentPeriod.endDate)}
+            </span>
+          </span>
+        </div>
+        <div className="profection-card-row">
+          <span className="profection-label">當前小限主星</span>
+          <span className="profection-value" style={{ fontSize: '16px' }}>
+            <span className="planet-glyph">{subInfo.glyph}</span> {subInfo.name}
+            <span style={{ fontSize: '12px', color: '#666', marginLeft: '10px' }}>
+              {fmtDate(currentSubPeriod.startDate)} — {fmtDate(currentSubPeriod.endDate)}
+            </span>
+          </span>
+        </div>
+        {/* Sub-period progress bar */}
+        <div style={{ margin: '8px 0 4px' }}>
+          <div style={{ fontSize: '11px', color: '#666', marginBottom: '3px' }}>小限進度 {subProgress}%</div>
+          <div style={{ background: '#e0e0e0', borderRadius: '4px', height: '8px', width: '100%' }}>
+            <div style={{ background: '#2c6fad', borderRadius: '4px', height: '8px', width: `${subProgress}%` }} />
+          </div>
+        </div>
+        <div className="profection-card-note">
+          法達（Firdāriyyāt）是古典阿拉伯行星時主術。日間盤自太陽始，夜間盤自月亮始，
+          75 年一大循環；每大限再分 7 小限，小限主星依序輪轉。
+        </div>
+      </div>
+
+      {/* Sub-periods of current main period */}
+      <h4 className="section-title">
+        {mainInfo.glyph} {mainInfo.name} 大限的七小限（{fmtDate(currentPeriod.startDate)} — {fmtDate(currentPeriod.endDate)}）
+      </h4>
+      <div className="table-scroll">
+        <table className="data-table">
+          <thead>
+            <tr className="table-header">
+              <th>小限主星</th>
+              <th>起始日期</th>
+              <th>結束日期</th>
+              <th>狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentPeriod.subPeriods.map((sp, i) => {
+              const isCurrent = targetDate >= sp.startDate && targetDate < sp.endDate;
+              const isPast = targetDate >= sp.endDate;
+              const spInfo = fmtFirdariaLord(sp.lord);
+              return (
+                <tr key={i} className={isCurrent ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'}>
+                  <td className="planet-cell">
+                    <span className="planet-glyph">{spInfo.glyph}</span> {spInfo.name}
+                  </td>
+                  <td className="center-cell">{fmtDate(sp.startDate)}</td>
+                  <td className="center-cell">{fmtDate(sp.endDate)}</td>
+                  <td className="center-cell">
+                    {isCurrent ? <span style={{ color: '#1a7a1a', fontWeight: 'bold' }}>▶ 當前</span>
+                     : isPast ? <span style={{ color: '#999' }}>已過</span>
+                     : <span style={{ color: '#666' }}>未至</span>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Full 75-year cycle table */}
+      <h4 className="section-title">75 年大限循環表</h4>
+      <div className="table-scroll" style={{ maxHeight: '340px', overflowY: 'auto' }}>
+        <table className="data-table">
+          <thead>
+            <tr className="table-header">
+              <th>大限主星</th>
+              <th>年數</th>
+              <th>起始日期</th>
+              <th>結束日期</th>
+              <th>當前小限</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allPeriods.map((p, i) => {
+              const isCurrentMain = targetDate >= p.startDate && targetDate < p.endDate;
+              const isPastMain = targetDate >= p.endDate;
+              const pInfo = fmtFirdariaLord(p.lord);
+              const activeSub = isCurrentMain
+                ? p.subPeriods.find((sp) => targetDate >= sp.startDate && targetDate < sp.endDate)
+                : undefined;
+              const activeSubInfo = activeSub ? fmtFirdariaLord(activeSub.lord) : null;
+              return (
+                <tr
+                  key={i}
+                  className={isCurrentMain ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'}
+                  style={isPastMain && !isCurrentMain ? { opacity: 0.55 } : undefined}
+                >
+                  <td className="planet-cell">
+                    <span className="planet-glyph">{pInfo.glyph}</span> {pInfo.name}
+                  </td>
+                  <td className="center-cell">{p.years} 年</td>
+                  <td className="center-cell">{fmtDate(p.startDate)}</td>
+                  <td className="center-cell">{fmtDate(p.endDate)}</td>
+                  <td className="center-cell">
+                    {activeSubInfo
+                      ? <><span className="planet-glyph">{activeSubInfo.glyph}</span> {activeSubInfo.name}</>
+                      : '—'}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ fontSize: '11px', color: '#888', marginTop: '6px' }}>
+        法達循環 75 年後重新開始。{isDay ? '日間盤序列：太陽→金星→水星→月亮→土星→木星→火星→北交→南交' : '夜間盤序列：月亮→土星→木星→火星→太陽→金星→水星→北交→南交'}
+      </div>
     </div>
   );
 }

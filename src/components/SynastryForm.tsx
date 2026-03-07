@@ -1,55 +1,111 @@
 /**
  * SynastryForm — Dual person input form for synastry analysis.
- * Each person has name, birth date/time, and location (with geocoding).
+ * Each person has name, birth date/time, location (with geocoding), timezone, and house system.
+ * Form format mirrors BirthDataForm exactly.
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import type { BirthData } from '../types/astro';
-import { HouseSystem } from '../types/astro';
-import { createDebouncedGeocode } from '../lib/geocode';
+import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
+import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
 import type { SynastryInput } from '../types/synastry';
 
+const TIMEZONES = [
+  { label: 'GMT-12', value: -12 },
+  { label: 'GMT-11', value: -11 },
+  { label: 'GMT-10', value: -10 },
+  { label: 'GMT-9', value: -9 },
+  { label: 'GMT-8', value: -8 },
+  { label: 'GMT-7', value: -7 },
+  { label: 'GMT-6', value: -6 },
+  { label: 'GMT-5', value: -5 },
+  { label: 'GMT-4', value: -4 },
+  { label: 'GMT-3', value: -3 },
+  { label: 'GMT-2', value: -2 },
+  { label: 'GMT-1', value: -1 },
+  { label: 'GMT+0 (UTC)', value: 0 },
+  { label: 'GMT+1', value: 1 },
+  { label: 'GMT+2', value: 2 },
+  { label: 'GMT+3', value: 3 },
+  { label: 'GMT+4', value: 4 },
+  { label: 'GMT+5', value: 5 },
+  { label: 'GMT+5:30 (印度)', value: 5.5 },
+  { label: 'GMT+6', value: 6 },
+  { label: 'GMT+7', value: 7 },
+  { label: 'GMT+8 (台灣/中國/香港)', value: 8 },
+  { label: 'GMT+9 (日本/韓國)', value: 9 },
+  { label: 'GMT+10', value: 10 },
+  { label: 'GMT+11', value: 11 },
+  { label: 'GMT+12', value: 12 },
+];
+
 interface PersonState {
   name: string;
-  year: string;
-  month: string;
-  day: string;
-  hour: string;
-  minute: string;
+  dateStr: string;    // 'YYYY-MM-DD'
+  timeStr: string;    // 'HH:MM'
   locationName: string;
-  latitude: string;
-  longitude: string;
+  latDeg: number;
+  latMin: number;
+  latDir: 'N' | 'S';
+  lonDeg: number;
+  lonMin: number;
+  lonDir: 'E' | 'W';
+  tzOffset: number;
   houseSystem: HouseSystem;
 }
 
 function defaultPerson(name: string): PersonState {
   return {
     name,
-    year: '1990',
-    month: '6',
-    day: '15',
-    hour: '12',
-    minute: '0',
+    dateStr: '1990-01-01',
+    timeStr: '12:00',
     locationName: '台北市',
-    latitude: '25.05',
-    longitude: '121.5',
+    latDeg: 25,
+    latMin: 3,
+    latDir: 'N',
+    lonDeg: 121,
+    lonMin: 30,
+    lonDir: 'E',
+    tzOffset: 8,
     houseSystem: HouseSystem.Placidus,
   };
 }
 
+function decimalToDMS(decimal: number): { deg: number; min: number } {
+  const abs = Math.abs(decimal);
+  return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
+}
+
 function parsePerson(p: PersonState): { name: string; birthData: BirthData; houseSystem: HouseSystem } | null {
-  const year = parseInt(p.year);
-  const month = parseInt(p.month);
-  const day = parseInt(p.day);
-  const hour = parseInt(p.hour);
-  const minute = parseInt(p.minute);
-  const lat = parseFloat(p.latitude);
-  const lon = parseFloat(p.longitude);
-  if (
-    isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute) ||
-    isNaN(lat) || isNaN(lon) || !p.name.trim() || !p.locationName.trim()
-  ) return null;
+  if (!p.name.trim() || !p.dateStr || !p.timeStr || !p.locationName.trim()) return null;
+  const [yearStr, monthStr, dayStr] = p.dateStr.split('-');
+  let year = parseInt(yearStr, 10);
+  let month = parseInt(monthStr, 10);
+  let day = parseInt(dayStr, 10);
+  const [hourStr, minuteStr] = p.timeStr.split(':');
+  let hour = parseInt(hourStr, 10);
+  let minute = parseInt(minuteStr, 10);
+  if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute)) return null;
+
+  // Convert local time → UTC
+  const totalMinutes = hour * 60 + minute - Math.round(p.tzOffset * 60);
+  let dayOffset = 0;
+  if (totalMinutes < 0) dayOffset = -1;
+  else if (totalMinutes >= 24 * 60) dayOffset = 1;
+  const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
+  hour = Math.floor(utcMinutes / 60);
+  minute = utcMinutes % 60;
+  if (dayOffset !== 0) {
+    const d = new Date(year, month - 1, day + dayOffset);
+    year = d.getFullYear();
+    month = d.getMonth() + 1;
+    day = d.getDate();
+  }
+
+  const lat = (p.latDeg + p.latMin / 60) * (p.latDir === 'S' ? -1 : 1);
+  const lon = (p.lonDeg + p.lonMin / 60) * (p.lonDir === 'W' ? -1 : 1);
+
   return {
     name: p.name.trim(),
     birthData: { year, month, day, hour, minute, latitude: lat, longitude: lon, locationName: p.locationName },
@@ -57,7 +113,7 @@ function parsePerson(p: PersonState): { name: string; birthData: BirthData; hous
   };
 }
 
-// Per-person geocoding section (controlled sub-component)
+// Per-person form — mirrors BirthDataForm layout exactly
 function PersonInput({
   label,
   person,
@@ -71,161 +127,209 @@ function PersonInput({
 }) {
   const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
   const [geoLoading, setGeoLoading] = useState(false);
-  const debouncedGeo = useRef(createDebouncedGeocode(600)).current;
+  const [geoError, setGeoError] = useState('');
 
-  const set = (key: keyof PersonState, val: string) => onChange({ ...person, [key]: val });
+  const set = <K extends keyof PersonState>(key: K, val: PersonState[K]) =>
+    onChange({ ...person, [key]: val });
 
-  const handleLocationChange = useCallback(
-    async (query: string) => {
-      set('locationName', query);
-      if (query.trim().length < 2) { setGeoResults([]); return; }
-      setGeoLoading(true);
-      try {
-        const results = await debouncedGeo(query);
-        setGeoResults(results);
-      } catch {
-        setGeoResults([]);
-      } finally {
-        setGeoLoading(false);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [person],
-  );
+  const handleGeoSearch = async () => {
+    if (!person.locationName.trim()) return;
+    setGeoLoading(true);
+    setGeoError('');
+    setGeoResults([]);
+    try {
+      const results = await geocode(person.locationName);
+      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
+      else setGeoResults(results);
+    } catch {
+      setGeoError('地址查詢失敗，請稍後再試');
+    } finally {
+      setGeoLoading(false);
+    }
+  };
 
-  const selectGeo = (r: GeocodingResult) => {
+  const handleSelectGeo = (r: GeocodingResult) => {
+    const latDMS = decimalToDMS(r.latitude);
+    const lonDMS = decimalToDMS(r.longitude);
     onChange({
       ...person,
-      locationName: r.displayName.split(',')[0].trim(),
-      latitude: r.latitude.toFixed(4),
-      longitude: r.longitude.toFixed(4),
+      locationName: r.displayName.split(',')[0],
+      latDeg: latDMS.deg,
+      latMin: latDMS.min,
+      latDir: r.latitude >= 0 ? 'N' : 'S',
+      lonDeg: lonDMS.deg,
+      lonMin: lonDMS.min,
+      lonDir: r.longitude >= 0 ? 'E' : 'W',
     });
     setGeoResults([]);
   };
-
-  const years = Array.from({ length: 181 }, (_, i) => 1920 + i);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  const minutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
   return (
     <div className={`synastry-person-block ${colorClass}`}>
       <div className="synastry-person-label">{label}</div>
 
-      <table className="quick-chart-form" cellPadding={4} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="form-label">姓名</td>
-            <td colSpan={3}>
-              <input
-                className="form-text-input"
-                type="text"
-                placeholder="輸入姓名"
-                value={person.name}
-                onChange={(e) => set('name', e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">出生日期</td>
-            <td>
-              <select className="form-select" value={person.year} onChange={(e) => set('year', e.target.value)}>
-                {years.map((y) => <option key={y} value={y}>{y}</option>)}
-              </select>
-              {' '}年
-            </td>
-            <td>
-              <select className="form-select" value={person.month} onChange={(e) => set('month', e.target.value)}>
-                {months.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-              {' '}月
-            </td>
-            <td>
-              <select className="form-select" value={person.day} onChange={(e) => set('day', e.target.value)}>
-                {days.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-              {' '}日
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">出生時間</td>
-            <td>
-              <select className="form-select" value={person.hour} onChange={(e) => set('hour', e.target.value)}>
-                {hours.map((h) => <option key={h} value={h}>{String(h).padStart(2, '0')}時</option>)}
-              </select>
-            </td>
-            <td>
-              <select className="form-select" value={person.minute} onChange={(e) => set('minute', e.target.value)}>
-                {minutes.map((m) => <option key={m} value={m}>{String(m).padStart(2, '0')}分</option>)}
-              </select>
-            </td>
-            <td>
-              <small className="form-note">UTC時間</small>
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">出生地點</td>
-            <td colSpan={3} style={{ position: 'relative' }}>
-              <input
-                className="form-text-input"
-                type="text"
-                placeholder="輸入城市名稱搜尋"
-                value={person.locationName}
-                onChange={(e) => handleLocationChange(e.target.value)}
-                style={{ width: '100%' }}
-              />
-              {geoLoading && <span className="geo-searching"> 搜尋中...</span>}
-              {geoResults.length > 0 && (
-                <ul className="geo-dropdown">
-                  {geoResults.slice(0, 5).map((r, i) => (
-                    <li key={i} className="geo-dropdown-item" onClick={() => selectGeo(r)}>
-                      {r.displayName}
-                    </li>
+      <form className="quick-chart-form">
+        <table className="form-table" cellPadding={3} cellSpacing={0}>
+          <tbody>
+            <tr>
+              <td className="form-label">姓名</td>
+              <td>
+                <input
+                  type="text"
+                  value={person.name}
+                  onChange={(e) => set('name', e.target.value)}
+                  className="form-input form-input-wide"
+                  placeholder="輸入姓名"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">日期</td>
+              <td>
+                <input
+                  type="date"
+                  value={person.dateStr}
+                  onChange={(e) => set('dateStr', e.target.value)}
+                  className="form-input"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">時間</td>
+              <td>
+                <input
+                  type="time"
+                  value={person.timeStr}
+                  onChange={(e) => set('timeStr', e.target.value)}
+                  className="form-input"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">地點名稱</td>
+              <td>
+                <div className="location-wrapper">
+                  <input
+                    type="text"
+                    value={person.locationName}
+                    onChange={(e) => set('locationName', e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+                    className="form-input form-input-wide"
+                    placeholder="城市名稱"
+                  />
+                  <button
+                    type="button"
+                    className="submit-btn"
+                    style={{ padding: '3px 10px', fontSize: '12px', marginLeft: '4px' }}
+                    onClick={handleGeoSearch}
+                    disabled={geoLoading}
+                  >
+                    {geoLoading ? '查詢中' : '搜尋'}
+                  </button>
+                  {geoError && <div style={{ fontSize: '11px', color: '#c00', marginTop: '2px' }}>{geoError}</div>}
+                  {geoResults.length > 0 && (
+                    <ul className="geo-results">
+                      {geoResults.map((r, i) => (
+                        <li key={i} onClick={() => handleSelectGeo(r)}>{r.displayName}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">北緯/南緯</td>
+              <td className="dms-cell">
+                <input
+                  type="number"
+                  min={0}
+                  max={90}
+                  value={person.latDeg}
+                  onChange={(e) => set('latDeg', parseInt(e.target.value, 10) || 0)}
+                  className="form-input form-input-dms"
+                />
+                <span className="dms-sep">°</span>
+                <select
+                  value={person.latDir}
+                  onChange={(e) => set('latDir', e.target.value as 'N' | 'S')}
+                  className="form-select-dir"
+                >
+                  <option value="N">N 北</option>
+                  <option value="S">S 南</option>
+                </select>
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={person.latMin}
+                  onChange={(e) => set('latMin', parseInt(e.target.value, 10) || 0)}
+                  className="form-input form-input-dms"
+                />
+                <span className="dms-sep">'</span>
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">東經/西經</td>
+              <td className="dms-cell">
+                <input
+                  type="number"
+                  min={0}
+                  max={180}
+                  value={person.lonDeg}
+                  onChange={(e) => set('lonDeg', parseInt(e.target.value, 10) || 0)}
+                  className="form-input form-input-dms"
+                />
+                <span className="dms-sep">°</span>
+                <select
+                  value={person.lonDir}
+                  onChange={(e) => set('lonDir', e.target.value as 'E' | 'W')}
+                  className="form-select-dir"
+                >
+                  <option value="E">E 東</option>
+                  <option value="W">W 西</option>
+                </select>
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={person.lonMin}
+                  onChange={(e) => set('lonMin', parseInt(e.target.value, 10) || 0)}
+                  className="form-input form-input-dms"
+                />
+                <span className="dms-sep">'</span>
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">時區</td>
+              <td>
+                <select
+                  value={person.tzOffset}
+                  onChange={(e) => set('tzOffset', parseFloat(e.target.value))}
+                  className="form-select"
+                >
+                  {TIMEZONES.map((tz) => (
+                    <option key={tz.value} value={tz.value}>{tz.label}</option>
                   ))}
-                </ul>
-              )}
-            </td>
-          </tr>
-          <tr>
-            <td className="form-label">緯度 / 經度</td>
-            <td>
-              <input
-                className="form-text-input"
-                type="number" step="0.0001"
-                value={person.latitude}
-                onChange={(e) => set('latitude', e.target.value)}
-                style={{ width: '80px' }}
-              />
-            </td>
-            <td>
-              <input
-                className="form-text-input"
-                type="number" step="0.0001"
-                value={person.longitude}
-                onChange={(e) => set('longitude', e.target.value)}
-                style={{ width: '80px' }}
-              />
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td className="form-label">宮位制</td>
-            <td colSpan={3}>
-              <select
-                className="form-select"
-                value={person.houseSystem}
-                onChange={(e) => onChange({ ...person, houseSystem: e.target.value as HouseSystem })}
-              >
-                {Object.values(HouseSystem).map((hs) => (
-                  <option key={hs} value={hs}>{hs}</option>
-                ))}
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="form-label">宮位制度</td>
+              <td>
+                <select
+                  value={person.houseSystem}
+                  onChange={(e) => set('houseSystem', e.target.value as HouseSystem)}
+                  className="form-select"
+                >
+                  {Object.entries(HOUSE_SYSTEM_INFO).map(([key, info]) => (
+                    <option key={key} value={key}>{info.name}</option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
     </div>
   );
 }
@@ -245,16 +349,23 @@ export function SynastryForm({ onSubmit, isLoading, currentChartData }: Synastry
   const loadCurrentChart = () => {
     if (!currentChartData) return;
     const d = currentChartData;
+    // birthData is stored in UTC; load it as UTC (tzOffset=0)
+    const dateStr = `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
+    const timeStr = `${String(d.hour).padStart(2, '0')}:${String(d.minute).padStart(2, '0')}`;
+    const latDMS = decimalToDMS(d.latitude);
+    const lonDMS = decimalToDMS(d.longitude);
     setPersonA((prev) => ({
       ...prev,
-      year: String(d.year),
-      month: String(d.month),
-      day: String(d.day),
-      hour: String(d.hour),
-      minute: String(d.minute),
+      dateStr,
+      timeStr,
       locationName: d.locationName,
-      latitude: String(d.latitude),
-      longitude: String(d.longitude),
+      latDeg: latDMS.deg,
+      latMin: latDMS.min,
+      latDir: d.latitude >= 0 ? 'N' : 'S',
+      lonDeg: lonDMS.deg,
+      lonMin: lonDMS.min,
+      lonDir: d.longitude >= 0 ? 'E' : 'W',
+      tzOffset: 0,
     }));
   };
 
@@ -265,8 +376,10 @@ export function SynastryForm({ onSubmit, isLoading, currentChartData }: Synastry
     if (!a) { setFormError('請完整填寫本命人（A）的資料'); return; }
     if (!b) { setFormError('請完整填寫對象（B）的資料'); return; }
     setFormError(null);
-    onSubmit({ ...a, nameA: a.name, birthDataA: a.birthData, houseSystemA: a.houseSystem,
-               nameB: b.name, birthDataB: b.birthData, houseSystemB: b.houseSystem });
+    onSubmit({
+      nameA: a.name, birthDataA: a.birthData, houseSystemA: a.houseSystem,
+      nameB: b.name, birthDataB: b.birthData, houseSystemB: b.houseSystem,
+    });
   };
 
   return (
@@ -274,14 +387,14 @@ export function SynastryForm({ onSubmit, isLoading, currentChartData }: Synastry
       {currentChartData && (
         <div className="synastry-load-hint">
           <button type="button" className="synastry-load-btn" onClick={loadCurrentChart}>
-            ← 從目前星盤載入 A
+            ← 從目前星盤載入 A（以 UTC 時間載入）
           </button>
         </div>
       )}
 
       <div className="synastry-persons-grid">
-        <PersonInput label="🔵 本命人（A）" person={personA} onChange={setPersonA} colorClass="person-a" />
-        <PersonInput label="🔴 對象（B）" person={personB} onChange={setPersonB} colorClass="person-b" />
+        <PersonInput label="本命人（A）" person={personA} onChange={setPersonA} colorClass="person-a" />
+        <PersonInput label="對象（B）" person={personB} onChange={setPersonB} colorClass="person-b" />
       </div>
 
       {formError && <div className="error-banner">{formError}</div>}
