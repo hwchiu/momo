@@ -1,4 +1,4 @@
-name: Auto-create PR for Claude branches
+name: Auto-create and merge PR for Claude branches
 
 on:
   push:
@@ -6,21 +6,22 @@ on:
       - 'claude/**'
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
-  create-pr:
+  create-and-merge-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create PR if not exists
+      - name: Create PR and merge
         uses: actions/github-script@v7
         with:
           script: |
             const branch = context.ref.replace('refs/heads/', '');
 
+            // Check if PR already exists
             const { data: prs } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -28,18 +29,29 @@ jobs:
               state: 'open',
             });
 
+            let prNumber;
+
             if (prs.length > 0) {
-              console.log(`PR already exists: #${prs[0].number}`);
-              return;
+              prNumber = prs[0].number;
+              console.log(`PR already exists: #${prNumber}`);
+            } else {
+              const { data: pr } = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[Claude] ${branch.replace('claude/', '')}`,
+                head: branch,
+                base: 'main',
+                body: 'Auto-generated PR from Claude Code.',
+              });
+              prNumber = pr.number;
+              console.log(`Created PR #${prNumber}: ${pr.html_url}`);
             }
 
-            const { data: pr } = await github.rest.pulls.create({
+            // Merge the PR
+            await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[Claude] ${branch.replace('claude/', '')}`,
-              head: branch,
-              base: 'main',
-              body: 'Auto-generated PR from Claude Code.',
+              pull_number: prNumber,
+              merge_method: 'squash',
             });
-
-            console.log(`Created PR #${pr.number}: ${pr.html_url}`);
+            console.log(`Merged PR #${prNumber} into main`);
