@@ -332,7 +332,6 @@ function App() {
               <SynastryForm
                 onSubmit={handleSynastrySubmit}
                 isLoading={synastryLoading}
-                currentChartData={chart?.birthData}
               />
             </section>
 
