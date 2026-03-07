@@ -64,7 +64,7 @@ function getPlanets() {
  * Convert a birth date/time to Julian Ephemeris Day (JDE).
  * The input is treated as UTC.
  */
-function birthDataToJDE(bd: BirthData): number {
+export function birthDataToJDE(bd: BirthData): number {
   const fractionalDay = bd.day + (bd.hour + bd.minute / 60) / 24;
   const cal = new julian.CalendarGregorian(bd.year, bd.month, fractionalDay);
   return cal.toJDE();

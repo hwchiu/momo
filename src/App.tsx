@@ -10,13 +10,20 @@ import { calculateBazi } from './lib/bazi';
 import type { VedicInput, VedicChart as VedicChartData } from './types/vedic';
 import { calculateVedicChart } from './lib/vedic';
 
+import type { SynastryInput, SynastryResult as SynastryResultData } from './types/synastry';
+import { calculateSynastry } from './lib/synastry';
+import { calculateNatalChart as calcChart } from './lib/astro';
+
 import { BirthDataForm } from './components/BirthDataForm';
 import { NatalChart } from './components/NatalChart';
 import { ChartDetails } from './components/ChartDetails';
+import { TransitPanel } from './components/TransitPanel';
 import { BaziForm } from './components/BaziForm';
 import { BaziResult } from './components/BaziResult';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
+import { SynastryForm } from './components/SynastryForm';
+import { SynastryResult } from './components/SynastryResult';
 import './App.css';
 
 // Default birth data: 2026-03-04, 04:26 local (GMT+8), Taipei
@@ -50,7 +57,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic'>('natal');
+  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic' | 'synastry'>('natal');
 
   // Natal chart state
   const [chart, setChart] = useState<NatalChartData | null>(null);
@@ -68,6 +75,11 @@ function App() {
   const [vedicChart, setVedicChart] = useState<VedicChartData | null>(null);
   const [vedicLoading, setVedicLoading] = useState(false);
   const [vedicError, setVedicError] = useState<string | null>(null);
+
+  // Synastry state
+  const [synastryResult, setSynastryResult] = useState<SynastryResultData | null>(null);
+  const [synastryLoading, setSynastryLoading] = useState(false);
+  const [synastryError, setSynastryError] = useState<string | null>(null);
 
   const runCalculation = useCallback((birthData: BirthData, houseSystem: HouseSystem) => {
     setIsLoading(true);
@@ -120,6 +132,26 @@ function App() {
         );
       } finally {
         setBaziLoading(false);
+      }
+    }, 50);
+  }, []);
+
+  const handleSynastrySubmit = useCallback((input: SynastryInput) => {
+    setSynastryLoading(true);
+    setSynastryError(null);
+    setTimeout(() => {
+      try {
+        const chartA = calcChart(input.birthDataA, input.houseSystemA);
+        const chartB = calcChart(input.birthDataB, input.houseSystemB);
+        const result = calculateSynastry(input.nameA, chartA, input.nameB, chartB);
+        setSynastryResult(result);
+      } catch (err) {
+        console.error('Synastry calculation error:', err);
+        setSynastryError(
+          err instanceof Error ? `計算合盤時發生錯誤：${err.message}` : '計算合盤時發生未知錯誤',
+        );
+      } finally {
+        setSynastryLoading(false);
       }
     }, 50);
   }, []);
@@ -181,6 +213,12 @@ function App() {
         >
           印度占星
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'synastry' ? 'active' : ''}`}
+          onClick={() => setActiveTab('synastry')}
+        >
+          雙人合盤
+        </button>
       </div>
 
       {/* ---- Main content ---- */}
@@ -206,6 +244,7 @@ function App() {
                   <NatalChart chart={chart} size={540} />
                 </div>
                 <ChartDetails chart={chart} />
+                <TransitPanel natalChart={chart} />
               </section>
             )}
           </>
@@ -242,6 +281,27 @@ function App() {
             {vedicChart && !vedicLoading && (
               <section className="chart-section">
                 <VedicResult chart={vedicChart} />
+              </section>
+            )}
+          </>
+        )}
+        {activeTab === 'synastry' && (
+          <>
+            <section className="quick-chart-section">
+              <h3 className="section-heading">雙人合盤分析</h3>
+              <SynastryForm
+                onSubmit={handleSynastrySubmit}
+                isLoading={synastryLoading}
+                currentChartData={chart?.birthData}
+              />
+            </section>
+
+            {synastryError && <div className="error-banner">{synastryError}</div>}
+            {synastryLoading && <div className="loading-msg">正在計算合盤，請稍候...</div>}
+
+            {synastryResult && !synastryLoading && (
+              <section className="chart-section">
+                <SynastryResult result={synastryResult} />
               </section>
             )}
           </>
