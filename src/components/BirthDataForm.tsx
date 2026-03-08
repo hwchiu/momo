@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
-import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { useGeoSearch } from '../hooks/useGeoSearch';
 import { OrbSettings } from './OrbSettings';
 
 interface BirthDataFormProps {
@@ -13,36 +14,6 @@ interface BirthDataFormProps {
   onOrbChange: (config: OrbConfig) => void;
 }
 
-// Timezone options
-const TIMEZONES = [
-  { label: 'GMT-12', value: -12 },
-  { label: 'GMT-11', value: -11 },
-  { label: 'GMT-10', value: -10 },
-  { label: 'GMT-9', value: -9 },
-  { label: 'GMT-8', value: -8 },
-  { label: 'GMT-7', value: -7 },
-  { label: 'GMT-6', value: -6 },
-  { label: 'GMT-5', value: -5 },
-  { label: 'GMT-4', value: -4 },
-  { label: 'GMT-3', value: -3 },
-  { label: 'GMT-2', value: -2 },
-  { label: 'GMT-1', value: -1 },
-  { label: 'GMT+0 (UTC)', value: 0 },
-  { label: 'GMT+1', value: 1 },
-  { label: 'GMT+2', value: 2 },
-  { label: 'GMT+3', value: 3 },
-  { label: 'GMT+4', value: 4 },
-  { label: 'GMT+5', value: 5 },
-  { label: 'GMT+5:30 (印度)', value: 5.5 },
-  { label: 'GMT+6', value: 6 },
-  { label: 'GMT+7', value: 7 },
-  { label: 'GMT+8 (台灣/中國/香港)', value: 8 },
-  { label: 'GMT+9 (日本/韓國)', value: 9 },
-  { label: 'GMT+10', value: 10 },
-  { label: 'GMT+11', value: 11 },
-  { label: 'GMT+12', value: 12 },
-];
-
 export function BirthDataForm({
   onSubmit,
   isLoading = false,
@@ -50,52 +21,20 @@ export function BirthDataForm({
   orbConfig,
   onOrbChange,
 }: BirthDataFormProps) {
-  // Date fields
   const [dateStr, setDateStr] = useState('2026-03-04');
-  // Time fields
   const [timeStr, setTimeStr] = useState('04:26');
-  // Location
   const [locationName, setLocationName] = useState('台北市');
-  // Latitude DMS
   const [latDeg, setLatDeg] = useState(25);
   const [latMin, setLatMin] = useState(3);
   const [latDir, setLatDir] = useState<'N' | 'S'>('N');
-  // Longitude DMS
   const [lonDeg, setLonDeg] = useState(121);
   const [lonMin, setLonMin] = useState(30);
   const [lonDir, setLonDir] = useState<'E' | 'W'>('E');
-  // Timezone offset hours
   const [tzOffset, setTzOffset] = useState(8);
-  // House system
   const [houseSystem, setHouseSystem] = useState<HouseSystem>(defaultHouseSystem);
-  // Ayanamsa
   const [ayanamsa, setAyanamsa] = useState('tropical');
-  // Geocoding
-  const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
-  const [geoLoading, setGeoLoading] = useState(false);
-  const [geoError, setGeoError] = useState('');
 
-  /** Convert a decimal-degree value to degrees + whole minutes */
-  function decimalToDMS(decimal: number): { deg: number; min: number } {
-    const abs = Math.abs(decimal);
-    return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
-  }
-
-  const handleGeoSearch = async () => {
-    if (!locationName.trim()) return;
-    setGeoLoading(true);
-    setGeoError('');
-    setGeoResults([]);
-    try {
-      const results = await geocode(locationName);
-      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
-      else setGeoResults(results);
-    } catch {
-      setGeoError('地址查詢失敗，請稍後再試');
-    } finally {
-      setGeoLoading(false);
-    }
-  };
+  const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
   const handleSelectGeoResult = (result: GeocodingResult) => {
     const latDMS = decimalToDMS(result.latitude);
@@ -107,59 +46,19 @@ export function BirthDataForm({
     setLonMin(lonDMS.min);
     setLonDir(result.longitude >= 0 ? 'E' : 'W');
     setLocationName(result.displayName.split(',')[0]);
-    setGeoResults([]);
+    clearResults();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Parse date
-    const [yearStr, monthStr, dayStr] = dateStr.split('-');
-    let year = parseInt(yearStr, 10);
-    let month = parseInt(monthStr, 10);
-    let day = parseInt(dayStr, 10);
-
-    // Parse time
-    const [hourStr, minuteStr] = timeStr.split(':');
-    let hour = parseInt(hourStr, 10);
-    let minute = parseInt(minuteStr, 10);
-
-    // Convert local time to UTC
-    // UTC = local time - tzOffset
-    const totalMinutes = hour * 60 + minute - Math.round(tzOffset * 60);
-
-    // Determine day offset caused by crossing midnight
-    let dayOffset = 0;
-    if (totalMinutes < 0) dayOffset = -1;
-    else if (totalMinutes >= 24 * 60) dayOffset = 1;
-
-    const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
-    hour = Math.floor(utcMinutes / 60);
-    minute = utcMinutes % 60;
-
-    // Adjust calendar date if UTC time crossed midnight
-    if (dayOffset !== 0) {
-      const d = new Date(year, month - 1, day + dayOffset);
-      year = d.getFullYear();
-      month = d.getMonth() + 1;
-      day = d.getDate();
-    }
-
-    // Convert DMS to decimal degrees
-    const lat = (latDeg + latMin / 60) * (latDir === 'S' ? -1 : 1);
-    const lon = (lonDeg + lonMin / 60) * (lonDir === 'W' ? -1 : 1);
-
+    const utc = localToUtc(dateStr, timeStr, tzOffset);
+    if (!utc) return;
     const birthData: BirthData = {
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      latitude: lat,
-      longitude: lon,
+      ...utc,
+      latitude: dmsToDecimal(latDeg, latMin, latDir),
+      longitude: dmsToDecimal(lonDeg, lonMin, lonDir),
       locationName,
     };
-
     onSubmit(birthData, houseSystem);
   };
 
@@ -196,14 +95,14 @@ export function BirthDataForm({
               type="text"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(locationName); } }}
               className="form-input form-input-wide"
               placeholder="城市名稱"
             />
             <button
               type="button"
               className="geo-search-btn"
-              onClick={handleGeoSearch}
+              onClick={() => searchGeo(locationName)}
               disabled={geoLoading}
             >
               {geoLoading ? '查詢中' : '搜尋'}

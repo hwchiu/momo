@@ -1,26 +1,14 @@
 import { useState } from 'react';
 import type { VedicInput, VedicAyanamsha } from '../types/vedic';
 import { AYANAMSHA_NAMES } from '../types/vedic';
-import type { BirthData } from '../types/astro';
-import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface VedicFormProps {
   onSubmit: (input: VedicInput) => void;
   isLoading?: boolean;
 }
-
-const TIMEZONES = [
-  { label: 'GMT-12', value: -12 }, { label: 'GMT-11', value: -11 }, { label: 'GMT-10', value: -10 },
-  { label: 'GMT-9', value: -9 }, { label: 'GMT-8', value: -8 }, { label: 'GMT-7', value: -7 },
-  { label: 'GMT-6', value: -6 }, { label: 'GMT-5', value: -5 }, { label: 'GMT-4', value: -4 },
-  { label: 'GMT-3', value: -3 }, { label: 'GMT-2', value: -2 }, { label: 'GMT-1', value: -1 },
-  { label: 'GMT+0 (UTC)', value: 0 }, { label: 'GMT+1', value: 1 }, { label: 'GMT+2', value: 2 },
-  { label: 'GMT+3', value: 3 }, { label: 'GMT+4', value: 4 }, { label: 'GMT+5', value: 5 },
-  { label: 'GMT+5:30 (印度)', value: 5.5 }, { label: 'GMT+6', value: 6 }, { label: 'GMT+7', value: 7 },
-  { label: 'GMT+8 (台灣/中國)', value: 8 }, { label: 'GMT+9 (日本/韓國)', value: 9 },
-  { label: 'GMT+10', value: 10 }, { label: 'GMT+11', value: 11 }, { label: 'GMT+12', value: 12 },
-];
 
 export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
   const [dateStr, setDateStr] = useState('1990-01-01');
@@ -34,30 +22,8 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
   const [lonDir, setLonDir] = useState<'E' | 'W'>('E');
   const [tzOffset, setTzOffset] = useState(8);
   const [ayanamsha, setAyanamsha] = useState<VedicAyanamsha>('lahiri');
-  const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
-  const [geoLoading, setGeoLoading] = useState(false);
-  const [geoError, setGeoError] = useState('');
 
-  function decimalToDMS(decimal: number) {
-    const abs = Math.abs(decimal);
-    return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
-  }
-
-  const handleGeoSearch = async () => {
-    if (!locationName.trim()) return;
-    setGeoLoading(true);
-    setGeoError('');
-    setGeoResults([]);
-    try {
-      const results = await geocode(locationName);
-      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
-      else setGeoResults(results);
-    } catch {
-      setGeoError('地址查詢失敗，請稍後再試');
-    } finally {
-      setGeoLoading(false);
-    }
-  };
+  const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
   const handleSelectGeo = (r: GeocodingResult) => {
     const latDMS = decimalToDMS(r.latitude);
@@ -69,39 +35,20 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
     setLonMin(lonDMS.min);
     setLonDir(r.longitude >= 0 ? 'E' : 'W');
     setLocationName(r.displayName.split(',')[0]);
-    setGeoResults([]);
+    clearResults();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const [yearStr, monthStr, dayStr] = dateStr.split('-');
-    let year = parseInt(yearStr, 10);
-    let month = parseInt(monthStr, 10);
-    let day = parseInt(dayStr, 10);
-    const [hourStr, minuteStr] = timeStr.split(':');
-    let hour = parseInt(hourStr, 10);
-    let minute = parseInt(minuteStr, 10);
-
-    // Convert local time → UTC
-    const totalMinutes = hour * 60 + minute - Math.round(tzOffset * 60);
-    let dayOffset = 0;
-    if (totalMinutes < 0) dayOffset = -1;
-    else if (totalMinutes >= 24 * 60) dayOffset = 1;
-    const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
-    hour = Math.floor(utcMinutes / 60);
-    minute = utcMinutes % 60;
-    if (dayOffset !== 0) {
-      const d = new Date(year, month - 1, day + dayOffset);
-      year = d.getFullYear();
-      month = d.getMonth() + 1;
-      day = d.getDate();
-    }
-
-    const lat = (latDeg + latMin / 60) * (latDir === 'S' ? -1 : 1);
-    const lon = (lonDeg + lonMin / 60) * (lonDir === 'W' ? -1 : 1);
-
-    const birthData: BirthData = { year, month, day, hour, minute, latitude: lat, longitude: lon, locationName };
-    onSubmit({ ...birthData, ayanamsha });
+    const utc = localToUtc(dateStr, timeStr, tzOffset);
+    if (!utc) return;
+    onSubmit({
+      ...utc,
+      latitude: dmsToDecimal(latDeg, latMin, latDir),
+      longitude: dmsToDecimal(lonDeg, lonMin, lonDir),
+      locationName,
+      ayanamsha,
+    });
   };
 
   return (
@@ -128,20 +75,19 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
                   type="text"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(locationName); } }}
                   className="form-input form-input-wide"
                   placeholder="城市名稱"
                 />
                 <button
                   type="button"
-                  className="submit-btn"
-                  style={{ padding: '3px 10px', fontSize: '12px', marginLeft: '4px' }}
-                  onClick={handleGeoSearch}
+                  className="geo-search-btn"
+                  onClick={() => searchGeo(locationName)}
                   disabled={geoLoading}
                 >
                   {geoLoading ? '查詢中' : '搜尋'}
                 </button>
-                {geoError && <div style={{ fontSize: '11px', color: '#c00', marginTop: '2px' }}>{geoError}</div>}
+                {geoError && <div className="geo-error">{geoError}</div>}
                 {geoResults.length > 0 && (
                   <ul className="geo-results">
                     {geoResults.map((r, i) => (

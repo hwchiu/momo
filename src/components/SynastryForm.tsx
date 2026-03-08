@@ -1,44 +1,15 @@
 /**
  * SynastryForm — Dual person input form for synastry analysis.
  * Each person has name, birth date/time, location (with geocoding), timezone, and house system.
- * Form format mirrors BirthDataForm exactly.
  */
 
 import { useState } from 'react';
 import type { BirthData } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
-import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
 import type { SynastryInput } from '../types/synastry';
-
-const TIMEZONES = [
-  { label: 'GMT-12', value: -12 },
-  { label: 'GMT-11', value: -11 },
-  { label: 'GMT-10', value: -10 },
-  { label: 'GMT-9', value: -9 },
-  { label: 'GMT-8', value: -8 },
-  { label: 'GMT-7', value: -7 },
-  { label: 'GMT-6', value: -6 },
-  { label: 'GMT-5', value: -5 },
-  { label: 'GMT-4', value: -4 },
-  { label: 'GMT-3', value: -3 },
-  { label: 'GMT-2', value: -2 },
-  { label: 'GMT-1', value: -1 },
-  { label: 'GMT+0 (UTC)', value: 0 },
-  { label: 'GMT+1', value: 1 },
-  { label: 'GMT+2', value: 2 },
-  { label: 'GMT+3', value: 3 },
-  { label: 'GMT+4', value: 4 },
-  { label: 'GMT+5', value: 5 },
-  { label: 'GMT+5:30 (印度)', value: 5.5 },
-  { label: 'GMT+6', value: 6 },
-  { label: 'GMT+7', value: 7 },
-  { label: 'GMT+8 (台灣/中國/香港)', value: 8 },
-  { label: 'GMT+9 (日本/韓國)', value: 9 },
-  { label: 'GMT+10', value: 10 },
-  { label: 'GMT+11', value: 11 },
-  { label: 'GMT+12', value: 12 },
-];
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface PersonState {
   name: string;
@@ -72,43 +43,18 @@ function defaultPerson(name: string): PersonState {
   };
 }
 
-function decimalToDMS(decimal: number): { deg: number; min: number } {
-  const abs = Math.abs(decimal);
-  return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
-}
-
 function parsePerson(p: PersonState): { name: string; birthData: BirthData; houseSystem: HouseSystem } | null {
   if (!p.name.trim() || !p.dateStr || !p.timeStr || !p.locationName.trim()) return null;
-  const [yearStr, monthStr, dayStr] = p.dateStr.split('-');
-  let year = parseInt(yearStr, 10);
-  let month = parseInt(monthStr, 10);
-  let day = parseInt(dayStr, 10);
-  const [hourStr, minuteStr] = p.timeStr.split(':');
-  let hour = parseInt(hourStr, 10);
-  let minute = parseInt(minuteStr, 10);
-  if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute)) return null;
-
-  // Convert local time → UTC
-  const totalMinutes = hour * 60 + minute - Math.round(p.tzOffset * 60);
-  let dayOffset = 0;
-  if (totalMinutes < 0) dayOffset = -1;
-  else if (totalMinutes >= 24 * 60) dayOffset = 1;
-  const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
-  hour = Math.floor(utcMinutes / 60);
-  minute = utcMinutes % 60;
-  if (dayOffset !== 0) {
-    const d = new Date(year, month - 1, day + dayOffset);
-    year = d.getFullYear();
-    month = d.getMonth() + 1;
-    day = d.getDate();
-  }
-
-  const lat = (p.latDeg + p.latMin / 60) * (p.latDir === 'S' ? -1 : 1);
-  const lon = (p.lonDeg + p.lonMin / 60) * (p.lonDir === 'W' ? -1 : 1);
-
+  const utc = localToUtc(p.dateStr, p.timeStr, p.tzOffset);
+  if (!utc) return null;
   return {
     name: p.name.trim(),
-    birthData: { year, month, day, hour, minute, latitude: lat, longitude: lon, locationName: p.locationName },
+    birthData: {
+      ...utc,
+      latitude: dmsToDecimal(p.latDeg, p.latMin, p.latDir),
+      longitude: dmsToDecimal(p.lonDeg, p.lonMin, p.lonDir),
+      locationName: p.locationName,
+    },
     houseSystem: p.houseSystem,
   };
 }
@@ -125,28 +71,10 @@ function PersonInput({
   onChange: (next: PersonState) => void;
   colorClass: string;
 }) {
-  const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
-  const [geoLoading, setGeoLoading] = useState(false);
-  const [geoError, setGeoError] = useState('');
+  const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
   const set = <K extends keyof PersonState>(key: K, val: PersonState[K]) =>
     onChange({ ...person, [key]: val });
-
-  const handleGeoSearch = async () => {
-    if (!person.locationName.trim()) return;
-    setGeoLoading(true);
-    setGeoError('');
-    setGeoResults([]);
-    try {
-      const results = await geocode(person.locationName);
-      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
-      else setGeoResults(results);
-    } catch {
-      setGeoError('地址查詢失敗，請稍後再試');
-    } finally {
-      setGeoLoading(false);
-    }
-  };
 
   const handleSelectGeo = (r: GeocodingResult) => {
     const latDMS = decimalToDMS(r.latitude);
@@ -161,7 +89,7 @@ function PersonInput({
       lonMin: lonDMS.min,
       lonDir: r.longitude >= 0 ? 'E' : 'W',
     });
-    setGeoResults([]);
+    clearResults();
   };
 
   return (
@@ -216,21 +144,20 @@ function PersonInput({
                     type="text"
                     value={person.locationName}
                     onChange={(e) => set('locationName', e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(person.locationName); } }}
                     className="form-input form-input-wide"
                     placeholder="城市名稱"
                     aria-label={`${label} 地點名稱`}
                   />
                   <button
                     type="button"
-                    className="submit-btn"
-                    style={{ padding: '3px 10px', fontSize: '12px', marginLeft: '4px' }}
-                    onClick={handleGeoSearch}
+                    className="geo-search-btn"
+                    onClick={() => searchGeo(person.locationName)}
                     disabled={geoLoading}
                   >
                     {geoLoading ? '查詢中' : '搜尋'}
                   </button>
-                  {geoError && <div style={{ fontSize: '11px', color: '#c00', marginTop: '2px' }}>{geoError}</div>}
+                  {geoError && <div className="geo-error">{geoError}</div>}
                   {geoResults.length > 0 && (
                     <ul className="geo-results">
                       {geoResults.map((r, i) => (
