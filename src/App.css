@@ -430,6 +430,56 @@
   margin-top: 2px;
 }
 
+/* Form hint text (e.g. 時辰 note beside time input) */
+.form-hint {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+
+/* Radio group inside form table */
+.radio-group {
+  display: flex;
+  gap: 16px;
+}
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Synastry aspect table: person A (blue) / B (red) column colors */
+.person-a-cell { color: #1a5ca8; }
+.person-b-cell { color: #c0392b; }
+
+/* Column divider inside data tables */
+.col-divider { border-right: 2px solid #bbb !important; }
+.col-divider-light { border-right: 2px solid #ddd !important; }
+
+/* Sub-header row (smaller font) */
+.table-sub-header { font-size: 11px; }
+
+/* Degree display inside cell */
+.cell-deg { font-size: 11px; }
+
+/* Antardasha (sub-dasha) rows */
+.vedic-antardasha-cell {
+  font-size: 12px;
+  padding-left: 20px;
+}
+
+/* Moon nakshatra info line */
+.vedic-moon-info {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-bottom: 8px;
+}
+
+/* Clickable table row */
+.row-clickable { cursor: pointer; }
+
 /* ---- Chart section ---- */
 .chart-section {
   margin-top: 16px;
@@ -605,25 +655,6 @@
 }
 .loading-star--delayed {
   animation-delay: 0.5s;
-}
-
-.geo-search-btn {
-  padding: 3px 10px;
-  font-size: 12px;
-  margin-left: 4px;
-  background: var(--clr-cosmos-2, #152038);
-  color: var(--clr-star, #c8a96e);
-  border: 1px solid var(--clr-star, #c8a96e);
-  border-radius: var(--radius-sm, 4px);
-  cursor: pointer;
-}
-.geo-search-btn:hover:not(:disabled) { opacity: 0.85; }
-.geo-search-btn:disabled { opacity: 0.5; cursor: default; }
-
-.geo-error {
-  font-size: 11px;
-  color: var(--clr-danger, #c00);
-  margin-top: 2px;
 }
 
 .error-banner {

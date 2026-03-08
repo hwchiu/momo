@@ -113,20 +113,20 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
           <table className="data-table" cellPadding={4} cellSpacing={0}>
             <thead>
               <tr className="table-header">
-                <th colSpan={3} style={{ borderRight: '2px solid #bbb' }}>{nameA}（A）</th>
-                <th colSpan={2} style={{ borderRight: '2px solid #bbb' }}>相位</th>
-                <th colSpan={3} style={{ borderRight: '2px solid #bbb' }}>{nameB}（B）</th>
+                <th colSpan={3} className="col-divider">{nameA}（A）</th>
+                <th colSpan={2} className="col-divider">相位</th>
+                <th colSpan={3} className="col-divider">{nameB}（B）</th>
                 <th>性質 / 詮釋</th>
               </tr>
-              <tr className="table-header" style={{ fontSize: '11px' }}>
+              <tr className="table-header table-sub-header">
                 <th>行星</th>
                 <th>星座 · 度數</th>
-                <th style={{ borderRight: '2px solid #bbb' }}>宮位</th>
+                <th className="col-divider">宮位</th>
                 <th>相位</th>
-                <th style={{ borderRight: '2px solid #bbb' }}>容許度</th>
+                <th className="col-divider">容許度</th>
                 <th>行星</th>
                 <th>星座 · 度數</th>
-                <th style={{ borderRight: '2px solid #bbb' }}>宮位</th>
+                <th className="col-divider">宮位</th>
                 <th></th>
               </tr>
             </thead>
@@ -156,47 +156,46 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
                 return (
                   <tr
                     key={i}
-                    className={`${i % 2 === 0 ? 'row-even' : 'row-odd'} aspect-row`}
+                    className={`${i % 2 === 0 ? 'row-even' : 'row-odd'} aspect-row row-clickable`}
                     onClick={() => toggleExpand(i)}
-                    style={{ cursor: 'pointer' }}
                   >
                     {/* A: planet */}
-                    <td className="planet-cell" style={{ color: '#1a5ca8' }}>
+                    <td className="planet-cell person-a-cell">
                       <span className="planet-glyph">{pAInfo.glyph}</span> {pAInfo.name}
                     </td>
                     {/* A: sign + degree */}
-                    <td className="center-cell" style={{ color: '#1a5ca8', whiteSpace: 'nowrap' }}>
+                    <td className="center-cell person-a-cell" style={{ whiteSpace: 'nowrap' }}>
                       <div>{fA.sign}</div>
-                      <div style={{ fontSize: '11px' }}>{fA.deg}</div>
+                      <div className="cell-deg">{fA.deg}</div>
                     </td>
                     {/* A: house */}
-                    <td className="center-cell" style={{ color: '#1a5ca8', borderRight: '2px solid #ddd', fontWeight: 'bold' }}>
+                    <td className="center-cell person-a-cell col-divider-light" style={{ fontWeight: 'bold' }}>
                       {fA.house}
                     </td>
-                    {/* aspect */}
+                    {/* aspect — color is dynamic, must stay inline */}
                     <td className="aspect-cell" style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}>
                       {aspInfo.symbol} {aspInfo.name}
                     </td>
                     {/* orb */}
-                    <td className="center-cell" style={{ borderRight: '2px solid #ddd', fontSize: '12px' }}>
+                    <td className="center-cell col-divider-light cell-deg">
                       {asp.orb.toFixed(2)}°
                     </td>
                     {/* B: planet */}
-                    <td className="planet-cell" style={{ color: '#c0392b' }}>
+                    <td className="planet-cell person-b-cell">
                       <span className="planet-glyph">{pBInfo.glyph}</span> {pBInfo.name}
                     </td>
                     {/* B: sign + degree */}
-                    <td className="center-cell" style={{ color: '#c0392b', whiteSpace: 'nowrap' }}>
+                    <td className="center-cell person-b-cell" style={{ whiteSpace: 'nowrap' }}>
                       <div>{fB.sign}</div>
-                      <div style={{ fontSize: '11px' }}>{fB.deg}</div>
+                      <div className="cell-deg">{fB.deg}</div>
                     </td>
                     {/* B: house */}
-                    <td className="center-cell" style={{ color: '#c0392b', borderRight: '2px solid #ddd', fontWeight: 'bold' }}>
+                    <td className="center-cell person-b-cell col-divider-light" style={{ fontWeight: 'bold' }}>
                       {fB.house}
                     </td>
-                    {/* nature + interpretation */}
+                    {/* nature + interpretation — NATURE_COLORS is dynamic */}
                     <td className="interpretation-cell">
-                      <span style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', fontSize: '11px', marginRight: '4px' }}>
+                      <span className="cell-deg" style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', marginRight: '4px' }}>
                         {NATURE_LABELS[asp.nature]}
                       </span>
                       {isOpen ? (

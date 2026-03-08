@@ -64,36 +64,34 @@ export function BaziForm({ onSubmit, isLoading = false }: BaziFormProps) {
                 onChange={(e) => setTimeStr(e.target.value)}
                 className="form-input"
               />
-              <span style={{ marginLeft: '8px', fontSize: '12px', color: '#666' }}>
-                （{getShichen(currentHour)}，地方時）
-              </span>
+              <span className="form-hint">（{getShichen(currentHour)}，地方時）</span>
             </td>
           </tr>
           <tr>
             <td className="form-label">性別</td>
             <td>
-              <label style={{ marginRight: '12px', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="gender"
-                  value="male"
-                  checked={gender === 'male'}
-                  onChange={() => setGender('male')}
-                  style={{ marginRight: '4px' }}
-                />
-                男
-              </label>
-              <label style={{ cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="gender"
-                  value="female"
-                  checked={gender === 'female'}
-                  onChange={() => setGender('female')}
-                  style={{ marginRight: '4px' }}
-                />
-                女
-              </label>
+              <div className="radio-group">
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    checked={gender === 'male'}
+                    onChange={() => setGender('male')}
+                  />
+                  男
+                </label>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="female"
+                    checked={gender === 'female'}
+                    onChange={() => setGender('female')}
+                  />
+                  女
+                </label>
+              </div>
             </td>
           </tr>
           <tr>
