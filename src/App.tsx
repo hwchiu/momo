@@ -28,6 +28,7 @@ import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
 import { SynastryResult } from './components/SynastryResult';
 import { LoadingMessage } from './components/LoadingMessage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './App.css';
 
 // Default birth data: 2026-03-04, 04:26 local (GMT+8), Taipei
@@ -256,6 +257,7 @@ function App() {
       </div>
 
       {/* ---- Main content ---- */}
+      <ErrorBoundary>
       <main className="site-main">
 
         {activeTab === 'natal' && (
@@ -363,6 +365,7 @@ function App() {
           </div>
         )}
       </main>
+      </ErrorBoundary>
 
       {/* ---- Footer ---- */}
       <footer className="site-footer">

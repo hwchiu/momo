@@ -8,7 +8,7 @@ import type { BirthData } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import type { GeocodingResult } from '../lib/geocode';
 import type { SynastryInput } from '../types/synastry';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface PersonState {
@@ -285,6 +285,10 @@ export function SynastryForm({ onSubmit, isLoading }: SynastryFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const coordErrA = validateCoords(personA.latDeg, personA.latMin, personA.lonDeg, personA.lonMin);
+    if (coordErrA) { setFormError(`本命人（A）坐標錯誤：${coordErrA}`); return; }
+    const coordErrB = validateCoords(personB.latDeg, personB.latMin, personB.lonDeg, personB.lonMin);
+    if (coordErrB) { setFormError(`對象（B）坐標錯誤：${coordErrB}`); return; }
     const a = parsePerson(personA);
     const b = parsePerson(personB);
     if (!a) { setFormError('請完整填寫本命人（A）的資料'); return; }

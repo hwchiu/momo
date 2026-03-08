@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { VedicInput, VedicAyanamsha } from '../types/vedic';
 import { AYANAMSHA_NAMES } from '../types/vedic';
 import type { GeocodingResult } from '../lib/geocode';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface VedicFormProps {
@@ -23,6 +23,7 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
   const [tzOffset, setTzOffset] = useState(8);
   const [ayanamsha, setAyanamsha] = useState<VedicAyanamsha>('lahiri');
 
+  const [coordError, setCoordError] = useState<string | null>(null);
   const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
   const handleSelectGeo = (r: GeocodingResult) => {
@@ -40,6 +41,9 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const coordErr = validateCoords(latDeg, latMin, lonDeg, lonMin);
+    if (coordErr) { setCoordError(coordErr); return; }
+    setCoordError(null);
     const utc = localToUtc(dateStr, timeStr, tzOffset);
     if (!utc) return;
     onSubmit({
@@ -144,6 +148,13 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
               </select>
             </td>
           </tr>
+          {coordError && (
+            <tr>
+              <td colSpan={2}>
+                <div className="geo-error" role="alert">{coordError}</div>
+              </td>
+            </tr>
+          )}
           <tr>
             <td colSpan={2} className="form-submit-cell">
               <button type="submit" className="submit-btn" disabled={isLoading}>
