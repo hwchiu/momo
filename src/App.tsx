@@ -12,7 +12,6 @@ import { calculateVedicChart } from './lib/vedic';
 
 import type { SynastryInput, SynastryResult as SynastryResultData } from './types/synastry';
 import { calculateSynastry } from './lib/synastry';
-import { calculateNatalChart as calcChart } from './lib/astro';
 
 import { BirthDataForm } from './components/BirthDataForm';
 import { NatalChart } from './components/NatalChart';
@@ -72,8 +71,6 @@ function App() {
   const [chart, setChart] = useState<NatalChartData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [renderTime, setRenderTime] = useState<number | null>(null);
-  const startTimeRef = useRef<number>(0);
 
   // Bazi state
   const [baziChart, setBaziChart] = useState<BaziChartData | null>(null);
@@ -94,14 +91,10 @@ function App() {
     lastNatalRef.current = { birthData, houseSystem };
     setIsLoading(true);
     setError(null);
-    startTimeRef.current = performance.now();
-
     setTimeout(() => {
       try {
         const result = calculateNatalChart(birthData, houseSystem, orbs);
         setChart(result);
-        const elapsed = (performance.now() - startTimeRef.current) / 1000;
-        setRenderTime(elapsed);
       } catch (err) {
         console.error('Chart calculation error:', err);
         setError(
@@ -160,8 +153,8 @@ function App() {
     setSynastryError(null);
     setTimeout(() => {
       try {
-        const chartA = calcChart(input.birthDataA, input.houseSystemA, orbConfig);
-        const chartB = calcChart(input.birthDataB, input.houseSystemB, orbConfig);
+        const chartA = calculateNatalChart(input.birthDataA, input.houseSystemA, orbConfig);
+        const chartB = calculateNatalChart(input.birthDataB, input.houseSystemB, orbConfig);
         const result = calculateSynastry(input.nameA, chartA, input.nameB, chartB, orbConfig);
         setSynastryResult(result);
       } catch (err) {
@@ -196,18 +189,14 @@ function App() {
   return (
     <div className="almuten-app">
 
-      {/* ---- Top nav links ---- */}
+      {/* ---- Top nav ---- */}
       <div className="top-nav">
-        <a href="#" className="nav-link active-lang">繁體中文</a>
-        <span className="nav-sep">|</span>
-        <a href="#" className="nav-link">切換至手機版</a>
-        <span className="nav-sep">|</span>
-        <a href="#" className="nav-link">星象日曆</a>
+        <span className="nav-link active-lang">繁體中文</span>
       </div>
 
       {/* ---- Header ---- */}
       <header className="site-header">
-        <h1 className="site-title">測試網站</h1>
+        <h1 className="site-title">星盤繪製器</h1>
         <p className="site-subtitle">線上古典占星圖</p>
       </header>
 
@@ -366,10 +355,7 @@ function App() {
 
       {/* ---- Footer ---- */}
       <footer className="site-footer">
-        {renderTime !== null && (
-          <span>Page rendered in {renderTime.toFixed(3)} seconds &nbsp;|&nbsp; </span>
-        )}
-        <span>&copy; 2012-2026 momo.hwchiu </span>
+        <span>&copy; 2012-2026 momo.hwchiu</span>
       </footer>
     </div>
   );
