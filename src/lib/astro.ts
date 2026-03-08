@@ -97,6 +97,22 @@ function degreeInSign(lon: number): { degree: number; minute: number } {
 
 /**
  * Calculate the geocentric ecliptic longitude of the Sun.
+ * @internal Exported for solar-return calculation; prefer calculateNatalChart for full charts.
+ */
+export function sunLongitudeAtJDE(jde: number): number {
+  return getSunLongitude(jde);
+}
+
+/**
+ * Assign a house number (1–12) to an arbitrary ecliptic longitude.
+ * @internal Exported for Arabic-parts house assignment.
+ */
+export function houseForLongitude(lon: number, houses: import('../types/astro').HouseCusp[]): number {
+  return getHouseForPlanet(lon, houses);
+}
+
+/**
+ * Calculate the geocentric ecliptic longitude of the Sun.
  */
 function getSunLongitude(jde: number): number {
   const T = base.J2000Century(jde);

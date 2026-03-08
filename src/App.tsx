@@ -17,6 +17,9 @@ import { BirthDataForm } from './components/BirthDataForm';
 import { NatalChart } from './components/NatalChart';
 import { ChartDetails } from './components/ChartDetails';
 import { TransitPanel } from './components/TransitPanel';
+import { ArabicPartsPanel } from './components/ArabicPartsPanel';
+import { ProfectionsPanel } from './components/ProfectionsPanel';
+import { SolarReturnPanel } from './components/SolarReturnPanel';
 import { BaziForm } from './components/BaziForm';
 import { BaziResult } from './components/BaziResult';
 import { KuaPanel } from './components/KuaPanel';
@@ -275,6 +278,9 @@ function App() {
                 </div>
                 <ChartDetails chart={chart} />
                 <TransitPanel natalChart={chart} />
+                <ArabicPartsPanel chart={chart} />
+                <ProfectionsPanel chart={chart} />
+                <SolarReturnPanel chart={chart} />
               </section>
             )}
           </div>
