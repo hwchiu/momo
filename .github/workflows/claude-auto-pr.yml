@@ -22,6 +22,14 @@ jobs:
           script: |
             const branch = context.ref.replace('refs/heads/', '');
 
+            // Use the latest commit message as PR title (first line only)
+            const { data: commit } = await github.rest.repos.getCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+            });
+            const commitMsg = commit.commit.message.split('\n')[0].trim();
+
             // Check if PR already exists
             const { data: prs } = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -39,7 +47,7 @@ jobs:
               const { data: pr } = await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `[Claude] ${branch.replace('claude/', '')}`,
+                title: commitMsg,
                 head: branch,
                 base: 'main',
                 body: 'Auto-generated PR from Claude Code.',
