@@ -271,7 +271,13 @@ function App() {
             </section>
 
             {error && <div className="error-banner">{error}</div>}
-            {isLoading && <div className="loading-msg">正在計算星盤，請稍候...</div>}
+            {isLoading && (
+              <div className="loading-msg">
+                <span className="loading-star">✦</span>
+                推算星象中，請稍候⋯
+                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
+              </div>
+            )}
 
             {chart && !isLoading && (
               <section className="chart-section">
@@ -296,7 +302,13 @@ function App() {
             </section>
 
             {baziError && <div className="error-banner">{baziError}</div>}
-            {baziLoading && <div className="loading-msg">正在計算八字，請稍候...</div>}
+            {baziLoading && (
+              <div className="loading-msg">
+                <span className="loading-star">✦</span>
+                推算八字命盤中，請稍候⋯
+                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
+              </div>
+            )}
 
             {baziChart && !baziLoading && (
               <section className="chart-section">
@@ -331,7 +343,13 @@ function App() {
             </section>
 
             {vedicError && <div className="error-banner">{vedicError}</div>}
-            {vedicLoading && <div className="loading-msg">正在計算印度命盤，請稍候...</div>}
+            {vedicLoading && (
+              <div className="loading-msg">
+                <span className="loading-star">✦</span>
+                推算吠陀命盤中，請稍候⋯
+                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
+              </div>
+            )}
 
             {vedicChart && !vedicLoading && (
               <section className="chart-section">
@@ -352,7 +370,13 @@ function App() {
             </section>
 
             {synastryError && <div className="error-banner">{synastryError}</div>}
-            {synastryLoading && <div className="loading-msg">正在計算合盤，請稍候...</div>}
+            {synastryLoading && (
+              <div className="loading-msg">
+                <span className="loading-star">✦</span>
+                推算雙星交匯中，請稍候⋯
+                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
+              </div>
+            )}
 
             {synastryResult && !synastryLoading && (
               <section className="chart-section">

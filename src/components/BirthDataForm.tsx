@@ -341,7 +341,7 @@ export function BirthDataForm({
 
         <div className="form-submit-cell">
           <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading ? '計算中...' : '製作星盤'}
+            {isLoading ? '✦ 推算中⋯' : '✦ 製作星盤'}
           </button>
         </div>
       </div>

@@ -201,7 +201,7 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
           <tr>
             <td colSpan={2} className="form-submit-cell">
               <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading ? '計算中...' : '製作命盤'}
+                {isLoading ? '✦ 推算中⋯' : '✦ 製作命盤'}
               </button>
             </td>
           </tr>
