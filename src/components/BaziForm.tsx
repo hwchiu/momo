@@ -99,7 +99,7 @@ export function BaziForm({ onSubmit, isLoading = false }: BaziFormProps) {
           <tr>
             <td colSpan={2} className="form-submit-cell">
               <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading ? '計算中...' : '排八字'}
+                {isLoading ? '✦ 推算中⋯' : '✦ 排八字'}
               </button>
             </td>
           </tr>
