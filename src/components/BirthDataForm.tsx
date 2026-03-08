@@ -32,7 +32,6 @@ export function BirthDataForm({
   const [lonDir, setLonDir] = useState<'E' | 'W'>('E');
   const [tzOffset, setTzOffset] = useState(8);
   const [houseSystem, setHouseSystem] = useState<HouseSystem>(defaultHouseSystem);
-  const [ayanamsa, setAyanamsa] = useState('tropical');
 
   const [coordError, setCoordError] = useState<string | null>(null);
   const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
@@ -221,20 +220,6 @@ export function BirthDataForm({
                 {info.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        <label className="form-label" htmlFor="bf-ayanamsa">黃道系統</label>
-        <div className="form-field">
-          <select
-            id="bf-ayanamsa"
-            value={ayanamsa}
-            onChange={(e) => setAyanamsa(e.target.value)}
-            className="form-select"
-          >
-            <option value="tropical">回歸黃道（Tropical）</option>
-            <option value="sidereal_lahiri">恆星黃道 - Lahiri</option>
-            <option value="sidereal_fagan">恆星黃道 - Fagan/Bradley</option>
           </select>
         </div>
 

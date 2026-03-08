@@ -451,12 +451,12 @@
 }
 
 /* Synastry aspect table: person A (blue) / B (red) column colors */
-.person-a-cell { color: #1a5ca8; }
-.person-b-cell { color: #c0392b; }
+.person-a-cell { color: var(--clr-primary); }
+.person-b-cell { color: var(--clr-danger); }
 
 /* Column divider inside data tables */
-.col-divider { border-right: 2px solid #bbb !important; }
-.col-divider-light { border-right: 2px solid #ddd !important; }
+.col-divider { border-right: 2px solid var(--clr-border) !important; }
+.col-divider-light { border-right: 2px solid var(--clr-border-light) !important; }
 
 /* Sub-header row (smaller font) */
 .table-sub-header { font-size: 11px; }
@@ -1621,9 +1621,13 @@
   overflow-x: auto;
 }
 
+.orb-hint { margin: 0 0 var(--sp-2); font-size: 12px; color: var(--clr-text-muted); }
+
 .orb-table { border-collapse: collapse; font-size: 13px; }
 .orb-table th { background: var(--clr-surface-3); padding: 4px 10px; text-align: left; font-weight: bold; }
 .orb-table td { padding: 3px 10px; }
+.orb-name-cell { white-space: nowrap; }
+.orb-glyph-cell { text-align: center; }
 
 .orb-input {
   width: 52px;
