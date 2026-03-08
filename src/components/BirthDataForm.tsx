@@ -166,9 +166,10 @@ export function BirthDataForm({
   return (
     <form className="quick-chart-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label className="form-label">日期</label>
+        <label className="form-label" htmlFor="bf-date">日期</label>
         <div className="form-field">
           <input
+            id="bf-date"
             type="date"
             value={dateStr}
             onChange={(e) => setDateStr(e.target.value)}
@@ -176,9 +177,10 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label">時間</label>
+        <label className="form-label" htmlFor="bf-time">時間</label>
         <div className="form-field">
           <input
+            id="bf-time"
             type="time"
             value={timeStr}
             onChange={(e) => setTimeStr(e.target.value)}
@@ -186,10 +188,11 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label">地點名稱</label>
+        <label className="form-label" htmlFor="bf-location">地點名稱</label>
         <div className="form-field">
           <div className="location-wrapper">
             <input
+              id="bf-location"
               type="text"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
@@ -218,21 +221,24 @@ export function BirthDataForm({
           </div>
         </div>
 
-        <label className="form-label">北緯/南緯</label>
+        <label className="form-label" htmlFor="bf-lat-deg">北緯/南緯</label>
         <div className="form-field dms-cell">
           <input
+            id="bf-lat-deg"
             type="number"
             min={0}
             max={90}
             value={latDeg}
             onChange={(e) => setLatDeg(parseInt(e.target.value, 10) || 0)}
             className="form-input form-input-dms"
+            aria-label="緯度度數"
           />
           <span className="dms-sep">°</span>
           <select
             value={latDir}
             onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
             className="form-select-dir"
+            aria-label="緯度方向"
           >
             <option value="N">N 北</option>
             <option value="S">S 南</option>
@@ -244,25 +250,29 @@ export function BirthDataForm({
             value={latMin}
             onChange={(e) => setLatMin(parseInt(e.target.value, 10) || 0)}
             className="form-input form-input-dms"
+            aria-label="緯度分數"
           />
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label">東經/西經</label>
+        <label className="form-label" htmlFor="bf-lon-deg">東經/西經</label>
         <div className="form-field dms-cell">
           <input
+            id="bf-lon-deg"
             type="number"
             min={0}
             max={180}
             value={lonDeg}
             onChange={(e) => setLonDeg(parseInt(e.target.value, 10) || 0)}
             className="form-input form-input-dms"
+            aria-label="經度度數"
           />
           <span className="dms-sep">°</span>
           <select
             value={lonDir}
             onChange={(e) => setLonDir(e.target.value as 'E' | 'W')}
             className="form-select-dir"
+            aria-label="經度方向"
           >
             <option value="E">E 東</option>
             <option value="W">W 西</option>
@@ -274,13 +284,15 @@ export function BirthDataForm({
             value={lonMin}
             onChange={(e) => setLonMin(parseInt(e.target.value, 10) || 0)}
             className="form-input form-input-dms"
+            aria-label="經度分數"
           />
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label">時區</label>
+        <label className="form-label" htmlFor="bf-tz">時區</label>
         <div className="form-field">
           <select
+            id="bf-tz"
             value={tzOffset}
             onChange={(e) => setTzOffset(parseFloat(e.target.value))}
             className="form-select"
@@ -293,9 +305,10 @@ export function BirthDataForm({
           </select>
         </div>
 
-        <label className="form-label">宮位制度</label>
+        <label className="form-label" htmlFor="bf-house">宮位制度</label>
         <div className="form-field">
           <select
+            id="bf-house"
             value={houseSystem}
             onChange={(e) => setHouseSystem(e.target.value as HouseSystem)}
             className="form-select"
@@ -308,9 +321,10 @@ export function BirthDataForm({
           </select>
         </div>
 
-        <label className="form-label">黃道系統</label>
+        <label className="form-label" htmlFor="bf-ayanamsa">黃道系統</label>
         <div className="form-field">
           <select
+            id="bf-ayanamsa"
             value={ayanamsa}
             onChange={(e) => setAyanamsa(e.target.value)}
             className="form-select"

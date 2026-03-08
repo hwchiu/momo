@@ -29,7 +29,7 @@ function ScoreMeter({ value, label, emoji, desc, color }: ScoreMeterProps) {
       <div className="compat-bar-bg">
         <div
           className="compat-bar-fill"
-          style={{ width: `${value}%`, backgroundColor: color }}
+          style={{ transform: `scaleX(${value / 100})`, backgroundColor: color }}
         />
       </div>
       <div className="compat-cat-desc">{desc}</div>

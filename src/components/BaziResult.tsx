@@ -262,7 +262,7 @@ export function BaziResult({ chart }: BaziResultProps) {
               <div
                 className="bazi-element-bar"
                 style={{
-                  width: `${(elemCounts[el] / maxCount) * 120}px`,
+                  transform: `scaleX(${(elemCounts[el] / maxCount)})`,
                   backgroundColor: ELEMENT_COLORS[el],
                 }}
               />

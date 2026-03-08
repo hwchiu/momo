@@ -208,30 +208,45 @@ function App() {
       <header className="site-header">
         <h1 className="site-title">測試網站</h1>
         <p className="site-subtitle">線上古典占星圖</p>
-        <h2 className="site-title-2">momo momo - 線上古典占星圖</h2>
       </header>
 
       {/* ---- Tab navigation ---- */}
-      <div className="tab-nav">
+      <div className="tab-nav" role="tablist" aria-label="功能分頁">
         <button
+          role="tab"
+          aria-selected={activeTab === 'natal'}
+          aria-controls="panel-natal"
+          id="tab-natal"
           className={`tab-btn ${activeTab === 'natal' ? 'active' : ''}`}
           onClick={() => setActiveTab('natal')}
         >
           星盤分析
         </button>
         <button
+          role="tab"
+          aria-selected={activeTab === 'bazi'}
+          aria-controls="panel-bazi"
+          id="tab-bazi"
           className={`tab-btn ${activeTab === 'bazi' ? 'active' : ''}`}
           onClick={() => setActiveTab('bazi')}
         >
           風水八字
         </button>
         <button
+          role="tab"
+          aria-selected={activeTab === 'vedic'}
+          aria-controls="panel-vedic"
+          id="tab-vedic"
           className={`tab-btn ${activeTab === 'vedic' ? 'active' : ''}`}
           onClick={() => setActiveTab('vedic')}
         >
           印度占星
         </button>
         <button
+          role="tab"
+          aria-selected={activeTab === 'synastry'}
+          aria-controls="panel-synastry"
+          id="tab-synastry"
           className={`tab-btn ${activeTab === 'synastry' ? 'active' : ''}`}
           onClick={() => setActiveTab('synastry')}
         >
@@ -243,7 +258,7 @@ function App() {
       <main className="site-main">
 
         {activeTab === 'natal' && (
-          <>
+          <div role="tabpanel" id="panel-natal" aria-labelledby="tab-natal">
             {/* Quick chart section */}
             <section className="quick-chart-section">
               <h3 className="section-heading">快速製圖</h3>
@@ -270,11 +285,11 @@ function App() {
                 <TransitPanel natalChart={chart} />
               </section>
             )}
-          </>
+          </div>
         )}
 
         {activeTab === 'bazi' && (
-          <>
+          <div role="tabpanel" id="panel-bazi" aria-labelledby="tab-bazi">
             <section className="quick-chart-section">
               <h3 className="section-heading">八字排盤</h3>
               <BaziForm onSubmit={handleBaziSubmit} isLoading={baziLoading} />
@@ -305,11 +320,11 @@ function App() {
               <h3 className="section-heading">擇日工具</h3>
               <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
             </section>
-          </>
+          </div>
         )}
 
         {activeTab === 'vedic' && (
-          <>
+          <div role="tabpanel" id="panel-vedic" aria-labelledby="tab-vedic">
             <section className="quick-chart-section">
               <h3 className="section-heading">印度占星命盤</h3>
               <VedicForm onSubmit={handleVedicSubmit} isLoading={vedicLoading} />
@@ -323,10 +338,11 @@ function App() {
                 <VedicResult chart={vedicChart} />
               </section>
             )}
-          </>
+          </div>
         )}
+
         {activeTab === 'synastry' && (
-          <>
+          <div role="tabpanel" id="panel-synastry" aria-labelledby="tab-synastry">
             <section className="quick-chart-section">
               <h3 className="section-heading">雙人合盤分析</h3>
               <SynastryForm
@@ -343,7 +359,7 @@ function App() {
                 <SynastryResult result={synastryResult} />
               </section>
             )}
-          </>
+          </div>
         )}
       </main>
 
