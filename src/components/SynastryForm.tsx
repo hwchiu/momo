@@ -380,7 +380,7 @@ export function SynastryForm({ onSubmit, isLoading }: SynastryFormProps) {
 
       <div className="synastry-submit-row">
         <button type="submit" className="submit-btn" disabled={isLoading}>
-          {isLoading ? '計算中...' : '✦ 計算合盤'}
+          {isLoading ? '✦ 推算中⋯' : '✦ 計算合盤'}
         </button>
       </div>
     </form>
