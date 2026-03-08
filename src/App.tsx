@@ -27,6 +27,7 @@ import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
 import { SynastryResult } from './components/SynastryResult';
+import { LoadingMessage } from './components/LoadingMessage';
 import './App.css';
 
 // Default birth data: 2026-03-04, 04:26 local (GMT+8), Taipei
@@ -271,13 +272,7 @@ function App() {
             </section>
 
             {error && <div className="error-banner">{error}</div>}
-            {isLoading && (
-              <div className="loading-msg">
-                <span className="loading-star">✦</span>
-                推算星象中，請稍候⋯
-                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
-              </div>
-            )}
+            {isLoading && <LoadingMessage text="推算星象中，請稍候⋯" />}
 
             {chart && !isLoading && (
               <section className="chart-section">
@@ -302,13 +297,7 @@ function App() {
             </section>
 
             {baziError && <div className="error-banner">{baziError}</div>}
-            {baziLoading && (
-              <div className="loading-msg">
-                <span className="loading-star">✦</span>
-                推算八字命盤中，請稍候⋯
-                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
-              </div>
-            )}
+            {baziLoading && <LoadingMessage text="推算八字命盤中，請稍候⋯" />}
 
             {baziChart && !baziLoading && (
               <section className="chart-section">
@@ -343,13 +332,7 @@ function App() {
             </section>
 
             {vedicError && <div className="error-banner">{vedicError}</div>}
-            {vedicLoading && (
-              <div className="loading-msg">
-                <span className="loading-star">✦</span>
-                推算吠陀命盤中，請稍候⋯
-                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
-              </div>
-            )}
+            {vedicLoading && <LoadingMessage text="推算吠陀命盤中，請稍候⋯" />}
 
             {vedicChart && !vedicLoading && (
               <section className="chart-section">
@@ -370,13 +353,7 @@ function App() {
             </section>
 
             {synastryError && <div className="error-banner">{synastryError}</div>}
-            {synastryLoading && (
-              <div className="loading-msg">
-                <span className="loading-star">✦</span>
-                推算雙星交匯中，請稍候⋯
-                <span className="loading-star" style={{ animationDelay: '0.5s' }}>✦</span>
-              </div>
-            )}
+            {synastryLoading && <LoadingMessage text="推算雙星交匯中，請稍候⋯" />}
 
             {synastryResult && !synastryLoading && (
               <section className="chart-section">

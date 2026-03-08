@@ -603,6 +603,28 @@
   animation: pulse-star 1.4s ease-in-out infinite;
   line-height: 1;
 }
+.loading-star--delayed {
+  animation-delay: 0.5s;
+}
+
+.geo-search-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-left: 4px;
+  background: var(--clr-cosmos-2, #152038);
+  color: var(--clr-star, #c8a96e);
+  border: 1px solid var(--clr-star, #c8a96e);
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+}
+.geo-search-btn:hover:not(:disabled) { opacity: 0.85; }
+.geo-search-btn:disabled { opacity: 0.5; cursor: default; }
+
+.geo-error {
+  font-size: 11px;
+  color: var(--clr-danger, #c00);
+  margin-top: 2px;
+}
 
 .error-banner {
   background: var(--clr-danger-bg);
