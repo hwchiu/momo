@@ -1678,6 +1678,150 @@
   .synastry-person-block { padding: 10px; }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   Sprint 1 — Solar Return, Arabic Parts, Profections
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Shared collapsible panel used by the three new classical panels */
+.classical-panel {
+  margin-top: var(--sp-6);
+  border-top: 2px solid var(--clr-border-light);
+  padding-top: var(--sp-1);
+}
+
+.panel-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--clr-primary);
+  padding: var(--sp-2) 0;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+.panel-toggle-btn:hover { color: var(--clr-primary-dark); }
+.panel-toggle-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+
+.panel-toggle-hint {
+  font-weight: normal;
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-left: var(--sp-2);
+}
+
+.panel-body {
+  padding: var(--sp-2) 0 var(--sp-4);
+}
+
+.panel-note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin: 0 0 var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--clr-star);
+}
+
+/* Arabic Parts table */
+.arabic-parts-table { width: 100%; }
+.lot-name-cell { white-space: nowrap; font-size: 13px; }
+.lot-idx { color: var(--clr-text-muted); font-size: 11px; margin-right: 4px; }
+.lot-en { font-size: 11px; color: var(--clr-text-muted); }
+.lot-formula-cell { font-size: 12px; color: var(--clr-text-muted); white-space: nowrap; }
+
+/* Profections */
+.profection-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.profection-age-input {
+  width: 72px;
+  text-align: center;
+}
+.profection-result-card {
+  background: var(--clr-surface-1);
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.profection-main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+.profection-house-badge {
+  background: var(--clr-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
+  min-width: 64px;
+  text-align: center;
+}
+.profection-detail { flex: 1; }
+.profection-sign { font-size: 15px; font-weight: bold; margin-bottom: var(--sp-1); }
+.profection-lord { font-size: 14px; margin-bottom: var(--sp-1); }
+.profection-planets { font-size: 13px; }
+.profection-planet-tag {
+  display: inline-block;
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  margin: 2px 4px 2px 0;
+  font-size: 12px;
+}
+.profection-cycle-note {
+  margin-top: var(--sp-2);
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  border-top: 1px solid var(--clr-border-subtle);
+  padding-top: var(--sp-2);
+}
+.profection-current-row { background: var(--clr-primary-light) !important; font-weight: bold; }
+
+/* Solar Return */
+.sr-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.sr-calc-btn { padding: 6px 16px; }
+.sr-result { margin-top: var(--sp-3); }
+.sr-datetime-card {
+  background: var(--clr-cosmos);
+  color: var(--clr-cosmos-text);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-3);
+  font-size: 14px;
+}
+.sr-angles {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.sr-angle-item {
+  background: var(--clr-surface-1);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 13px;
+}
+.retrograde-tag { color: var(--clr-danger); font-size: 11px; }
+
 /* ---- 640px: large phone / small tablet ---- */
 @media (max-width: 640px) {
   .almuten-app { padding: 0 var(--sp-2); }
