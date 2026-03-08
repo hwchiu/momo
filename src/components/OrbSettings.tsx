@@ -44,7 +44,7 @@ export function OrbSettings({ orbConfig, onChange }: OrbSettingsProps) {
       </button>
       {open && (
         <div className="orb-settings-panel">
-          <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#666' }}>
+          <p className="orb-hint">
             兩星之間的容許度 = (星體A + 星體B) / 2
           </p>
           <table className="orb-table" cellPadding={2} cellSpacing={0}>
@@ -60,8 +60,8 @@ export function OrbSettings({ orbConfig, onChange }: OrbSettingsProps) {
                 const info = PLANET_INFO[planet];
                 return (
                   <tr key={planet}>
-                    <td style={{ whiteSpace: 'nowrap' }}>{info.name}</td>
-                    <td style={{ textAlign: 'center' }}>{info.glyph}</td>
+                    <td className="orb-name-cell">{info.name}</td>
+                    <td className="orb-glyph-cell">{info.glyph}</td>
                     <td>
                       <input
                         type="number"
