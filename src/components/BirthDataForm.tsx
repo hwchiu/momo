@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import type { GeocodingResult } from '../lib/geocode';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc } from '../lib/formUtils';
+import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 import { OrbSettings } from './OrbSettings';
 
@@ -34,6 +34,7 @@ export function BirthDataForm({
   const [houseSystem, setHouseSystem] = useState<HouseSystem>(defaultHouseSystem);
   const [ayanamsa, setAyanamsa] = useState('tropical');
 
+  const [coordError, setCoordError] = useState<string | null>(null);
   const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
   const handleSelectGeoResult = (result: GeocodingResult) => {
@@ -51,6 +52,9 @@ export function BirthDataForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const coordErr = validateCoords(latDeg, latMin, lonDeg, lonMin);
+    if (coordErr) { setCoordError(coordErr); return; }
+    setCoordError(null);
     const utc = localToUtc(dateStr, timeStr, tzOffset);
     if (!utc) return;
     const birthData: BirthData = {
@@ -237,6 +241,12 @@ export function BirthDataForm({
         <div className="form-submit-cell">
           <OrbSettings orbConfig={orbConfig} onChange={onOrbChange} />
         </div>
+
+        {coordError && (
+          <div className="form-submit-cell">
+            <div className="geo-error" role="alert">{coordError}</div>
+          </div>
+        )}
 
         <div className="form-submit-cell">
           <button type="submit" className="submit-btn" disabled={isLoading}>
