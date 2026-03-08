@@ -180,6 +180,7 @@ function PersonInput({
                   onChange={(e) => set('name', e.target.value)}
                   className="form-input form-input-wide"
                   placeholder="輸入姓名"
+                  aria-label={`${label} 姓名`}
                 />
               </td>
             </tr>
@@ -191,6 +192,7 @@ function PersonInput({
                   value={person.dateStr}
                   onChange={(e) => set('dateStr', e.target.value)}
                   className="form-input"
+                  aria-label={`${label} 日期`}
                 />
               </td>
             </tr>
@@ -202,6 +204,7 @@ function PersonInput({
                   value={person.timeStr}
                   onChange={(e) => set('timeStr', e.target.value)}
                   className="form-input"
+                  aria-label={`${label} 時間`}
                 />
               </td>
             </tr>
@@ -216,6 +219,7 @@ function PersonInput({
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
                     className="form-input form-input-wide"
                     placeholder="城市名稱"
+                    aria-label={`${label} 地點名稱`}
                   />
                   <button
                     type="button"
@@ -247,12 +251,14 @@ function PersonInput({
                   value={person.latDeg}
                   onChange={(e) => set('latDeg', parseInt(e.target.value, 10) || 0)}
                   className="form-input form-input-dms"
+                  aria-label={`${label} 緯度度數`}
                 />
                 <span className="dms-sep">°</span>
                 <select
                   value={person.latDir}
                   onChange={(e) => set('latDir', e.target.value as 'N' | 'S')}
                   className="form-select-dir"
+                  aria-label={`${label} 緯度方向`}
                 >
                   <option value="N">N 北</option>
                   <option value="S">S 南</option>
@@ -264,6 +270,7 @@ function PersonInput({
                   value={person.latMin}
                   onChange={(e) => set('latMin', parseInt(e.target.value, 10) || 0)}
                   className="form-input form-input-dms"
+                  aria-label={`${label} 緯度分數`}
                 />
                 <span className="dms-sep">'</span>
               </td>
@@ -278,12 +285,14 @@ function PersonInput({
                   value={person.lonDeg}
                   onChange={(e) => set('lonDeg', parseInt(e.target.value, 10) || 0)}
                   className="form-input form-input-dms"
+                  aria-label={`${label} 經度度數`}
                 />
                 <span className="dms-sep">°</span>
                 <select
                   value={person.lonDir}
                   onChange={(e) => set('lonDir', e.target.value as 'E' | 'W')}
                   className="form-select-dir"
+                  aria-label={`${label} 經度方向`}
                 >
                   <option value="E">E 東</option>
                   <option value="W">W 西</option>
@@ -295,6 +304,7 @@ function PersonInput({
                   value={person.lonMin}
                   onChange={(e) => set('lonMin', parseInt(e.target.value, 10) || 0)}
                   className="form-input form-input-dms"
+                  aria-label={`${label} 經度分數`}
                 />
                 <span className="dms-sep">'</span>
               </td>
@@ -306,6 +316,7 @@ function PersonInput({
                   value={person.tzOffset}
                   onChange={(e) => set('tzOffset', parseFloat(e.target.value))}
                   className="form-select"
+                  aria-label={`${label} 時區`}
                 >
                   {TIMEZONES.map((tz) => (
                     <option key={tz.value} value={tz.value}>{tz.label}</option>
@@ -320,6 +331,7 @@ function PersonInput({
                   value={person.houseSystem}
                   onChange={(e) => set('houseSystem', e.target.value as HouseSystem)}
                   className="form-select"
+                  aria-label={`${label} 宮位制度`}
                 >
                   {Object.entries(HOUSE_SYSTEM_INFO).map(([key, info]) => (
                     <option key={key} value={key}>{info.name}</option>
