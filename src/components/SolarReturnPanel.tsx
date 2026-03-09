@@ -100,7 +100,7 @@ export function SolarReturnPanel({ chart }: SolarReturnPanelProps) {
                 <strong>太陽回歸時刻（UTC）：</strong>
                 {srChart.utc.year}-{String(srChart.utc.month).padStart(2, '0')}-{String(srChart.utc.day).padStart(2, '0')}
                 &nbsp;{String(srChart.utc.hour).padStart(2, '0')}:{String(srChart.utc.minute).padStart(2, '0')}
-                <span className="form-hint">　地點：{chart.birthData.locationName}</span>
+                <span className="form-hint"> 地點：{chart.birthData.locationName}</span>
               </div>
 
               <div className="sr-angles">

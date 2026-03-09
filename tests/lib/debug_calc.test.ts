@@ -45,7 +45,6 @@ it('debug sidereal time for 1990-03-17 02:51 UTC', () => {
   const φ = 24.8 * RAD;
   console.log('Obliquity (rad):', ε, '→ degrees:', ε * DEG);
   
-  const targetAsc = 185.87 * RAD;
   // targetAsc = atan2(-cos(RAMC), sin(ε)*tan(φ) + cos(ε)*sin(RAMC))
   // Rearranging: RAMC that gives this ASC
   // sin(ASC) * (sin(ε)*tan(φ) + cos(ε)*sin(RAMC)) = -cos(ASC)*(-1... no)

@@ -9,9 +9,6 @@
  * in the target year. Convergence is typically achieved within 5 iterations.
  */
 
-// @ts-expect-error astronomia has no type declarations
-import * as julian from 'astronomia/julian';
-
 import { birthDataToJDE, calculateNatalChart, sunLongitudeAtJDE } from './astro';
 import type { BirthData, NatalChart, HouseSystem } from '../types/astro';
 import type { SolarReturnChart } from '../types/returns';

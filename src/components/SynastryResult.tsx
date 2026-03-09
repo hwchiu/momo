@@ -39,8 +39,17 @@ function fmtPlanetPos(planet: Planet, result: SynastryResult, side: 'A' | 'B') {
 /** Grouped overview: each A planet → its cross-aspects to B planets (with full sign/house) */
 function OverviewTable({ result }: { result: SynastryResult }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const toggle = (key: string) =>
-    setExpanded((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
+  const toggle = (key: string) => {
+    setExpanded((prev) => {
+      const n = new Set(prev);
+      if (n.has(key)) {
+        n.delete(key);
+      } else {
+        n.add(key);
+      }
+      return n;
+    });
+  };
 
   // Group aspects by A planet
   const byPlanetA = new Map<Planet, SynastryAspect[]>();

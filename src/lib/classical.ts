@@ -386,7 +386,7 @@ export function getCombustState(planet: Planet, planetLon: number, sunLon: numbe
  */
 export function getOrientalOccidental(planet: Planet, planetLon: number, sunLon: number): '東出' | '西沒' {
   // Signed difference: how far planet is ahead of Sun (positive = planet is ahead)
-  let diff = (planetLon - sunLon + 360) % 360;
+  const diff = (planetLon - sunLon + 360) % 360;
 
   if (planet === Planet.Mercury || planet === Planet.Venus) {
     // Inferior planets: oriental if behind the Sun in direct motion (diff > 180 means behind)
