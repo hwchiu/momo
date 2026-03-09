@@ -19,7 +19,10 @@ interface Props {
 
 const PLANET_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'all', label: '全部行星' },
-  ...Object.values(Planet).map((p) => ({ value: p, label: `${PLANET_INFO[p].glyph} ${PLANET_INFO[p].name}` })),
+  ...Object.values(Planet).map((p) => ({
+    value: p,
+    label: `${PLANET_INFO[p].glyph} ${PLANET_INFO[p].name}`,
+  })),
 ];
 
 const NATURE_OPTIONS = [
@@ -31,11 +34,17 @@ const NATURE_OPTIONS = [
 
 const ASPECT_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'all', label: '全部相位' },
-  { value: String(AspectType.Conjunction), label: `${ASPECT_INFO[AspectType.Conjunction].symbol} 合相` },
+  {
+    value: String(AspectType.Conjunction),
+    label: `${ASPECT_INFO[AspectType.Conjunction].symbol} 合相`,
+  },
   { value: String(AspectType.Trine), label: `${ASPECT_INFO[AspectType.Trine].symbol} 三分相` },
   { value: String(AspectType.Sextile), label: `${ASPECT_INFO[AspectType.Sextile].symbol} 六分相` },
   { value: String(AspectType.Square), label: `${ASPECT_INFO[AspectType.Square].symbol} 四分相` },
-  { value: String(AspectType.Opposition), label: `${ASPECT_INFO[AspectType.Opposition].symbol} 對分相` },
+  {
+    value: String(AspectType.Opposition),
+    label: `${ASPECT_INFO[AspectType.Opposition].symbol} 對分相`,
+  },
 ];
 
 type SortKey = 'orb' | 'planet' | 'aspect';
@@ -62,12 +71,14 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
   const toggleExpand = (i: number) =>
     setExpanded((prev) => {
       const next = new Set(prev);
-      if (next.has(i)) next.delete(i); else next.add(i);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
       return next;
     });
 
   const filtered = aspects.filter((asp) => {
-    if (filterPlanet !== 'all' && asp.planetA !== filterPlanet && asp.planetB !== filterPlanet) return false;
+    if (filterPlanet !== 'all' && asp.planetA !== filterPlanet && asp.planetB !== filterPlanet)
+      return false;
     if (filterNature !== 'all' && asp.nature !== filterNature) return false;
     if (filterAspect !== 'all' && String(asp.type) !== filterAspect) return false;
     return true;
@@ -83,14 +94,38 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
     <div className="synastry-aspect-list">
       {/* Filter bar */}
       <div className="aspect-filters">
-        <select className="form-select" value={filterPlanet} onChange={(e) => setFilterPlanet(e.target.value)}>
-          {PLANET_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        <select
+          className="form-select"
+          value={filterPlanet}
+          onChange={(e) => setFilterPlanet(e.target.value)}
+        >
+          {PLANET_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
         </select>
-        <select className="form-select" value={filterNature} onChange={(e) => setFilterNature(e.target.value)}>
-          {NATURE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        <select
+          className="form-select"
+          value={filterNature}
+          onChange={(e) => setFilterNature(e.target.value)}
+        >
+          {NATURE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
         </select>
-        <select className="form-select" value={filterAspect} onChange={(e) => setFilterAspect(e.target.value)}>
-          {ASPECT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        <select
+          className="form-select"
+          value={filterAspect}
+          onChange={(e) => setFilterAspect(e.target.value)}
+        >
+          {ASPECT_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
         </select>
         <span className="aspect-sort-label">排序：</span>
         {(['orb', 'aspect', 'planet'] as SortKey[]).map((k) => (
@@ -113,9 +148,15 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
           <table className="data-table" cellPadding={4} cellSpacing={0}>
             <thead>
               <tr className="table-header">
-                <th colSpan={3} className="col-divider">{nameA}（A）</th>
-                <th colSpan={2} className="col-divider">相位</th>
-                <th colSpan={3} className="col-divider">{nameB}（B）</th>
+                <th colSpan={3} className="col-divider">
+                  {nameA}（A）
+                </th>
+                <th colSpan={2} className="col-divider">
+                  相位
+                </th>
+                <th colSpan={3} className="col-divider">
+                  {nameB}（B）
+                </th>
                 <th>性質 / 詮釋</th>
               </tr>
               <tr className="table-header table-sub-header">
@@ -169,11 +210,17 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
                       <div className="cell-deg">{fA.deg}</div>
                     </td>
                     {/* A: house */}
-                    <td className="center-cell person-a-cell col-divider-light" style={{ fontWeight: 'bold' }}>
+                    <td
+                      className="center-cell person-a-cell col-divider-light"
+                      style={{ fontWeight: 'bold' }}
+                    >
                       {fA.house}
                     </td>
                     {/* aspect — color is dynamic, must stay inline */}
-                    <td className="aspect-cell" style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    <td
+                      className="aspect-cell"
+                      style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}
+                    >
                       {aspInfo.symbol} {aspInfo.name}
                     </td>
                     {/* orb */}
@@ -190,12 +237,22 @@ export function SynastryAspectList({ aspects, nameA, nameB, chartA, chartB }: Pr
                       <div className="cell-deg">{fB.deg}</div>
                     </td>
                     {/* B: house */}
-                    <td className="center-cell person-b-cell col-divider-light" style={{ fontWeight: 'bold' }}>
+                    <td
+                      className="center-cell person-b-cell col-divider-light"
+                      style={{ fontWeight: 'bold' }}
+                    >
                       {fB.house}
                     </td>
                     {/* nature + interpretation — NATURE_COLORS is dynamic */}
                     <td className="interpretation-cell">
-                      <span className="cell-deg" style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', marginRight: '4px' }}>
+                      <span
+                        className="cell-deg"
+                        style={{
+                          color: NATURE_COLORS[asp.nature],
+                          fontWeight: 'bold',
+                          marginRight: '4px',
+                        }}
+                      >
                         {NATURE_LABELS[asp.nature]}
                       </span>
                       {isOpen ? (

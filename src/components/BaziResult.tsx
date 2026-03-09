@@ -8,7 +8,13 @@ import {
   ELEMENT_COLORS,
   BRANCH_HIDDEN_STEMS,
 } from '../types/bazi';
-import { getTodayGanzhi, countElements, getTenGod, findBranchInteractions, analyzeDayMaster } from '../lib/bazi';
+import {
+  getTodayGanzhi,
+  countElements,
+  getTenGod,
+  findBranchInteractions,
+  analyzeDayMaster,
+} from '../lib/bazi';
 
 interface BaziResultProps {
   chart: BaziChart;
@@ -53,9 +59,12 @@ export function BaziResult({ chart }: BaziResultProps) {
     <div className="bazi-result">
       {/* 今日干支 */}
       <div className="bazi-today-banner">
-        今日：{STEMS[today.yearPillar.stem]}{BRANCHES[today.yearPillar.branch]}年&nbsp;
-        {STEMS[today.monthPillar.stem]}{BRANCHES[today.monthPillar.branch]}月&nbsp;
-        {STEMS[today.dayPillar.stem]}{BRANCHES[today.dayPillar.branch]}日
+        今日：{STEMS[today.yearPillar.stem]}
+        {BRANCHES[today.yearPillar.branch]}年&nbsp;
+        {STEMS[today.monthPillar.stem]}
+        {BRANCHES[today.monthPillar.branch]}月&nbsp;
+        {STEMS[today.dayPillar.stem]}
+        {BRANCHES[today.dayPillar.branch]}日
       </div>
 
       {/* 命盤四柱 */}
@@ -77,9 +86,7 @@ export function BaziResult({ chart }: BaziResultProps) {
                   {i === 2 ? (
                     <span className="bazi-ten-god bazi-ten-god-daymaster">日主</span>
                   ) : (
-                    <span className="bazi-ten-god">
-                      {getTenGod(dayPillar.stem, p.stem)}
-                    </span>
+                    <span className="bazi-ten-god">{getTenGod(dayPillar.stem, p.stem)}</span>
                   )}
                 </td>
               ))}
@@ -156,7 +163,10 @@ export function BaziResult({ chart }: BaziResultProps) {
       <div className={`day-master-box day-master-${dayAnalysis.strength}`}>
         <div className="day-master-strength">
           <span className="day-master-label">日主</span>
-          <span className="day-master-stem" style={{ color: ELEMENT_COLORS[STEM_ELEMENTS[dayPillar.stem]] }}>
+          <span
+            className="day-master-stem"
+            style={{ color: ELEMENT_COLORS[STEM_ELEMENTS[dayPillar.stem]] }}
+          >
             {STEMS[dayPillar.stem]}（{STEM_ELEMENTS[dayPillar.stem]}）
           </span>
           <span className="day-master-tag">{dayAnalysis.strength}</span>
@@ -165,10 +175,16 @@ export function BaziResult({ chart }: BaziResultProps) {
         <p className="day-master-desc">{dayAnalysis.description}</p>
         <div className="day-master-gods">
           <span>
-            用神：<strong style={{ color: ELEMENT_COLORS[dayAnalysis.favorableElement] }}>{dayAnalysis.favorableElement}</strong>
+            用神：
+            <strong style={{ color: ELEMENT_COLORS[dayAnalysis.favorableElement] }}>
+              {dayAnalysis.favorableElement}
+            </strong>
           </span>
           <span style={{ marginLeft: '16px' }}>
-            忌神：<strong style={{ color: ELEMENT_COLORS[dayAnalysis.avoidElement] }}>{dayAnalysis.avoidElement}</strong>
+            忌神：
+            <strong style={{ color: ELEMENT_COLORS[dayAnalysis.avoidElement] }}>
+              {dayAnalysis.avoidElement}
+            </strong>
           </span>
         </div>
       </div>
@@ -183,7 +199,10 @@ export function BaziResult({ chart }: BaziResultProps) {
             <div
               key={idx}
               className="bazi-interaction-tag"
-              style={{ borderColor: INTERACTION_COLORS[item.type], color: INTERACTION_COLORS[item.type] }}
+              style={{
+                borderColor: INTERACTION_COLORS[item.type],
+                color: INTERACTION_COLORS[item.type],
+              }}
             >
               <strong>{item.type}</strong>
               <span>：{item.pillars.join('＋')}支</span>
@@ -220,7 +239,10 @@ export function BaziResult({ chart }: BaziResultProps) {
                 <td className="center-cell">{cycle.index + 1}</td>
                 <td
                   className="center-cell"
-                  style={{ color: ELEMENT_COLORS[STEM_ELEMENTS[cycle.pillar.stem]], fontWeight: 'bold' }}
+                  style={{
+                    color: ELEMENT_COLORS[STEM_ELEMENTS[cycle.pillar.stem]],
+                    fontWeight: 'bold',
+                  }}
                 >
                   {STEMS[cycle.pillar.stem]}
                 </td>
@@ -229,7 +251,10 @@ export function BaziResult({ chart }: BaziResultProps) {
                 </td>
                 <td
                   className="center-cell"
-                  style={{ color: ELEMENT_COLORS[BRANCH_ELEMENTS[cycle.pillar.branch]], fontWeight: 'bold' }}
+                  style={{
+                    color: ELEMENT_COLORS[BRANCH_ELEMENTS[cycle.pillar.branch]],
+                    fontWeight: 'bold',
+                  }}
                 >
                   {BRANCHES[cycle.pillar.branch]}
                 </td>
@@ -262,7 +287,7 @@ export function BaziResult({ chart }: BaziResultProps) {
               <div
                 className="bazi-element-bar"
                 style={{
-                  transform: `scaleX(${(elemCounts[el] / maxCount)})`,
+                  transform: `scaleX(${elemCounts[el] / maxCount})`,
                   backgroundColor: ELEMENT_COLORS[el],
                 }}
               />

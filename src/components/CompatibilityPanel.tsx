@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface ScoreMeterProps {
-  value: number;   // 0-100
+  value: number; // 0-100
   label: string;
   emoji: string;
   desc: string;
@@ -24,7 +24,9 @@ function ScoreMeter({ value, label, emoji, desc, color }: ScoreMeterProps) {
       <div className="compat-cat-header">
         <span className="compat-cat-emoji">{emoji}</span>
         <span className="compat-cat-label">{label}</span>
-        <span className="compat-cat-score" style={{ color }}>{value} 分</span>
+        <span className="compat-cat-score" style={{ color }}>
+          {value} 分
+        </span>
       </div>
       <div className="compat-bar-bg">
         <div
@@ -106,7 +108,8 @@ export function CompatibilityPanel({ score, nameA, nameB }: Props) {
       </div>
 
       <div className="compat-note">
-        ※ 評分基於兩人之間的主要跨盤相位，僅供參考。占星是理解自我與關係的工具，不應作為關係決策的唯一依據。
+        ※
+        評分基於兩人之間的主要跨盤相位，僅供參考。占星是理解自我與關係的工具，不應作為關係決策的唯一依據。
       </div>
     </div>
   );

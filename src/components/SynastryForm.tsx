@@ -8,13 +8,19 @@ import type { BirthData } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import type { GeocodingResult } from '../lib/geocode';
 import type { SynastryInput } from '../types/synastry';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
+import {
+  TIMEZONES,
+  decimalToDMS,
+  dmsToDecimal,
+  localToUtc,
+  validateCoords,
+} from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface PersonState {
   name: string;
-  dateStr: string;    // 'YYYY-MM-DD'
-  timeStr: string;    // 'HH:MM'
+  dateStr: string; // 'YYYY-MM-DD'
+  timeStr: string; // 'HH:MM'
   locationName: string;
   latDeg: number;
   latMin: number;
@@ -43,7 +49,9 @@ function defaultPerson(name: string): PersonState {
   };
 }
 
-function parsePerson(p: PersonState): { name: string; birthData: BirthData; houseSystem: HouseSystem } | null {
+function parsePerson(
+  p: PersonState,
+): { name: string; birthData: BirthData; houseSystem: HouseSystem } | null {
   if (!p.name.trim() || !p.dateStr || !p.timeStr || !p.locationName.trim()) return null;
   const utc = localToUtc(p.dateStr, p.timeStr, p.tzOffset);
   if (!utc) return null;
@@ -144,7 +152,12 @@ function PersonInput({
                     type="text"
                     value={person.locationName}
                     onChange={(e) => set('locationName', e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(person.locationName); } }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchGeo(person.locationName);
+                      }
+                    }}
                     className="form-input form-input-wide"
                     placeholder="城市名稱"
                     aria-label={`${label} 地點名稱`}
@@ -161,7 +174,9 @@ function PersonInput({
                   {geoResults.length > 0 && (
                     <ul className="geo-results">
                       {geoResults.map((r, i) => (
-                        <li key={i} onClick={() => handleSelectGeo(r)}>{r.displayName}</li>
+                        <li key={i} onClick={() => handleSelectGeo(r)}>
+                          {r.displayName}
+                        </li>
                       ))}
                     </ul>
                   )}
@@ -246,7 +261,9 @@ function PersonInput({
                   aria-label={`${label} 時區`}
                 >
                   {TIMEZONES.map((tz) => (
-                    <option key={tz.value} value={tz.value}>{tz.label}</option>
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
                   ))}
                 </select>
               </td>
@@ -261,7 +278,9 @@ function PersonInput({
                   aria-label={`${label} 宮位制度`}
                 >
                   {Object.entries(HOUSE_SYSTEM_INFO).map(([key, info]) => (
-                    <option key={key} value={key}>{info.name}</option>
+                    <option key={key} value={key}>
+                      {info.name}
+                    </option>
                   ))}
                 </select>
               </td>
@@ -285,26 +304,62 @@ export function SynastryForm({ onSubmit, isLoading }: SynastryFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const coordErrA = validateCoords(personA.latDeg, personA.latMin, personA.lonDeg, personA.lonMin);
-    if (coordErrA) { setFormError(`本命人（A）坐標錯誤：${coordErrA}`); return; }
-    const coordErrB = validateCoords(personB.latDeg, personB.latMin, personB.lonDeg, personB.lonMin);
-    if (coordErrB) { setFormError(`對象（B）坐標錯誤：${coordErrB}`); return; }
+    const coordErrA = validateCoords(
+      personA.latDeg,
+      personA.latMin,
+      personA.lonDeg,
+      personA.lonMin,
+    );
+    if (coordErrA) {
+      setFormError(`本命人（A）坐標錯誤：${coordErrA}`);
+      return;
+    }
+    const coordErrB = validateCoords(
+      personB.latDeg,
+      personB.latMin,
+      personB.lonDeg,
+      personB.lonMin,
+    );
+    if (coordErrB) {
+      setFormError(`對象（B）坐標錯誤：${coordErrB}`);
+      return;
+    }
     const a = parsePerson(personA);
     const b = parsePerson(personB);
-    if (!a) { setFormError('請完整填寫本命人（A）的資料'); return; }
-    if (!b) { setFormError('請完整填寫對象（B）的資料'); return; }
+    if (!a) {
+      setFormError('請完整填寫本命人（A）的資料');
+      return;
+    }
+    if (!b) {
+      setFormError('請完整填寫對象（B）的資料');
+      return;
+    }
     setFormError(null);
     onSubmit({
-      nameA: a.name, birthDataA: a.birthData, houseSystemA: a.houseSystem,
-      nameB: b.name, birthDataB: b.birthData, houseSystemB: b.houseSystem,
+      nameA: a.name,
+      birthDataA: a.birthData,
+      houseSystemA: a.houseSystem,
+      nameB: b.name,
+      birthDataB: b.birthData,
+      houseSystemB: b.houseSystem,
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="synastry-form">
       <div className="synastry-persons-grid">
-        <PersonInput label="本命人（A）" person={personA} onChange={setPersonA} colorClass="person-a" />
-        <PersonInput label="對象（B）" person={personB} onChange={setPersonB} colorClass="person-b" />
+        <PersonInput
+          label="本命人（A）"
+          person={personA}
+          onChange={setPersonA}
+          colorClass="person-a"
+        />
+        <PersonInput
+          label="對象（B）"
+          person={personB}
+          onChange={setPersonB}
+          colorClass="person-b"
+        />
       </div>
 
       {formError && <div className="error-banner">{formError}</div>}

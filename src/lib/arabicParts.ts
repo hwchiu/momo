@@ -58,24 +58,27 @@ const LOT_DEFS: LotDef[] = [
   {
     nameZh: '福運點',
     nameEn: 'Lot of Fortune',
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Moon), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☽ − ☉ (日間)' }
-      : { a: lon(c, Planet.Sun), b: lon(c, Planet.Moon), formulaLabel: 'ASC + ☉ − ☽ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Moon), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☽ − ☉ (日間)' }
+        : { a: lon(c, Planet.Sun), b: lon(c, Planet.Moon), formulaLabel: 'ASC + ☉ − ☽ (夜間)' },
   },
   {
     nameZh: '精神點',
     nameEn: 'Lot of Spirit',
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Sun), b: lon(c, Planet.Moon), formulaLabel: 'ASC + ☉ − ☽ (日間)' }
-      : { a: lon(c, Planet.Moon), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☽ − ☉ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Sun), b: lon(c, Planet.Moon), formulaLabel: 'ASC + ☉ − ☽ (日間)' }
+        : { a: lon(c, Planet.Moon), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☽ − ☉ (夜間)' },
   },
   {
     nameZh: '愛情點',
     nameEn: 'Lot of Eros',
     // Day: ASC + Venus − Fortune; Night: ASC + Fortune − Venus
-    bodies: (day, c, fortune) => day
-      ? { a: lon(c, Planet.Venus), b: fortune, formulaLabel: 'ASC + ♀ − 福運點 (日間)' }
-      : { a: fortune, b: lon(c, Planet.Venus), formulaLabel: 'ASC + 福運點 − ♀ (夜間)' },
+    bodies: (day, c, fortune) =>
+      day
+        ? { a: lon(c, Planet.Venus), b: fortune, formulaLabel: 'ASC + ♀ − 福運點 (日間)' }
+        : { a: fortune, b: lon(c, Planet.Venus), formulaLabel: 'ASC + 福運點 − ♀ (夜間)' },
   },
   {
     nameZh: '必要點',
@@ -121,25 +124,28 @@ const LOT_DEFS: LotDef[] = [
     nameZh: '婚姻點（男）',
     nameEn: 'Lot of Marriage (male)',
     // Day: ASC + Venus − Saturn; Night: ASC + Saturn − Venus
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Venus), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ♀ − ♄ (日間)' }
-      : { a: lon(c, Planet.Saturn), b: lon(c, Planet.Venus), formulaLabel: 'ASC + ♄ − ♀ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Venus), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ♀ − ♄ (日間)' }
+        : { a: lon(c, Planet.Saturn), b: lon(c, Planet.Venus), formulaLabel: 'ASC + ♄ − ♀ (夜間)' },
   },
   {
     nameZh: '婚姻點（女）',
     nameEn: 'Lot of Marriage (female)',
     // Opposite of male
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Saturn), b: lon(c, Planet.Venus), formulaLabel: 'ASC + ♄ − ♀ (日間)' }
-      : { a: lon(c, Planet.Venus), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ♀ − ♄ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Saturn), b: lon(c, Planet.Venus), formulaLabel: 'ASC + ♄ − ♀ (日間)' }
+        : { a: lon(c, Planet.Venus), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ♀ − ♄ (夜間)' },
   },
   {
     nameZh: '父親點',
     nameEn: 'Lot of Father',
     // Day: ASC + Saturn − Sun; Night: ASC + Sun − Saturn
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Saturn), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ♄ − ☉ (日間)' }
-      : { a: lon(c, Planet.Sun), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ☉ − ♄ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Saturn), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ♄ − ☉ (日間)' }
+        : { a: lon(c, Planet.Sun), b: lon(c, Planet.Saturn), formulaLabel: 'ASC + ☉ − ♄ (夜間)' },
   },
   {
     nameZh: '母親點',
@@ -155,9 +161,10 @@ const LOT_DEFS: LotDef[] = [
     nameZh: '事業點',
     nameEn: 'Lot of Vocation',
     // Day: ASC + Mercury − Sun; Night: ASC + Moon − Mercury (Vettius Valens)
-    bodies: (day, c) => day
-      ? { a: lon(c, Planet.Mercury), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☿ − ☉ (日間)' }
-      : { a: lon(c, Planet.Moon), b: lon(c, Planet.Mercury), formulaLabel: 'ASC + ☽ − ☿ (夜間)' },
+    bodies: (day, c) =>
+      day
+        ? { a: lon(c, Planet.Mercury), b: lon(c, Planet.Sun), formulaLabel: 'ASC + ☿ − ☉ (日間)' }
+        : { a: lon(c, Planet.Moon), b: lon(c, Planet.Mercury), formulaLabel: 'ASC + ☽ − ☿ (夜間)' },
   },
 ];
 

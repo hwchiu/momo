@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import type { NatalChart } from '../types/astro';
-import { ZODIAC_SIGNS, PLANET_INFO, ASPECT_INFO, HOUSE_SYSTEM_INFO, Planet, ZodiacSign } from '../types/astro';
+import {
+  ZODIAC_SIGNS,
+  PLANET_INFO,
+  ASPECT_INFO,
+  HOUSE_SYSTEM_INFO,
+  Planet,
+  ZodiacSign,
+  AspectType,
+} from '../types/astro';
 import type { PlanetPosition } from '../types/astro';
 import {
   CLASSICAL_PLANETS,
@@ -47,11 +55,45 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
   const [activeTab, setActiveTab] = useState<'planets' | 'dignity' | 'aspects' | 'reception'>(
     'planets',
   );
+  const [filterAspectTypes, setFilterAspectTypes] = useState<Set<AspectType>>(
+    new Set([
+      AspectType.Conjunction,
+      AspectType.Sextile,
+      AspectType.Square,
+      AspectType.Trine,
+      AspectType.Opposition,
+    ]),
+  );
+  const [filterPlanetGroup, setFilterPlanetGroup] = useState<'all' | 'classical' | 'modern'>('all');
+  const [filterMaxOrb, setFilterMaxOrb] = useState<number>(12);
 
   const sunPos = chart.planets.find((p) => p.planet === Planet.Sun);
   if (!sunPos) return null;
 
   const dayChart = isDayChart(sunPos.house);
+
+  const CLASSICAL_PLANET_SET = new Set<Planet>([
+    Planet.Sun,
+    Planet.Moon,
+    Planet.Mercury,
+    Planet.Venus,
+    Planet.Mars,
+    Planet.Jupiter,
+    Planet.Saturn,
+  ]);
+  const MODERN_PLANET_SET = new Set<Planet>([Planet.Uranus, Planet.Neptune, Planet.Pluto]);
+
+  const filteredAspects = chart.aspects.filter((a) => {
+    if (!filterAspectTypes.has(a.type)) return false;
+    if (a.orb > filterMaxOrb) return false;
+    if (filterPlanetGroup === 'classical') {
+      if (!CLASSICAL_PLANET_SET.has(a.planet1) || !CLASSICAL_PLANET_SET.has(a.planet2))
+        return false;
+    } else if (filterPlanetGroup === 'modern') {
+      if (!MODERN_PLANET_SET.has(a.planet1) && !MODERN_PLANET_SET.has(a.planet2)) return false;
+    }
+    return true;
+  });
 
   const classicalPlanetPositions = CLASSICAL_PLANETS.map(
     (pl) => chart.planets.find((p) => p.planet === pl)!,
@@ -63,12 +105,13 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
 
   // Render affiliated states for a planet position
   function renderAffiliatedStates(pos: PlanetPosition) {
-    const states = getAffiliatedStates(pos, sunPos!);
+    const states = getAffiliatedStates(pos, sunPos!, chart.planets);
     const parts: string[] = [];
     if (states.sect) parts.push('得時');
     parts.push(states.oriental);
     if (states.retrograde) parts.push('逆行℞');
     if (states.combust) parts.push(states.combust);
+    if (states.besieged) parts.push('被夾擊');
     if (isPeregrine(pos.planet, pos.sign, pos.degree, dayChart)) parts.push('無主');
     return parts.join(' ');
   }
@@ -91,14 +134,22 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
         <td>
           <PlanetGlyph planet={pos.planet} /> {PLANET_INFO[pos.planet].name}
         </td>
-        <td className="score-cell score-positive">{score.domicile > 0 ? `+${score.domicile}` : ''}</td>
-        <td className="score-cell score-positive">{score.exaltation > 0 ? `+${score.exaltation}` : ''}</td>
-        <td className="score-cell score-positive">{score.triplicity > 0 ? `+${score.triplicity}` : ''}</td>
+        <td className="score-cell score-positive">
+          {score.domicile > 0 ? `+${score.domicile}` : ''}
+        </td>
+        <td className="score-cell score-positive">
+          {score.exaltation > 0 ? `+${score.exaltation}` : ''}
+        </td>
+        <td className="score-cell score-positive">
+          {score.triplicity > 0 ? `+${score.triplicity}` : ''}
+        </td>
         <td className="score-cell score-positive">{score.term > 0 ? `+${score.term}` : ''}</td>
         <td className="score-cell score-positive">{score.face > 0 ? `+${score.face}` : ''}</td>
         <td className="score-cell score-negative">{score.detriment < 0 ? score.detriment : ''}</td>
         <td className="score-cell score-negative">{score.fall < 0 ? score.fall : ''}</td>
-        <td className={`score-cell score-total ${score.total > 0 ? 'score-positive' : score.total < 0 ? 'score-negative' : ''}`}>
+        <td
+          className={`score-cell score-total ${score.total > 0 ? 'score-positive' : score.total < 0 ? 'score-negative' : ''}`}
+        >
           {score.total > 0 ? `+${score.total}` : score.total}
         </td>
       </tr>
@@ -123,7 +174,6 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
 
   return (
     <div className="chart-details">
-
       {/* ---- Chart summary ---- */}
       <div className="chart-summary">
         <table className="summary-table" cellPadding={3} cellSpacing={0}>
@@ -139,20 +189,22 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
               <td>
                 <SignGlyph sign={Math.floor(chart.ascendant / 30) as ZodiacSign} />{' '}
                 {ZODIAC_SIGNS[Math.floor(chart.ascendant / 30) as ZodiacSign].name}{' '}
-                {Math.floor(chart.ascendant % 30)}°{' '}
-                {Math.floor(((chart.ascendant % 30) % 1) * 60)}'
+                {Math.floor(chart.ascendant % 30)}° {Math.floor(((chart.ascendant % 30) % 1) * 60)}'
               </td>
               <td className="summary-label">中天 MC</td>
               <td>
                 <SignGlyph sign={Math.floor(chart.midheaven / 30) as ZodiacSign} />{' '}
                 {ZODIAC_SIGNS[Math.floor(chart.midheaven / 30) as ZodiacSign].name}{' '}
-                {Math.floor(chart.midheaven % 30)}°{' '}
-                {Math.floor(((chart.midheaven % 30) % 1) * 60)}'
+                {Math.floor(chart.midheaven % 30)}° {Math.floor(((chart.midheaven % 30) % 1) * 60)}'
               </td>
             </tr>
             <tr>
               <td className="summary-label">日夜盤</td>
-              <td colSpan={3}>{dayChart ? '日間盤（太陽在地平線上，第7-12宮）' : '夜間盤（太陽在地平線下，第1-6宮）'}</td>
+              <td colSpan={3}>
+                {dayChart
+                  ? '日間盤（太陽在地平線上，第7-12宮）'
+                  : '夜間盤（太陽在地平線下，第1-6宮）'}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -261,7 +313,10 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
               <tbody>
                 <tr>
                   {chart.houses.map((h, i) => (
-                    <td key={h.house} className={`center-cell ${i % 2 === 0 ? 'row-even' : 'row-odd'}`}>
+                    <td
+                      key={h.house}
+                      className={`center-cell ${i % 2 === 0 ? 'row-even' : 'row-odd'}`}
+                    >
                       <SignGlyph sign={h.sign} />
                       <br />
                       {ZODIAC_SIGNS[h.sign].name}
@@ -281,7 +336,6 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
         <div className="chart-subtab-content">
           <h3 className="section-title">尊貴狀態參考表</h3>
           <div className="dignity-tables-grid">
-
             {/* Domicile */}
             <div className="dignity-table-block">
               <h4 className="dignity-table-title">本垣（廟）</h4>
@@ -335,9 +389,12 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                         <td>
                           {exalt ? (
                             <>
-                              <SignGlyph sign={exalt.sign} /> {ZODIAC_SIGNS[exalt.sign].name} {exalt.degree}°
+                              <SignGlyph sign={exalt.sign} /> {ZODIAC_SIGNS[exalt.sign].name}{' '}
+                              {exalt.degree}°
                             </>
-                          ) : '-'}
+                          ) : (
+                            '-'
+                          )}
                         </td>
                       </tr>
                     );
@@ -378,7 +435,9 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                             <>
                               <SignGlyph sign={fallSign} /> {ZODIAC_SIGNS[fallSign].name}
                             </>
-                          ) : '-'}
+                          ) : (
+                            '-'
+                          )}
                         </td>
                       </tr>
                     );
@@ -399,12 +458,14 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {([
-                    ['火', [ZodiacSign.Aries, ZodiacSign.Leo, ZodiacSign.Sagittarius]],
-                    ['土', [ZodiacSign.Taurus, ZodiacSign.Virgo, ZodiacSign.Capricorn]],
-                    ['風', [ZodiacSign.Gemini, ZodiacSign.Libra, ZodiacSign.Aquarius]],
-                    ['水', [ZodiacSign.Cancer, ZodiacSign.Scorpio, ZodiacSign.Pisces]],
-                  ] as [string, ZodiacSign[]][]).map(([elem, signs], i) => {
+                  {(
+                    [
+                      ['火', [ZodiacSign.Aries, ZodiacSign.Leo, ZodiacSign.Sagittarius]],
+                      ['土', [ZodiacSign.Taurus, ZodiacSign.Virgo, ZodiacSign.Capricorn]],
+                      ['風', [ZodiacSign.Gemini, ZodiacSign.Libra, ZodiacSign.Aquarius]],
+                      ['水', [ZodiacSign.Cancer, ZodiacSign.Scorpio, ZodiacSign.Pisces]],
+                    ] as [string, ZodiacSign[]][]
+                  ).map(([elem, signs], i) => {
                     const rulers = getTriplicityRulers(signs[0]);
                     const ruler = dayChart ? rulers.day : rulers.night;
                     return (
@@ -412,7 +473,9 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                         <td className="center-cell">{elem}</td>
                         <td>
                           {signs.map((s) => (
-                            <span key={s}><SignGlyph sign={s} /> </span>
+                            <span key={s}>
+                              <SignGlyph sign={s} />{' '}
+                            </span>
                           ))}
                         </td>
                         <td className="planet-cell">
@@ -424,7 +487,6 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                 </tbody>
               </table>
             </div>
-
           </div>
 
           {/* Terms table */}
@@ -438,11 +500,22 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                 </tr>
               </thead>
               <tbody>
-                {([
-                  ZodiacSign.Aries, ZodiacSign.Taurus, ZodiacSign.Gemini, ZodiacSign.Cancer,
-                  ZodiacSign.Leo, ZodiacSign.Virgo, ZodiacSign.Libra, ZodiacSign.Scorpio,
-                  ZodiacSign.Sagittarius, ZodiacSign.Capricorn, ZodiacSign.Aquarius, ZodiacSign.Pisces,
-                ] as ZodiacSign[]).map((sign, si) => {
+                {(
+                  [
+                    ZodiacSign.Aries,
+                    ZodiacSign.Taurus,
+                    ZodiacSign.Gemini,
+                    ZodiacSign.Cancer,
+                    ZodiacSign.Leo,
+                    ZodiacSign.Virgo,
+                    ZodiacSign.Libra,
+                    ZodiacSign.Scorpio,
+                    ZodiacSign.Sagittarius,
+                    ZodiacSign.Capricorn,
+                    ZodiacSign.Aquarius,
+                    ZodiacSign.Pisces,
+                  ] as ZodiacSign[]
+                ).map((sign, si) => {
                   const terms = computeTermsForSign(sign);
                   return (
                     <tr key={sign} className={si % 2 === 0 ? 'row-even' : 'row-odd'}>
@@ -474,11 +547,22 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                 </tr>
               </thead>
               <tbody>
-                {([
-                  ZodiacSign.Aries, ZodiacSign.Taurus, ZodiacSign.Gemini, ZodiacSign.Cancer,
-                  ZodiacSign.Leo, ZodiacSign.Virgo, ZodiacSign.Libra, ZodiacSign.Scorpio,
-                  ZodiacSign.Sagittarius, ZodiacSign.Capricorn, ZodiacSign.Aquarius, ZodiacSign.Pisces,
-                ] as ZodiacSign[]).map((sign, si) => {
+                {(
+                  [
+                    ZodiacSign.Aries,
+                    ZodiacSign.Taurus,
+                    ZodiacSign.Gemini,
+                    ZodiacSign.Cancer,
+                    ZodiacSign.Leo,
+                    ZodiacSign.Virgo,
+                    ZodiacSign.Libra,
+                    ZodiacSign.Scorpio,
+                    ZodiacSign.Sagittarius,
+                    ZodiacSign.Capricorn,
+                    ZodiacSign.Aquarius,
+                    ZodiacSign.Pisces,
+                  ] as ZodiacSign[]
+                ).map((sign, si) => {
                   const d1 = getDecanRuler(sign, 0);
                   const d2 = getDecanRuler(sign, 10);
                   const d3 = getDecanRuler(sign, 20);
@@ -530,8 +614,70 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
       {activeTab === 'aspects' && (
         <div className="chart-subtab-content">
           <h3 className="section-title">相位</h3>
-          {chart.aspects.length === 0 ? (
-            <p className="no-data">沒有找到相位</p>
+
+          {/* Filter bar */}
+          <div className="aspect-filter-bar">
+            <div className="aspect-filter-group">
+              <span className="aspect-filter-label">相位類型：</span>
+              {(
+                [
+                  [AspectType.Conjunction, '☌合'],
+                  [AspectType.Sextile, '✱六分'],
+                  [AspectType.Square, '□四分'],
+                  [AspectType.Trine, '△三分'],
+                  [AspectType.Opposition, '☍對分'],
+                ] as [AspectType, string][]
+              ).map(([type, label]) => (
+                <label key={type} className="aspect-filter-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={filterAspectTypes.has(type)}
+                    onChange={(e) => {
+                      const next = new Set(filterAspectTypes);
+                      if (e.target.checked) next.add(type);
+                      else next.delete(type);
+                      setFilterAspectTypes(next);
+                    }}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+            <div className="aspect-filter-group">
+              <span className="aspect-filter-label">行星分類：</span>
+              {(['all', 'classical', 'modern'] as const).map((g) => (
+                <label key={g} className="aspect-filter-radio">
+                  <input
+                    type="radio"
+                    name="planet-group"
+                    value={g}
+                    checked={filterPlanetGroup === g}
+                    onChange={() => setFilterPlanetGroup(g)}
+                  />
+                  {g === 'all'
+                    ? '全部'
+                    : g === 'classical'
+                      ? '七政（古典7星）'
+                      : '現代行星（天王海王冥王）'}
+                </label>
+              ))}
+            </div>
+            <div className="aspect-filter-group">
+              <span className="aspect-filter-label">容許度上限：{filterMaxOrb}°</span>
+              <input
+                type="range"
+                min={0}
+                max={12}
+                step={0.5}
+                value={filterMaxOrb}
+                onChange={(e) => setFilterMaxOrb(Number(e.target.value))}
+                className="aspect-filter-slider"
+              />
+            </div>
+          </div>
+
+          {filteredAspects.length === 0 ? (
+            <p className="no-data">沒有符合條件的相位</p>
           ) : (
             <div className="table-scroll">
               <table className="data-table" cellPadding={3} cellSpacing={0}>
@@ -545,7 +691,7 @@ export function ChartDetails({ chart }: ChartDetailsProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {chart.aspects.map((a, i) => {
+                  {filteredAspects.map((a, i) => {
                     const p1 = PLANET_INFO[a.planet1];
                     const p2 = PLANET_INFO[a.planet2];
                     const aspectInfo = ASPECT_INFO[a.type];

@@ -2,7 +2,13 @@ import { useState } from 'react';
 import type { VedicInput, VedicAyanamsha } from '../types/vedic';
 import { AYANAMSHA_NAMES } from '../types/vedic';
 import type { GeocodingResult } from '../lib/geocode';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
+import {
+  TIMEZONES,
+  decimalToDMS,
+  dmsToDecimal,
+  localToUtc,
+  validateCoords,
+} from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 
 interface VedicFormProps {
@@ -42,7 +48,10 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const coordErr = validateCoords(latDeg, latMin, lonDeg, lonMin);
-    if (coordErr) { setCoordError(coordErr); return; }
+    if (coordErr) {
+      setCoordError(coordErr);
+      return;
+    }
     setCoordError(null);
     const utc = localToUtc(dateStr, timeStr, tzOffset);
     if (!utc) return;
@@ -62,13 +71,23 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
           <tr>
             <td className="form-label">日期</td>
             <td>
-              <input type="date" value={dateStr} onChange={(e) => setDateStr(e.target.value)} className="form-input" />
+              <input
+                type="date"
+                value={dateStr}
+                onChange={(e) => setDateStr(e.target.value)}
+                className="form-input"
+              />
             </td>
           </tr>
           <tr>
             <td className="form-label">時間</td>
             <td>
-              <input type="time" value={timeStr} onChange={(e) => setTimeStr(e.target.value)} className="form-input" />
+              <input
+                type="time"
+                value={timeStr}
+                onChange={(e) => setTimeStr(e.target.value)}
+                className="form-input"
+              />
             </td>
           </tr>
           <tr>
@@ -79,7 +98,12 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
                   type="text"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(locationName); } }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      searchGeo(locationName);
+                    }
+                  }}
                   className="form-input form-input-wide"
                   placeholder="城市名稱"
                 />
@@ -95,7 +119,9 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
                 {geoResults.length > 0 && (
                   <ul className="geo-results">
                     {geoResults.map((r, i) => (
-                      <li key={i} onClick={() => handleSelectGeo(r)}>{r.displayName}</li>
+                      <li key={i} onClick={() => handleSelectGeo(r)}>
+                        {r.displayName}
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -105,35 +131,77 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
           <tr>
             <td className="form-label">北緯/南緯</td>
             <td className="dms-cell">
-              <input type="number" min={0} max={90} value={latDeg} onChange={(e) => setLatDeg(parseInt(e.target.value, 10) || 0)} className="form-input form-input-dms" />
+              <input
+                type="number"
+                min={0}
+                max={90}
+                value={latDeg}
+                onChange={(e) => setLatDeg(parseInt(e.target.value, 10) || 0)}
+                className="form-input form-input-dms"
+              />
               <span className="dms-sep">°</span>
-              <select value={latDir} onChange={(e) => setLatDir(e.target.value as 'N' | 'S')} className="form-select-dir">
+              <select
+                value={latDir}
+                onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
+                className="form-select-dir"
+              >
                 <option value="N">N 北</option>
                 <option value="S">S 南</option>
               </select>
-              <input type="number" min={0} max={59} value={latMin} onChange={(e) => setLatMin(parseInt(e.target.value, 10) || 0)} className="form-input form-input-dms" />
+              <input
+                type="number"
+                min={0}
+                max={59}
+                value={latMin}
+                onChange={(e) => setLatMin(parseInt(e.target.value, 10) || 0)}
+                className="form-input form-input-dms"
+              />
               <span className="dms-sep">'</span>
             </td>
           </tr>
           <tr>
             <td className="form-label">東經/西經</td>
             <td className="dms-cell">
-              <input type="number" min={0} max={180} value={lonDeg} onChange={(e) => setLonDeg(parseInt(e.target.value, 10) || 0)} className="form-input form-input-dms" />
+              <input
+                type="number"
+                min={0}
+                max={180}
+                value={lonDeg}
+                onChange={(e) => setLonDeg(parseInt(e.target.value, 10) || 0)}
+                className="form-input form-input-dms"
+              />
               <span className="dms-sep">°</span>
-              <select value={lonDir} onChange={(e) => setLonDir(e.target.value as 'E' | 'W')} className="form-select-dir">
+              <select
+                value={lonDir}
+                onChange={(e) => setLonDir(e.target.value as 'E' | 'W')}
+                className="form-select-dir"
+              >
                 <option value="E">E 東</option>
                 <option value="W">W 西</option>
               </select>
-              <input type="number" min={0} max={59} value={lonMin} onChange={(e) => setLonMin(parseInt(e.target.value, 10) || 0)} className="form-input form-input-dms" />
+              <input
+                type="number"
+                min={0}
+                max={59}
+                value={lonMin}
+                onChange={(e) => setLonMin(parseInt(e.target.value, 10) || 0)}
+                className="form-input form-input-dms"
+              />
               <span className="dms-sep">'</span>
             </td>
           </tr>
           <tr>
             <td className="form-label">時區</td>
             <td>
-              <select value={tzOffset} onChange={(e) => setTzOffset(parseFloat(e.target.value))} className="form-select">
+              <select
+                value={tzOffset}
+                onChange={(e) => setTzOffset(parseFloat(e.target.value))}
+                className="form-select"
+              >
                 {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value}>{tz.label}</option>
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </option>
                 ))}
               </select>
             </td>
@@ -141,9 +209,15 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
           <tr>
             <td className="form-label">歲差系統</td>
             <td>
-              <select value={ayanamsha} onChange={(e) => setAyanamsha(e.target.value as VedicAyanamsha)} className="form-select">
+              <select
+                value={ayanamsha}
+                onChange={(e) => setAyanamsha(e.target.value as VedicAyanamsha)}
+                className="form-select"
+              >
                 {(Object.entries(AYANAMSHA_NAMES) as [VedicAyanamsha, string][]).map(([k, v]) => (
-                  <option key={k} value={k}>{v}</option>
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
                 ))}
               </select>
             </td>
@@ -151,7 +225,9 @@ export function VedicForm({ onSubmit, isLoading = false }: VedicFormProps) {
           {coordError && (
             <tr>
               <td colSpan={2}>
-                <div className="geo-error" role="alert">{coordError}</div>
+                <div className="geo-error" role="alert">
+                  {coordError}
+                </div>
               </td>
             </tr>
           )}

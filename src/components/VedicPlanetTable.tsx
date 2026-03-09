@@ -34,7 +34,7 @@ export function VedicPlanetTable({ chart }: VedicPlanetTableProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vedic_chart_${chart.input.year}${String(chart.input.month).padStart(2,'0')}${String(chart.input.day).padStart(2,'0')}.csv`;
+    a.download = `vedic_chart_${chart.input.year}${String(chart.input.month).padStart(2, '0')}${String(chart.input.day).padStart(2, '0')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     setShowCsv(false);
@@ -52,7 +52,11 @@ export function VedicPlanetTable({ chart }: VedicPlanetTableProps) {
         >
           匯出 CSV
         </button>
-        {showCsv && <span style={{ fontSize: '11px', color: '#555', marginLeft: '6px' }}>下載行星位置資料</span>}
+        {showCsv && (
+          <span style={{ fontSize: '11px', color: '#555', marginLeft: '6px' }}>
+            下載行星位置資料
+          </span>
+        )}
       </div>
       <div className="table-scroll">
         <table className="data-table">
@@ -91,10 +95,14 @@ export function VedicPlanetTable({ chart }: VedicPlanetTableProps) {
                 </td>
                 <td className="dignity-cell">
                   {planet.dignity === 'exalted' && (
-                    <span className="dignity-廟" title="入廟（Exaltation）">↑入廟</span>
+                    <span className="dignity-廟" title="入廟（Exaltation）">
+                      ↑入廟
+                    </span>
                   )}
                   {planet.dignity === 'debilitated' && (
-                    <span className="dignity-陷" title="弱勢（Debilitation）">↓弱勢</span>
+                    <span className="dignity-陷" title="弱勢（Debilitation）">
+                      ↓弱勢
+                    </span>
                   )}
                 </td>
               </tr>

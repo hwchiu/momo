@@ -2,7 +2,13 @@ import { useState } from 'react';
 import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import type { GeocodingResult } from '../lib/geocode';
-import { TIMEZONES, decimalToDMS, dmsToDecimal, localToUtc, validateCoords } from '../lib/formUtils';
+import {
+  TIMEZONES,
+  decimalToDMS,
+  dmsToDecimal,
+  localToUtc,
+  validateCoords,
+} from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 import { OrbSettings } from './OrbSettings';
 
@@ -52,7 +58,10 @@ export function BirthDataForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const coordErr = validateCoords(latDeg, latMin, lonDeg, lonMin);
-    if (coordErr) { setCoordError(coordErr); return; }
+    if (coordErr) {
+      setCoordError(coordErr);
+      return;
+    }
     setCoordError(null);
     const utc = localToUtc(dateStr, timeStr, tzOffset);
     if (!utc) return;
@@ -68,7 +77,9 @@ export function BirthDataForm({
   return (
     <form className="quick-chart-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label className="form-label" htmlFor="bf-date">日期</label>
+        <label className="form-label" htmlFor="bf-date">
+          日期
+        </label>
         <div className="form-field">
           <input
             id="bf-date"
@@ -79,7 +90,9 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label" htmlFor="bf-time">時間</label>
+        <label className="form-label" htmlFor="bf-time">
+          時間
+        </label>
         <div className="form-field">
           <input
             id="bf-time"
@@ -90,7 +103,9 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label" htmlFor="bf-location">地點名稱</label>
+        <label className="form-label" htmlFor="bf-location">
+          地點名稱
+        </label>
         <div className="form-field">
           <div className="location-wrapper">
             <input
@@ -98,7 +113,12 @@ export function BirthDataForm({
               type="text"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchGeo(locationName); } }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  searchGeo(locationName);
+                }
+              }}
               className="form-input form-input-wide"
               placeholder="城市名稱"
             />
@@ -123,7 +143,9 @@ export function BirthDataForm({
           </div>
         </div>
 
-        <label className="form-label" htmlFor="bf-lat-deg">北緯/南緯</label>
+        <label className="form-label" htmlFor="bf-lat-deg">
+          北緯/南緯
+        </label>
         <div className="form-field dms-cell">
           <input
             id="bf-lat-deg"
@@ -157,7 +179,9 @@ export function BirthDataForm({
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label" htmlFor="bf-lon-deg">東經/西經</label>
+        <label className="form-label" htmlFor="bf-lon-deg">
+          東經/西經
+        </label>
         <div className="form-field dms-cell">
           <input
             id="bf-lon-deg"
@@ -191,7 +215,9 @@ export function BirthDataForm({
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label" htmlFor="bf-tz">時區</label>
+        <label className="form-label" htmlFor="bf-tz">
+          時區
+        </label>
         <div className="form-field">
           <select
             id="bf-tz"
@@ -207,7 +233,9 @@ export function BirthDataForm({
           </select>
         </div>
 
-        <label className="form-label" htmlFor="bf-house">宮位制度</label>
+        <label className="form-label" htmlFor="bf-house">
+          宮位制度
+        </label>
         <div className="form-field">
           <select
             id="bf-house"
@@ -229,7 +257,9 @@ export function BirthDataForm({
 
         {coordError && (
           <div className="form-submit-cell">
-            <div className="geo-error" role="alert">{coordError}</div>
+            <div className="geo-error" role="alert">
+              {coordError}
+            </div>
           </div>
         )}
 

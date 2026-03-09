@@ -53,7 +53,9 @@ export function ProfectionsPanel({ chart }: ProfectionsPanelProps) {
       {open && result && si && lordInfo && (
         <div className="panel-body">
           <div className="profection-controls">
-            <label className="form-label" htmlFor="prof-age">查詢年齡：</label>
+            <label className="form-label" htmlFor="prof-age">
+              查詢年齡：
+            </label>
             <input
               id="prof-age"
               type="number"
@@ -74,7 +76,10 @@ export function ProfectionsPanel({ chart }: ProfectionsPanelProps) {
                   {si.glyph} {si.name}（{si.element}象）
                 </div>
                 <div className="profection-lord">
-                  年主星：<strong>{lordInfo.glyph} {lordInfo.name}</strong>
+                  年主星：
+                  <strong>
+                    {lordInfo.glyph} {lordInfo.name}
+                  </strong>
                 </div>
                 {result.planetsInHouse.length > 0 && (
                   <div className="profection-planets">
@@ -132,8 +137,12 @@ export function ProfectionsPanel({ chart }: ProfectionsPanelProps) {
                       >
                         <td className="center-cell">{r.age}</td>
                         <td className="center-cell">第 {r.house} 宮</td>
-                        <td>{rSi.glyph} {rSi.name}</td>
-                        <td>{rLord.glyph} {rLord.name}</td>
+                        <td>
+                          {rSi.glyph} {rSi.name}
+                        </td>
+                        <td>
+                          {rLord.glyph} {rLord.name}
+                        </td>
                         <td className="form-hint">
                           {r.planetsInHouse.length > 0
                             ? r.planetsInHouse.map((p) => PLANET_INFO[p].glyph).join(' ')

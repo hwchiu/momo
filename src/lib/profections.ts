@@ -21,18 +21,18 @@ import type { ProfectionResult } from '../types/returns';
  * Outer planets (Uranus, Neptune, Pluto) are not used in classical profections.
  */
 export const TRADITIONAL_RULERS: Record<ZodiacSign, Planet> = {
-  0: Planet.Mars,    // Aries
-  1: Planet.Venus,   // Taurus
+  0: Planet.Mars, // Aries
+  1: Planet.Venus, // Taurus
   2: Planet.Mercury, // Gemini
-  3: Planet.Moon,    // Cancer
-  4: Planet.Sun,     // Leo
+  3: Planet.Moon, // Cancer
+  4: Planet.Sun, // Leo
   5: Planet.Mercury, // Virgo
-  6: Planet.Venus,   // Libra
-  7: Planet.Mars,    // Scorpio
+  6: Planet.Venus, // Libra
+  7: Planet.Mars, // Scorpio
   8: Planet.Jupiter, // Sagittarius
-  9: Planet.Saturn,  // Capricorn
+  9: Planet.Saturn, // Capricorn
   10: Planet.Saturn, // Aquarius
-  11: Planet.Jupiter,// Pisces
+  11: Planet.Jupiter, // Pisces
 };
 
 /**
@@ -45,10 +45,10 @@ export function calculateProfection(chart: NatalChart, age: number): ProfectionR
   if (age < 0) throw new RangeError('Age must be ≥ 0');
 
   // House activates by cycling 1→12 every 12 years
-  const house = (age % 12) + 1;  // 1-indexed
+  const house = (age % 12) + 1; // 1-indexed
 
   // Find the sign on the cusp of the profected house
-  const houseIndex = house - 1;  // 0-indexed
+  const houseIndex = house - 1; // 0-indexed
   const cusp = chart.houses[houseIndex];
   if (!cusp) throw new Error(`House ${house} cusp not found in chart`);
 
@@ -56,9 +56,7 @@ export function calculateProfection(chart: NatalChart, age: number): ProfectionR
   const lord = TRADITIONAL_RULERS[signOnCusp];
 
   // Natal planets located in the profected house
-  const planetsInHouse = chart.planets
-    .filter((p) => p.house === house)
-    .map((p) => p.planet);
+  const planetsInHouse = chart.planets.filter((p) => p.house === house).map((p) => p.planet);
 
   return { age, house, signOnCusp, lord, planetsInHouse };
 }

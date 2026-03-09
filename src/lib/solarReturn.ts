@@ -67,7 +67,7 @@ export function findSolarReturnJDE(natalSunLon: number, startJDE: number): numbe
   for (let i = 0; i < 50; i++) {
     const sunLon = sunLongitudeAtJDE(jde);
     // Shortest signed arc from current Sun to target ([-180, +180])
-    let diff = ((natalSunLon - sunLon) % 360 + 360) % 360;
+    let diff = (((natalSunLon - sunLon) % 360) + 360) % 360;
     if (diff > 180) diff -= 360;
     if (Math.abs(diff) < 0.00001) break;
     jde += diff / SUN_SPEED_DEG_PER_DAY;

@@ -63,24 +63,75 @@ export interface VedicChart {
 // ---- Display constants ----
 
 export const RASHIS_ZH = [
-  '牡羊', '金牛', '雙子', '巨蟹',
-  '獅子', '處女', '天秤', '天蠍',
-  '射手', '摩羯', '水瓶', '雙魚',
+  '牡羊',
+  '金牛',
+  '雙子',
+  '巨蟹',
+  '獅子',
+  '處女',
+  '天秤',
+  '天蠍',
+  '射手',
+  '摩羯',
+  '水瓶',
+  '雙魚',
 ];
 
 export const RASHI_SHORT = ['Ar', 'Ta', 'Ge', 'Ca', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi'];
 
 export const NAKSHATRAS = [
-  'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra',
-  'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni',
-  'Hasta', 'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha',
-  'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha',
-  'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati',
+  'Ashwini',
+  'Bharani',
+  'Krittika',
+  'Rohini',
+  'Mrigashira',
+  'Ardra',
+  'Punarvasu',
+  'Pushya',
+  'Ashlesha',
+  'Magha',
+  'Purva Phalguni',
+  'Uttara Phalguni',
+  'Hasta',
+  'Chitra',
+  'Swati',
+  'Vishakha',
+  'Anuradha',
+  'Jyeshtha',
+  'Mula',
+  'Purva Ashadha',
+  'Uttara Ashadha',
+  'Shravana',
+  'Dhanishta',
+  'Shatabhisha',
+  'Purva Bhadrapada',
+  'Uttara Bhadrapada',
+  'Revati',
 ];
 
 /** Vimshottari order: Ketu → Venus → Sun → Moon → Mars → Rahu → Jupiter → Saturn → Mercury */
-export const DASHA_ORDER = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury'];
-export const DASHA_ORDER_ZH = ['計都', '金星', '太陽', '月亮', '火星', '羅睺', '木星', '土星', '水星'];
+export const DASHA_ORDER = [
+  'Ketu',
+  'Venus',
+  'Sun',
+  'Moon',
+  'Mars',
+  'Rahu',
+  'Jupiter',
+  'Saturn',
+  'Mercury',
+];
+export const DASHA_ORDER_ZH = [
+  '計都',
+  '金星',
+  '太陽',
+  '月亮',
+  '火星',
+  '羅睺',
+  '木星',
+  '土星',
+  '水星',
+];
 export const DASHA_YEARS = [7, 20, 6, 10, 7, 18, 16, 19, 17];
 
 export const PLANET_COLORS: Record<string, string> = {

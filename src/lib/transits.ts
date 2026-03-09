@@ -56,9 +56,9 @@ function getPlanetsAtDate(date: Date, natalChart: NatalChart): PlanetPosition[] 
 // ---- Orb configuration ----
 
 export interface TransitOrbConfig {
-  transit: number;     // orb for transit-to-natal aspects (default 2°)
+  transit: number; // orb for transit-to-natal aspects (default 2°)
   progression: number; // orb for progressed-to-natal aspects (default 2°)
-  solarArc: number;    // orb for solar arc-to-natal aspects (default 1°)
+  solarArc: number; // orb for solar arc-to-natal aspects (default 1°)
 }
 
 export const DEFAULT_TRANSIT_ORB_CONFIG: TransitOrbConfig = {
@@ -143,12 +143,7 @@ function getOrb(lon1: number, lon2: number, angle: number): number {
  * Determine applying/separating by comparing orbs at t vs t+1 day.
  * Requires the transit planet's longitude one day later.
  */
-function isApplying(
-  tLon: number,
-  tLonNext: number,
-  nLon: number,
-  aspectAngle: number,
-): boolean {
+function isApplying(tLon: number, tLonNext: number, nLon: number, aspectAngle: number): boolean {
   const orbNow = getOrb(tLon, nLon, aspectAngle);
   const orbNext = getOrb(tLonNext, nLon, aspectAngle);
   return orbNext < orbNow;
@@ -203,7 +198,11 @@ function toPlanetRows(positions: PlanetPosition[]): TransitPlanetRow[] {
 /**
  * Transits: current planetary positions vs natal.
  */
-export function getTransitChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): TransitChart {
+export function getTransitChart(
+  natalChart: NatalChart,
+  date: Date,
+  orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG,
+): TransitChart {
   const noon = new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 12, 0, 0),
   );
@@ -221,14 +220,18 @@ export function getTransitChart(natalChart: NatalChart, date: Date, orbConfig: T
 /**
  * Secondary Progressions: each elapsed day after birth = 1 year of life.
  */
-export function getProgressedChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): ProgressedChart {
+export function getProgressedChart(
+  natalChart: NatalChart,
+  date: Date,
+  orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG,
+): ProgressedChart {
   const birthJDE = birthDataToJDE(natalChart.birthData);
   const targetJDE = dateToJDE(date);
   const ageInYears = (targetJDE - birthJDE) / 365.25;
 
   // Progressed JDE = birthJDE + age_in_years (days)
   const progressedJDE = birthJDE + ageInYears;
-  const progressedJDENext = progressedJDE + (1 / 365.25); // 1 year later = 1 more day
+  const progressedJDENext = progressedJDE + 1 / 365.25; // 1 year later = 1 more day
 
   const progDate = jdeToDate(progressedJDE);
   const progDateNext = jdeToDate(progressedJDENext);
@@ -248,7 +251,12 @@ export function getProgressedChart(natalChart: NatalChart, date: Date, orbConfig
   const progFullChart = calculateNatalChart(progBD, HouseSystem.WholeSign);
 
   const rows = toPlanetRows(progPlanets);
-  const aspects = findCrossAspects(rows, progPlanetsNext, natalChart.planets, orbConfig.progression);
+  const aspects = findCrossAspects(
+    rows,
+    progPlanetsNext,
+    natalChart.planets,
+    orbConfig.progression,
+  );
 
   return {
     date,
@@ -263,7 +271,11 @@ export function getProgressedChart(natalChart: NatalChart, date: Date, orbConfig
 /**
  * Solar Arc Directions: all natal planets advanced by (SP Sun - natal Sun) degrees.
  */
-export function getSolarArcChart(natalChart: NatalChart, date: Date, orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG): SolarArcChart {
+export function getSolarArcChart(
+  natalChart: NatalChart,
+  date: Date,
+  orbConfig: TransitOrbConfig = DEFAULT_TRANSIT_ORB_CONFIG,
+): SolarArcChart {
   const progChart = getProgressedChart(natalChart, date, orbConfig);
   const natalSun = natalChart.planets.find((p) => p.planet === Planet.Sun)!;
   const progSun = progChart.planets.find((p) => p.planet === Planet.Sun)!;
@@ -294,18 +306,18 @@ export function getSolarArcChart(natalChart: NatalChart, date: Date, orbConfig: 
 // ---- House topics for profection display ----
 
 const HOUSE_TOPICS_ZH: string[] = [
-  '本人・身體・性格',         // 1
-  '財務・資產・價值觀',        // 2
-  '溝通・兄弟・短途旅行',      // 3
-  '家庭・房產・根源',          // 4
-  '創意・子女・戀愛',          // 5
-  '健康・工作・日常',          // 6
-  '婚姻・伴侶・公開關係',      // 7
-  '死亡・遺產・共享資源',      // 8
-  '信仰・高等教育・遠途旅行',  // 9
-  '事業・名聲・公共地位',      // 10
-  '友誼・社群・理想',          // 11
-  '隱藏・療癒・靈性',          // 12
+  '本人・身體・性格', // 1
+  '財務・資產・價值觀', // 2
+  '溝通・兄弟・短途旅行', // 3
+  '家庭・房產・根源', // 4
+  '創意・子女・戀愛', // 5
+  '健康・工作・日常', // 6
+  '婚姻・伴侶・公開關係', // 7
+  '死亡・遺產・共享資源', // 8
+  '信仰・高等教育・遠途旅行', // 9
+  '事業・名聲・公共地位', // 10
+  '友誼・社群・理想', // 11
+  '隱藏・療癒・靈性', // 12
 ];
 
 // Classical sign rulers (7 planets)
@@ -363,7 +375,7 @@ export function getProfection(natalChart: NatalChart, date: Date): ProfectionRes
 export type FirdariaLord = Planet | 'NorthNode' | 'SouthNode';
 
 export interface FirdariaSubPeriod {
-  lord: Planet;     // classical planet lord for this sub-period
+  lord: Planet; // classical planet lord for this sub-period
   startDate: Date;
   endDate: Date;
 }
@@ -378,27 +390,55 @@ export interface FirdariaPeriod {
 
 export interface FirdariaResult {
   isDay: boolean;
-  allPeriods: FirdariaPeriod[];      // all 9 periods in the current 75-year cycle
+  allPeriods: FirdariaPeriod[]; // all 9 periods in the current 75-year cycle
   currentPeriod: FirdariaPeriod;
   currentSubPeriod: FirdariaSubPeriod;
 }
 
 // Day chart: Sun (10y), Venus (8y), Mercury (13y), Moon (9y), Saturn (11y), Jupiter (12y), Mars (7y), ☊ (3y), ☋ (2y)
 const DAY_FIRDARIA: Array<[FirdariaLord, number]> = [
-  [Planet.Sun, 10], [Planet.Venus, 8], [Planet.Mercury, 13], [Planet.Moon, 9],
-  [Planet.Saturn, 11], [Planet.Jupiter, 12], [Planet.Mars, 7],
-  ['NorthNode', 3], ['SouthNode', 2],
+  [Planet.Sun, 10],
+  [Planet.Venus, 8],
+  [Planet.Mercury, 13],
+  [Planet.Moon, 9],
+  [Planet.Saturn, 11],
+  [Planet.Jupiter, 12],
+  [Planet.Mars, 7],
+  ['NorthNode', 3],
+  ['SouthNode', 2],
 ];
 
 // Night chart: Moon (9y), Saturn (11y), Jupiter (12y), Mars (7y), Sun (10y), Venus (8y), Mercury (13y), ☊ (3y), ☋ (2y)
 const NIGHT_FIRDARIA: Array<[FirdariaLord, number]> = [
-  [Planet.Moon, 9], [Planet.Saturn, 11], [Planet.Jupiter, 12], [Planet.Mars, 7],
-  [Planet.Sun, 10], [Planet.Venus, 8], [Planet.Mercury, 13],
-  ['NorthNode', 3], ['SouthNode', 2],
+  [Planet.Moon, 9],
+  [Planet.Saturn, 11],
+  [Planet.Jupiter, 12],
+  [Planet.Mars, 7],
+  [Planet.Sun, 10],
+  [Planet.Venus, 8],
+  [Planet.Mercury, 13],
+  ['NorthNode', 3],
+  ['SouthNode', 2],
 ];
 
-const DAY_SEQ7: Planet[] = [Planet.Sun, Planet.Venus, Planet.Mercury, Planet.Moon, Planet.Saturn, Planet.Jupiter, Planet.Mars];
-const NIGHT_SEQ7: Planet[] = [Planet.Moon, Planet.Saturn, Planet.Jupiter, Planet.Mars, Planet.Sun, Planet.Venus, Planet.Mercury];
+const DAY_SEQ7: Planet[] = [
+  Planet.Sun,
+  Planet.Venus,
+  Planet.Mercury,
+  Planet.Moon,
+  Planet.Saturn,
+  Planet.Jupiter,
+  Planet.Mars,
+];
+const NIGHT_SEQ7: Planet[] = [
+  Planet.Moon,
+  Planet.Saturn,
+  Planet.Jupiter,
+  Planet.Mars,
+  Planet.Sun,
+  Planet.Venus,
+  Planet.Mercury,
+];
 
 /** Sub-lords for a main period: 7 classical planets starting from the main lord */
 function getFirdariaSubLords(mainLord: FirdariaLord, isDay: boolean): Planet[] {
@@ -416,10 +456,15 @@ function addYearsMs(date: Date, years: number): Date {
  * Day/night sect determines sequence; 75-year cycle repeats through life.
  */
 export function getFirdaria(natalChart: NatalChart, date: Date): FirdariaResult {
-  const birthDate = new Date(Date.UTC(
-    natalChart.birthData.year, natalChart.birthData.month - 1, natalChart.birthData.day,
-    natalChart.birthData.hour, natalChart.birthData.minute,
-  ));
+  const birthDate = new Date(
+    Date.UTC(
+      natalChart.birthData.year,
+      natalChart.birthData.month - 1,
+      natalChart.birthData.day,
+      natalChart.birthData.hour,
+      natalChart.birthData.minute,
+    ),
+  );
 
   // Day chart: Sun in houses 7–12 (above horizon)
   const sunPos = natalChart.planets.find((p) => p.planet === Planet.Sun);
@@ -451,11 +496,12 @@ export function getFirdaria(natalChart: NatalChart, date: Date): FirdariaResult 
     cursor = periodEnd;
   }
 
-  const currentPeriod = allPeriods.find((p) => date >= p.startDate && date < p.endDate)
-    ?? allPeriods[allPeriods.length - 1];
+  const currentPeriod =
+    allPeriods.find((p) => date >= p.startDate && date < p.endDate) ??
+    allPeriods[allPeriods.length - 1];
   const currentSubPeriod =
-    currentPeriod.subPeriods.find((sp) => date >= sp.startDate && date < sp.endDate)
-    ?? currentPeriod.subPeriods[currentPeriod.subPeriods.length - 1];
+    currentPeriod.subPeriods.find((sp) => date >= sp.startDate && date < sp.endDate) ??
+    currentPeriod.subPeriods[currentPeriod.subPeriods.length - 1];
 
   return { isDay, allPeriods, currentPeriod, currentSubPeriod };
 }

@@ -33,11 +33,11 @@ export interface CompositeHouse {
 
 /** Per-category compatibility scores and descriptions */
 export interface CompatibilityScore {
-  overall: number;        // 0–100
-  emotional: number;      // 情感連結
-  communication: number;  // 溝通默契
-  attraction: number;     // 吸引力
-  stability: number;      // 長期穩定性
+  overall: number; // 0–100
+  emotional: number; // 情感連結
+  communication: number; // 溝通默契
+  attraction: number; // 吸引力
+  stability: number; // 長期穩定性
   overallLabel: string;
   overallDesc: string;
   emotionalDesc: string;

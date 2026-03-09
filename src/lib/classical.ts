@@ -222,18 +222,18 @@ const CHALDEAN_ORDER: Planet[] = [
 // Each sign has 3 decans (0-9°, 10-19°, 20-29°)
 // The starting planet for the first decan of each sign (Chaldean order, Aries starts at Mars):
 const DECAN_START_INDEX: Record<ZodiacSign, number> = {
-  [ZodiacSign.Aries]: 0,       // Mars
-  [ZodiacSign.Taurus]: 3,      // Mercury
-  [ZodiacSign.Gemini]: 6,      // Jupiter
-  [ZodiacSign.Cancer]: 2,      // Venus
-  [ZodiacSign.Leo]: 5,         // Saturn
-  [ZodiacSign.Virgo]: 1,       // Sun
-  [ZodiacSign.Libra]: 4,       // Moon
-  [ZodiacSign.Scorpio]: 0,     // Mars
+  [ZodiacSign.Aries]: 0, // Mars
+  [ZodiacSign.Taurus]: 3, // Mercury
+  [ZodiacSign.Gemini]: 6, // Jupiter
+  [ZodiacSign.Cancer]: 2, // Venus
+  [ZodiacSign.Leo]: 5, // Saturn
+  [ZodiacSign.Virgo]: 1, // Sun
+  [ZodiacSign.Libra]: 4, // Moon
+  [ZodiacSign.Scorpio]: 0, // Mars
   [ZodiacSign.Sagittarius]: 3, // Mercury
-  [ZodiacSign.Capricorn]: 6,   // Jupiter
-  [ZodiacSign.Aquarius]: 2,    // Venus
-  [ZodiacSign.Pisces]: 5,      // Saturn
+  [ZodiacSign.Capricorn]: 6, // Jupiter
+  [ZodiacSign.Aquarius]: 2, // Venus
+  [ZodiacSign.Pisces]: 5, // Saturn
 };
 
 /** Get the decan/face (十度) ruler for a given sign and degree (0-based within sign) */
@@ -248,13 +248,13 @@ export function getDecanRuler(sign: ZodiacSign, degree: number): Planet {
 // -5 detriment, -4 fall
 
 export interface DignityScore {
-  domicile: number;    // +5 or 0
-  exaltation: number;  // +4 or 0
-  triplicity: number;  // +3 or 0
-  term: number;        // +2 or 0
-  face: number;        // +1 or 0
-  detriment: number;   // -5 or 0
-  fall: number;        // -4 or 0
+  domicile: number; // +5 or 0
+  exaltation: number; // +4 or 0
+  triplicity: number; // +3 or 0
+  term: number; // +2 or 0
+  face: number; // +1 or 0
+  detriment: number; // -5 or 0
+  fall: number; // -4 or 0
   total: number;
 }
 
@@ -384,7 +384,11 @@ export function getCombustState(planet: Planet, planetLon: number, sunLon: numbe
  *
  * Returns '東出' or '西沒'.
  */
-export function getOrientalOccidental(planet: Planet, planetLon: number, sunLon: number): '東出' | '西沒' {
+export function getOrientalOccidental(
+  planet: Planet,
+  planetLon: number,
+  sunLon: number,
+): '東出' | '西沒' {
   // Signed difference: how far planet is ahead of Sun (positive = planet is ahead)
   const diff = (planetLon - sunLon + 360) % 360;
 
@@ -401,21 +405,63 @@ export function getOrientalOccidental(planet: Planet, planetLon: number, sunLon:
 // ---- Affiliated states (附屬狀態) aggregator ----
 
 export interface AffiliatedStates {
-  sect: boolean;        // 得時
+  sect: boolean; // 得時
   oriental: '東出' | '西沒';
-  retrograde: boolean;  // 逆行
+  retrograde: boolean; // 逆行
   combust: CombustState;
+  besieged: boolean; // 被夾擊
+}
+
+/**
+ * A planet is "besieged" (被夾擊) when it is enclosed between Mars and Saturn
+ * on both sides within 8 degrees, with no benefic (Jupiter or Venus) between them.
+ */
+export function isBesieged(
+  planet: Planet,
+  planetLon: number,
+  allPlanets: { planet: Planet; longitude: number }[],
+): boolean {
+  // Find Mars and Saturn positions
+  const marsEntry = allPlanets.find((p) => p.planet === Planet.Mars);
+  const saturnEntry = allPlanets.find((p) => p.planet === Planet.Saturn);
+  if (!marsEntry || !saturnEntry) return false;
+
+  // Don't apply to Mars or Saturn themselves
+  if (planet === Planet.Mars || planet === Planet.Saturn) return false;
+
+  const marsLon = marsEntry.longitude;
+  const saturnLon = saturnEntry.longitude;
+
+  // Check if planet is within 8° of both Mars AND Saturn
+  const distToMars = angularDistance(planetLon, marsLon);
+  const distToSaturn = angularDistance(planetLon, saturnLon);
+  if (distToMars > 8 || distToSaturn > 8) return false;
+
+  // Check if any benefic (Jupiter or Venus) is also within this range (acts as shield)
+  const benefics = [Planet.Jupiter, Planet.Venus];
+  for (const beneficPlanet of benefics) {
+    const beneficEntry = allPlanets.find((p) => p.planet === beneficPlanet);
+    if (!beneficEntry) continue;
+    const distBeneficMars = angularDistance(beneficEntry.longitude, marsLon);
+    const distBeneficSaturn = angularDistance(beneficEntry.longitude, saturnLon);
+    if (distBeneficMars < distToMars || distBeneficSaturn < distToSaturn) return false;
+  }
+
+  return true;
 }
 
 export function getAffiliatedStates(
   pos: PlanetPosition,
   sunPos: PlanetPosition,
+  allPlanets?: PlanetPosition[],
 ): AffiliatedStates {
+  const besieged = allPlanets ? isBesieged(pos.planet, pos.longitude, allPlanets) : false;
   return {
     sect: isSectInFavor(pos.planet, sunPos.house),
     oriental: getOrientalOccidental(pos.planet, pos.longitude, sunPos.longitude),
     retrograde: pos.retrograde,
     combust: getCombustState(pos.planet, pos.longitude, sunPos.longitude),
+    besieged,
   };
 }
 

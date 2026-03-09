@@ -45,7 +45,10 @@ function MahaDashaRow({ maha, defaultOpen }: { maha: MahaDasha; defaultOpen: boo
           >
             <td></td>
             {/* planet color is dynamic — must stay inline */}
-            <td className="vedic-antardasha-cell" style={{ color: PLANET_COLORS[a.lord] ?? '#555' }}>
+            <td
+              className="vedic-antardasha-cell"
+              style={{ color: PLANET_COLORS[a.lord] ?? '#555' }}
+            >
               └ {a.lord}
             </td>
             <td className="vedic-antardasha-cell">{a.lordZh}</td>
@@ -80,11 +83,12 @@ export function VedicDasha({ chart }: VedicDashaProps) {
           </span>
           {currentAntar && (
             <>
-              {' '}/ 子運{' '}
+              {' '}
+              / 子運{' '}
               <span style={{ color: PLANET_COLORS[currentAntar.lord], fontWeight: 'bold' }}>
                 {currentAntar.lord}（{currentAntar.lordZh}）
-              </span>
-              {' '}至 {fmtDate(currentAntar.endDate)}
+              </span>{' '}
+              至 {fmtDate(currentAntar.endDate)}
             </>
           )}
         </div>
@@ -93,7 +97,7 @@ export function VedicDasha({ chart }: VedicDashaProps) {
       {moon && (
         <div className="vedic-moon-info">
           月亮星宿：{NAKSHATRAS[moon.nakshatra]}（第 {moon.nakshatra + 1} 宿），Pada {moon.pada}，
-          Rashi {Math.floor(moon.siderealLon)}° {(moon.siderealLon % 1 * 60).toFixed(0)}'
+          Rashi {Math.floor(moon.siderealLon)}° {((moon.siderealLon % 1) * 60).toFixed(0)}'
         </div>
       )}
 
@@ -112,7 +116,11 @@ export function VedicDasha({ chart }: VedicDashaProps) {
           </thead>
           <tbody>
             {dashas.map((maha) => (
-              <MahaDashaRow key={maha.lord + maha.startDate.getFullYear()} maha={maha} defaultOpen={maha.isCurrent} />
+              <MahaDashaRow
+                key={maha.lord + maha.startDate.getFullYear()}
+                maha={maha}
+                defaultOpen={maha.isCurrent}
+              />
             ))}
           </tbody>
         </table>

@@ -33,7 +33,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="error-banner" role="alert" style={{ margin: '24px auto', maxWidth: '600px' }}>
+        <div
+          className="error-banner"
+          role="alert"
+          style={{ margin: '24px auto', maxWidth: '600px' }}
+        >
           <strong>頁面發生錯誤</strong>
           <p style={{ marginTop: '8px', fontSize: '13px' }}>
             {this.state.error?.message ?? '未知錯誤'}

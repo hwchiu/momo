@@ -6,37 +6,37 @@
 /* ---- Design tokens ---- */
 :root {
   /* Brand */
-  --clr-primary:       #1a5ca8;
-  --clr-primary-dark:  #1a4a80;
-  --clr-primary-btn:   #2c5f9e;
+  --clr-primary: #1a5ca8;
+  --clr-primary-dark: #1a4a80;
+  --clr-primary-btn: #2c5f9e;
   --clr-primary-light: #e8f0fb;
 
   /* Semantic */
-  --clr-success:      #1a7a1a;
-  --clr-success-bg:   #e8f4e8;
-  --clr-danger:       #c0392b;
-  --clr-danger-bg:    #fff0f0;
-  --clr-danger-dark:  #9b1c1c;
-  --clr-warning:      #c05000;
-  --clr-warning-bg:   #fff8e1;
+  --clr-success: #1a7a1a;
+  --clr-success-bg: #e8f4e8;
+  --clr-danger: #c0392b;
+  --clr-danger-bg: #fff0f0;
+  --clr-danger-dark: #9b1c1c;
+  --clr-warning: #c05000;
+  --clr-warning-bg: #fff8e1;
   --clr-warning-border: #f5c842;
 
   /* Text — all WCAG AA compliant on white */
-  --clr-text-1:     #111;
-  --clr-text-2:     #222;
-  --clr-text-3:     #3d3d3d;
-  --clr-text-muted: #5a5a5a;  /* 7.0:1 on white — was #888 (3.5:1, failed) */
+  --clr-text-1: #111;
+  --clr-text-2: #222;
+  --clr-text-3: #3d3d3d;
+  --clr-text-muted: #5a5a5a; /* 7.0:1 on white — was #888 (3.5:1, failed) */
 
   /* Surface */
-  --clr-surface:    #fff;
-  --clr-surface-1:  #f8f8f6;
-  --clr-surface-2:  #f0f0ee;
-  --clr-surface-3:  #e8e8e6;
+  --clr-surface: #fff;
+  --clr-surface-1: #f8f8f6;
+  --clr-surface-2: #f0f0ee;
+  --clr-surface-3: #e8e8e6;
 
   /* Border */
   --clr-border-strong: #888;
-  --clr-border:        #bbb;
-  --clr-border-light:  #ddd;
+  --clr-border: #bbb;
+  --clr-border-light: #ddd;
   --clr-border-subtle: #eee;
 
   /* Spacing */
@@ -53,39 +53,66 @@
   --radius-lg: 10px;
 
   /* Focus ring */
-  --focus-ring: 0 0 0 3px rgba(26, 92, 168, 0.30);
+  --focus-ring: 0 0 0 3px rgba(26, 92, 168, 0.3);
 
   /* Celestial / delight tokens */
-  --clr-cosmos:    #0c1a32;
-  --clr-cosmos-2:  #152038;
-  --clr-star:      #c8a96e;  /* golden amber — stellar accent */
-  --clr-star-dim:  rgba(200, 169, 110, 0.35);
+  --clr-cosmos: #0c1a32;
+  --clr-cosmos-2: #152038;
+  --clr-star: #c8a96e; /* golden amber — stellar accent */
+  --clr-star-dim: rgba(200, 169, 110, 0.35);
   --clr-star-text: #d4b980;
   --clr-cosmos-text: #ddeeff;
 }
 
 /* ---- Keyframes ---- */
 @keyframes pulse-star {
-  0%, 100% { opacity: 1;   transform: scale(1)    rotate(0deg); }
-  50%       { opacity: 0.3; transform: scale(0.7)  rotate(180deg); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.7) rotate(180deg);
+  }
 }
 
 @keyframes celestial-appear {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes star-drift {
-  0%   { background-position: 0 0, 30px 30px; }
-  100% { background-position: 60px 30px, 90px 60px; }
+  0% {
+    background-position:
+      0 0,
+      30px 30px;
+  }
+  100% {
+    background-position:
+      60px 30px,
+      90px 60px;
+  }
 }
 
 /* Respect reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .loading-star        { animation: none !important; }
+  .loading-star {
+    animation: none !important;
+  }
   .chart-section,
-  .bazi-result-section { animation: none !important; }
-  .submit-btn          { transition: background 0.15s !important; }
+  .bazi-result-section {
+    animation: none !important;
+  }
+  .submit-btn {
+    transition: background 0.15s !important;
+  }
 }
 
 /* ---- Base ---- */
@@ -118,7 +145,9 @@
   color: var(--clr-primary);
   text-decoration: none;
 }
-.nav-link:hover { text-decoration: underline; }
+.nav-link:hover {
+  text-decoration: underline;
+}
 
 .active-lang {
   font-weight: bold;
@@ -148,10 +177,14 @@
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px),
-    radial-gradient(circle, rgba(200,169,110,0.12) 1px, transparent 1px);
-  background-size: 60px 60px, 40px 40px;
-  background-position: 0 0, 20px 20px;
+    radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+    radial-gradient(circle, rgba(200, 169, 110, 0.12) 1px, transparent 1px);
+  background-size:
+    60px 60px,
+    40px 40px;
+  background-position:
+    0 0,
+    20px 20px;
   animation: star-drift 80s linear infinite;
   pointer-events: none;
 }
@@ -197,7 +230,9 @@
   scrollbar-width: none;
 }
 
-.tab-nav::-webkit-scrollbar { display: none; }
+.tab-nav::-webkit-scrollbar {
+  display: none;
+}
 
 /* [H-3] Raised to 44px */
 .tab-btn {
@@ -214,7 +249,10 @@
   min-height: 44px;
   touch-action: manipulation;
   white-space: nowrap;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .tab-btn.active {
@@ -233,7 +271,9 @@
 }
 
 /* ---- Main ---- */
-.site-main { padding-bottom: 28px; }
+.site-main {
+  padding-bottom: 28px;
+}
 
 /* ---- Section headings — improved hierarchy ---- */
 .section-heading {
@@ -267,8 +307,12 @@
 }
 
 /* ---- Quick chart form ---- */
-.quick-chart-section { margin-bottom: 16px; }
-.quick-chart-form { padding: 10px 0; }
+.quick-chart-section {
+  margin-bottom: 16px;
+}
+.quick-chart-form {
+  padding: 10px 0;
+}
 
 /* CSS Grid form layout */
 .form-grid {
@@ -365,8 +409,14 @@
   box-shadow: var(--focus-ring);
 }
 
-.dms-cell { flex-wrap: wrap; gap: 4px; }
-.dms-sep { font-weight: bold; margin: 0 1px; }
+.dms-cell {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.dms-sep {
+  font-weight: bold;
+  margin: 0 1px;
+}
 
 .submit-btn {
   padding: 10px 28px;
@@ -381,7 +431,10 @@
   min-height: 44px;
   touch-action: manipulation;
   border-radius: var(--radius-sm);
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    transform 0.12s,
+    box-shadow 0.15s;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -397,7 +450,10 @@
   outline: none;
   box-shadow: var(--focus-ring);
 }
-.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 /* Geo search button */
 .geo-search-btn {
@@ -416,12 +472,17 @@
   transition: background 0.15s;
 }
 
-.geo-search-btn:hover:not(:disabled) { background: var(--clr-primary-dark); }
+.geo-search-btn:hover:not(:disabled) {
+  background: var(--clr-primary-dark);
+}
 .geo-search-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
-.geo-search-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.geo-search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .geo-error {
   width: 100%;
@@ -451,18 +512,30 @@
 }
 
 /* Synastry aspect table: person A (blue) / B (red) column colors */
-.person-a-cell { color: var(--clr-primary); }
-.person-b-cell { color: var(--clr-danger); }
+.person-a-cell {
+  color: var(--clr-primary);
+}
+.person-b-cell {
+  color: var(--clr-danger);
+}
 
 /* Column divider inside data tables */
-.col-divider { border-right: 2px solid var(--clr-border) !important; }
-.col-divider-light { border-right: 2px solid var(--clr-border-light) !important; }
+.col-divider {
+  border-right: 2px solid var(--clr-border) !important;
+}
+.col-divider-light {
+  border-right: 2px solid var(--clr-border-light) !important;
+}
 
 /* Sub-header row (smaller font) */
-.table-sub-header { font-size: 11px; }
+.table-sub-header {
+  font-size: 11px;
+}
 
 /* Degree display inside cell */
-.cell-deg { font-size: 11px; }
+.cell-deg {
+  font-size: 11px;
+}
 
 /* Antardasha (sub-dasha) rows */
 .vedic-antardasha-cell {
@@ -478,7 +551,9 @@
 }
 
 /* Clickable table row */
-.row-clickable { cursor: pointer; }
+.row-clickable {
+  cursor: pointer;
+}
 
 /* ---- Chart section ---- */
 .chart-section {
@@ -541,10 +616,16 @@
   white-space: nowrap;
 }
 
-.row-even { background: var(--clr-surface); }
-.row-odd  { background: var(--clr-surface-1); }
+.row-even {
+  background: var(--clr-surface);
+}
+.row-odd {
+  background: var(--clr-surface-1);
+}
 
-.data-table tr:hover td { background: var(--clr-primary-light); }
+.data-table tr:hover td {
+  background: var(--clr-primary-light);
+}
 
 /* ---- Planet / sign glyphs ---- */
 .planet-glyph,
@@ -553,34 +634,62 @@
   margin-right: 2px;
 }
 
-.planet-cell { white-space: nowrap; }
+.planet-cell {
+  white-space: nowrap;
+}
 
 .longitude-cell {
   white-space: nowrap;
   font-family: monospace, 'Noto Sans TC', sans-serif;
 }
 
-.center-cell { text-align: center; }
+.center-cell {
+  text-align: center;
+}
 
 /* ---- Dignity states ---- */
-.dignity-cell { text-align: center; font-weight: bold; }
-.dignity-廟 { color: var(--clr-success); }
-.dignity-旺 { color: var(--clr-primary); }
-.dignity-落 { color: var(--clr-warning); }
-.dignity-陷 { color: var(--clr-danger); }
+.dignity-cell {
+  text-align: center;
+  font-weight: bold;
+}
+.dignity-廟 {
+  color: var(--clr-success);
+}
+.dignity-旺 {
+  color: var(--clr-primary);
+}
+.dignity-落 {
+  color: var(--clr-warning);
+}
+.dignity-陷 {
+  color: var(--clr-danger);
+}
 
 .affiliated-cell {
   font-size: 12px;
   color: var(--clr-text-muted);
 }
 
-.retrograde-symbol { color: #900; font-weight: bold; }
+.retrograde-symbol {
+  color: #900;
+  font-weight: bold;
+}
 
 /* ---- Dignity scores ---- */
-.score-cell { text-align: center; font-weight: bold; }
-.score-positive { color: var(--clr-success); }
-.score-negative { color: var(--clr-danger); }
-.score-total { font-size: 1.05em; border-left: 2px solid var(--clr-border-strong); }
+.score-cell {
+  text-align: center;
+  font-weight: bold;
+}
+.score-positive {
+  color: var(--clr-success);
+}
+.score-negative {
+  color: var(--clr-danger);
+}
+.score-total {
+  font-size: 1.05em;
+  border-left: 2px solid var(--clr-border-strong);
+}
 
 /* ---- Dignity tables grid ---- */
 .dignity-tables-grid {
@@ -590,7 +699,9 @@
   margin-bottom: var(--sp-4);
 }
 
-.dignity-table-block { min-width: 0; }
+.dignity-table-block {
+  min-width: 0;
+}
 
 .dignity-table-title {
   font-size: 0.88rem;
@@ -604,16 +715,29 @@
 
 /* ---- Terms table ---- */
 .terms-table td,
-.terms-table th { font-size: 12px; }
+.terms-table th {
+  font-size: 12px;
+}
 
-.sign-label-cell { white-space: nowrap; font-weight: bold; }
-.term-cell { font-size: 12px; white-space: nowrap; }
+.sign-label-cell {
+  white-space: nowrap;
+  font-weight: bold;
+}
+.term-cell {
+  font-size: 12px;
+  white-space: nowrap;
+}
 
 /* ---- Aspects ---- */
-.aspect-cell { text-align: center; font-weight: bold; }
+.aspect-cell {
+  text-align: center;
+  font-weight: bold;
+}
 
 /* ---- Chart summary ---- */
-.chart-summary { margin-bottom: 14px; }
+.chart-summary {
+  margin-bottom: 14px;
+}
 
 .summary-table {
   border-collapse: collapse;
@@ -720,7 +844,9 @@
   align-items: center;
 }
 
-.geo-results li:hover { background: var(--clr-primary-light); }
+.geo-results li:hover {
+  background: var(--clr-primary-light);
+}
 .geo-results li:focus-visible {
   outline: none;
   background: var(--clr-primary-light);
@@ -778,7 +904,9 @@
   min-height: 30px;
 }
 
-.transit-quick-btn:hover { background: var(--clr-surface-3); }
+.transit-quick-btn:hover {
+  background: var(--clr-surface-3);
+}
 .transit-quick-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
@@ -792,7 +920,9 @@
   scrollbar-width: none;
   white-space: nowrap;
 }
-.transit-mode-nav::-webkit-scrollbar { display: none; }
+.transit-mode-nav::-webkit-scrollbar {
+  display: none;
+}
 
 .transit-mode-btn {
   padding: 5px 16px;
@@ -815,13 +945,17 @@
   color: var(--clr-text-1);
 }
 
-.transit-mode-btn:hover:not(.active) { background: var(--clr-surface-3); }
+.transit-mode-btn:hover:not(.active) {
+  background: var(--clr-surface-3);
+}
 .transit-mode-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-.transit-content { padding-top: 4px; }
+.transit-content {
+  padding-top: 4px;
+}
 
 .transit-info-bar {
   background: var(--clr-surface-1);
@@ -843,7 +977,9 @@
   border-radius: var(--radius-sm);
 }
 
-.transit-tight-item { margin-right: 4px; }
+.transit-tight-item {
+  margin-right: 4px;
+}
 
 .transit-two-col {
   display: grid;
@@ -852,8 +988,12 @@
   align-items: start;
 }
 
-.transit-pos-section { min-width: 0; }
-.transit-aspects-col { min-width: 0; }
+.transit-pos-section {
+  min-width: 0;
+}
+.transit-aspects-col {
+  min-width: 0;
+}
 
 .transit-pos-label {
   font-size: 12px;
@@ -871,11 +1011,23 @@
   padding: 3px 7px;
 }
 
-.transit-exact-row td { background: var(--clr-warning-bg) !important; }
+.transit-exact-row td {
+  background: var(--clr-warning-bg) !important;
+}
 
-.transit-tight-orb { color: var(--clr-warning); font-weight: bold; }
-.transit-applying   { color: var(--clr-warning); font-size: 11px; font-weight: bold; }
-.transit-separating { color: #4169e1; font-size: 11px; }
+.transit-tight-orb {
+  color: var(--clr-warning);
+  font-weight: bold;
+}
+.transit-applying {
+  color: var(--clr-warning);
+  font-size: 11px;
+  font-weight: bold;
+}
+.transit-separating {
+  color: #4169e1;
+  font-size: 11px;
+}
 
 /* ---- Profection card ---- */
 .profection-card {
@@ -901,7 +1053,9 @@
   flex-shrink: 0;
 }
 
-.profection-value { color: var(--clr-text-2); }
+.profection-value {
+  color: var(--clr-text-2);
+}
 
 .profection-card-note {
   font-size: 12px;
@@ -912,11 +1066,18 @@
   line-height: 1.6;
 }
 
-.profection-current-row { background: var(--clr-warning-bg) !important; font-weight: bold; }
-.profection-current-row td { background: var(--clr-warning-bg) !important; }
+.profection-current-row {
+  background: var(--clr-warning-bg) !important;
+  font-weight: bold;
+}
+.profection-current-row td {
+  background: var(--clr-warning-bg) !important;
+}
 
 /* ---- Bazi result ---- */
-.bazi-result { margin-top: 8px; }
+.bazi-result {
+  margin-top: 8px;
+}
 
 .bazi-today-banner {
   background: #f5f0e8;
@@ -937,8 +1098,15 @@
   padding: 9px 14px;
 }
 
-.bazi-glyph-cell { vertical-align: middle; }
-.bazi-large-glyph { font-size: 2rem; font-weight: bold; display: block; line-height: 1.2; }
+.bazi-glyph-cell {
+  vertical-align: middle;
+}
+.bazi-large-glyph {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+  line-height: 1.2;
+}
 
 .bazi-yinyang {
   font-size: 12px;
@@ -952,7 +1120,9 @@
   color: var(--clr-text-muted);
 }
 
-.bazi-elements-stats { padding: 8px 4px; }
+.bazi-elements-stats {
+  padding: 8px 4px;
+}
 
 .bazi-element-row {
   display: flex;
@@ -960,7 +1130,12 @@
   margin-bottom: 6px;
 }
 
-.bazi-element-name { font-size: 1rem; font-weight: bold; width: 24px; flex-shrink: 0; }
+.bazi-element-name {
+  font-size: 1rem;
+  font-weight: bold;
+  width: 24px;
+  flex-shrink: 0;
+}
 
 .bazi-element-bar-wrap {
   flex: 0 0 130px;
@@ -995,8 +1170,15 @@
 }
 
 /* [H-4] Raised from 11px */
-.bazi-hidden-stem { font-size: 12px; opacity: 0.75; }
-.bazi-hidden-main { font-size: 13px; font-weight: bold; opacity: 1; }
+.bazi-hidden-stem {
+  font-size: 12px;
+  opacity: 0.75;
+}
+.bazi-hidden-main {
+  font-size: 13px;
+  font-weight: bold;
+  opacity: 1;
+}
 
 .bazi-ten-god {
   display: inline-block;
@@ -1013,7 +1195,11 @@
   font-weight: bold;
 }
 
-.bazi-no-interaction { color: var(--clr-text-muted); font-size: 13px; padding: 6px 0; }
+.bazi-no-interaction {
+  color: var(--clr-text-muted);
+  font-size: 13px;
+  padding: 6px 0;
+}
 
 .bazi-interactions {
   display: flex;
@@ -1040,9 +1226,18 @@
   border-left: 4px solid;
 }
 
-.day-master-旺  { background: #fff0f0; border-color: var(--clr-danger); }
-.day-master-弱  { background: #eef4ff; border-color: var(--clr-primary); }
-.day-master-中和 { background: #f0fff4; border-color: var(--clr-success); }
+.day-master-旺 {
+  background: #fff0f0;
+  border-color: var(--clr-danger);
+}
+.day-master-弱 {
+  background: #eef4ff;
+  border-color: var(--clr-primary);
+}
+.day-master-中和 {
+  background: #f0fff4;
+  border-color: var(--clr-success);
+}
 
 .day-master-strength {
   display: flex;
@@ -1052,12 +1247,33 @@
   margin-bottom: 6px;
 }
 
-.day-master-label  { font-size: 12px; color: var(--clr-text-muted); }
-.day-master-stem   { font-size: 15px; font-weight: bold; }
-.day-master-tag    { font-size: 14px; font-weight: bold; padding: 1px 8px; border-radius: var(--radius-sm); background: rgba(0,0,0,0.07); }
-.day-master-score  { font-size: 12px; color: var(--clr-text-muted); }
-.day-master-desc   { font-size: 13px; color: var(--clr-text-3); margin: 4px 0; }
-.day-master-gods   { font-size: 13px; }
+.day-master-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.day-master-stem {
+  font-size: 15px;
+  font-weight: bold;
+}
+.day-master-tag {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.07);
+}
+.day-master-score {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.day-master-desc {
+  font-size: 13px;
+  color: var(--clr-text-3);
+  margin: 4px 0;
+}
+.day-master-gods {
+  font-size: 13px;
+}
 
 /* ---- 本命卦 / 八宅 ---- */
 .kua-header {
@@ -1068,10 +1284,25 @@
   flex-wrap: wrap;
 }
 
-.kua-number { display: flex; align-items: baseline; gap: 6px; }
-.kua-num-label { font-size: 12px; color: var(--clr-text-muted); }
-.kua-num-value { font-size: 2.5rem; font-weight: bold; color: var(--clr-primary); line-height: 1; }
-.kua-trigram   { font-size: 1.2rem; color: var(--clr-text-3); }
+.kua-number {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.kua-num-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.kua-num-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--clr-primary);
+  line-height: 1;
+}
+.kua-trigram {
+  font-size: 1.2rem;
+  color: var(--clr-text-3);
+}
 
 .kua-group-badge {
   display: inline-block;
@@ -1080,18 +1311,50 @@
   font-size: 13px;
   font-weight: bold;
 }
-.kua-group-badge[data-group='東四命'] { background: var(--clr-success-bg); color: var(--clr-success); }
-.kua-group-badge[data-group='西四命'] { background: #fff3cd; color: #856404; }
+.kua-group-badge[data-group='東四命'] {
+  background: var(--clr-success-bg);
+  color: var(--clr-success);
+}
+.kua-group-badge[data-group='西四命'] {
+  background: #fff3cd;
+  color: #856404;
+}
 
-.kua-table th, .kua-table td { padding: 7px 12px; }
-.kua-dir-type   { font-weight: bold; font-size: 13px; }
-.kua-auspicious { color: var(--clr-success); }
-.kua-inauspicious { color: var(--clr-danger); }
-.kua-direction  { font-size: 14px; font-weight: bold; }
-.kua-icon-good  { color: var(--clr-success); font-size: 14px; }
-.kua-icon-bad   { color: var(--clr-danger); font-size: 14px; }
-.kua-dir-desc   { font-size: 12px; color: var(--clr-text-muted); }
-.kua-note       { font-size: 12px; color: var(--clr-text-muted); margin-top: 8px; }
+.kua-table th,
+.kua-table td {
+  padding: 7px 12px;
+}
+.kua-dir-type {
+  font-weight: bold;
+  font-size: 13px;
+}
+.kua-auspicious {
+  color: var(--clr-success);
+}
+.kua-inauspicious {
+  color: var(--clr-danger);
+}
+.kua-direction {
+  font-size: 14px;
+  font-weight: bold;
+}
+.kua-icon-good {
+  color: var(--clr-success);
+  font-size: 14px;
+}
+.kua-icon-bad {
+  color: var(--clr-danger);
+  font-size: 14px;
+}
+.kua-dir-desc {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.kua-note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-top: 8px;
+}
 
 /* ---- 流年飛星 ---- */
 .flying-stars-controls {
@@ -1102,8 +1365,13 @@
   flex-wrap: wrap;
 }
 
-.flying-star-year-input { width: 90px; }
-.flying-star-center-info { font-size: 14px; color: var(--clr-text-3); }
+.flying-star-year-input {
+  width: 90px;
+}
+.flying-star-center-info {
+  font-size: 14px;
+  color: var(--clr-text-3);
+}
 
 .flying-star-warning {
   background: #fff3cd;
@@ -1123,7 +1391,10 @@
   margin-bottom: 14px;
 }
 
-.flying-star-row { display: flex; gap: 4px; }
+.flying-star-row {
+  display: flex;
+  gap: 4px;
+}
 
 .flying-star-cell {
   flex: 1;
@@ -1140,10 +1411,21 @@
 }
 
 /* [H-4] Raised from 10px */
-.fs-direction  { font-size: 12px; }
-.fs-star-number { font-size: 1.8rem; font-weight: bold; line-height: 1; }
-.fs-star-name  { font-size: 12px; }
-.fs-quality    { font-size: 11px; font-weight: bold; }
+.fs-direction {
+  font-size: 12px;
+}
+.fs-star-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  line-height: 1;
+}
+.fs-star-name {
+  font-size: 12px;
+}
+.fs-quality {
+  font-size: 11px;
+  font-weight: bold;
+}
 
 .flying-star-legend {
   display: flex;
@@ -1153,7 +1435,11 @@
   font-size: 13px;
 }
 
-.fs-legend-item { display: flex; align-items: center; gap: 5px; }
+.fs-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .fs-legend-dot {
   display: inline-block;
   width: 12px;
@@ -1162,8 +1448,16 @@
   border: 1px solid;
 }
 
-.flying-star-stars-guide h4 { margin: 0 0 8px; font-size: 13px; color: var(--clr-text-muted); }
-.fs-star-list { display: flex; flex-direction: column; gap: 4px; }
+.flying-star-stars-guide h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--clr-text-muted);
+}
+.fs-star-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 .fs-star-item {
   display: flex;
   align-items: center;
@@ -1173,7 +1467,11 @@
   padding-left: 8px;
   border-left: 3px solid;
 }
-.fs-star-num { font-weight: bold; font-size: 14px; min-width: 16px; }
+.fs-star-num {
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 16px;
+}
 
 /* ---- 擇日工具 ---- */
 .date-select-controls {
@@ -1184,8 +1482,14 @@
   flex-wrap: wrap;
 }
 
-.date-select-control-group { display: flex; flex-direction: column; gap: 4px; }
-.date-select-input { min-width: 90px; }
+.date-select-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.date-select-input {
+  min-width: 90px;
+}
 
 .date-select-summary {
   display: flex;
@@ -1196,14 +1500,33 @@
   flex-wrap: wrap;
 }
 
-.ds-summary-good { color: var(--clr-success); font-weight: bold; }
-.ds-summary-bad  { color: var(--clr-danger); font-weight: bold; }
-.ds-summary-note { color: var(--clr-text-muted); }
+.ds-summary-good {
+  color: var(--clr-success);
+  font-weight: bold;
+}
+.ds-summary-bad {
+  color: var(--clr-danger);
+  font-weight: bold;
+}
+.ds-summary-note {
+  color: var(--clr-text-muted);
+}
 
-.date-select-table th, .date-select-table td { padding: 5px 10px; }
-.date-row-good { background: var(--clr-success-bg); }
-.date-row-bad  { background: var(--clr-danger-bg); }
-.date-select-note { font-size: 12px; color: var(--clr-text-muted); max-width: 220px; }
+.date-select-table th,
+.date-select-table td {
+  padding: 5px 10px;
+}
+.date-row-good {
+  background: var(--clr-success-bg);
+}
+.date-row-bad {
+  background: var(--clr-danger-bg);
+}
+.date-select-note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  max-width: 220px;
+}
 
 .officer-tag {
   display: inline-block;
@@ -1212,12 +1535,23 @@
   font-size: 12px;
   font-weight: bold;
 }
-.officer-good    { background: #d4edda; color: #155724; }
-.officer-bad     { background: #f8d7da; color: #721c24; }
-.officer-neutral { background: var(--clr-surface-2); color: var(--clr-text-muted); }
+.officer-good {
+  background: #d4edda;
+  color: #155724;
+}
+.officer-bad {
+  background: #f8d7da;
+  color: #721c24;
+}
+.officer-neutral {
+  background: var(--clr-surface-2);
+  color: var(--clr-text-muted);
+}
 
 /* ---- Vedic result ---- */
-.vedic-result { margin-top: 8px; }
+.vedic-result {
+  margin-top: 8px;
+}
 
 .vedic-result-header {
   display: flex;
@@ -1227,7 +1561,11 @@
   flex-wrap: wrap;
 }
 
-.vedic-result-title { font-size: 14px; font-weight: bold; color: var(--clr-text-2); }
+.vedic-result-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--clr-text-2);
+}
 
 .vedic-lagna-badge {
   background: var(--clr-primary-btn);
@@ -1246,7 +1584,9 @@
   scrollbar-width: none;
   white-space: nowrap;
 }
-.vedic-subtab-nav::-webkit-scrollbar { display: none; }
+.vedic-subtab-nav::-webkit-scrollbar {
+  display: none;
+}
 
 .vedic-subtab-btn {
   padding: 5px 16px;
@@ -1269,16 +1609,22 @@
   color: var(--clr-text-1);
 }
 
-.vedic-subtab-btn:hover:not(.active) { background: var(--clr-surface-3); }
+.vedic-subtab-btn:hover:not(.active) {
+  background: var(--clr-surface-3);
+}
 .vedic-subtab-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-.vedic-subtab-content { padding-top: 4px; }
+.vedic-subtab-content {
+  padding-top: 4px;
+}
 
 /* ---- South Indian chart ---- */
-.si-chart-wrap { margin: 10px 0; }
+.si-chart-wrap {
+  margin: 10px 0;
+}
 
 .si-chart-table {
   border-collapse: collapse;
@@ -1286,12 +1632,25 @@
   table-layout: fixed;
 }
 
-.si-chart-table td { border: 2px solid #4a4a6a; vertical-align: top; }
+.si-chart-table td {
+  border: 2px solid #4a4a6a;
+  vertical-align: top;
+}
 
-.si-cell { width: 120px; min-height: 90px; background: #16213e; }
-.si-cell.si-lagna { background: #0f3460; border-color: #e94560 !important; }
+.si-cell {
+  width: 120px;
+  min-height: 90px;
+  background: #16213e;
+}
+.si-cell.si-lagna {
+  background: #0f3460;
+  border-color: #e94560 !important;
+}
 
-.si-cell-inner { padding: 5px 6px; min-height: 80px; }
+.si-cell-inner {
+  padding: 5px 6px;
+  min-height: 80px;
+}
 
 .si-cell-header {
   display: flex;
@@ -1300,11 +1659,27 @@
   margin-bottom: 4px;
 }
 
-.si-rashi-name  { font-size: 12px; color: #9aa0b0; font-weight: bold; }
-.si-house-num   { font-size: 10px; color: #6a7080; margin-left: auto; }
-.si-lagna-mark  { font-size: 10px; color: #e94560; font-weight: bold; }
+.si-rashi-name {
+  font-size: 12px;
+  color: #9aa0b0;
+  font-weight: bold;
+}
+.si-house-num {
+  font-size: 10px;
+  color: #6a7080;
+  margin-left: auto;
+}
+.si-lagna-mark {
+  font-size: 10px;
+  color: #e94560;
+  font-weight: bold;
+}
 
-.si-planets { display: flex; flex-wrap: wrap; gap: 2px; }
+.si-planets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
 
 .si-planet-token {
   font-size: 11px;
@@ -1315,15 +1690,41 @@
   white-space: nowrap;
 }
 
-.si-center { background: #0d0d1a; border-color: #4a4a6a; text-align: center; vertical-align: middle; }
-.si-center-content { padding: 12px 8px; }
-.si-center-title { font-size: 14px; font-weight: bold; color: #c8a960; margin-bottom: 8px; }
-.si-center-info  { font-size: 11px; color: #7a8090; margin-bottom: 4px; }
-.si-footer       { font-size: 12px; color: #888; margin-top: 5px; }
-.si-legend       { font-size: 12px; color: #888; margin-top: 3px; }
+.si-center {
+  background: #0d0d1a;
+  border-color: #4a4a6a;
+  text-align: center;
+  vertical-align: middle;
+}
+.si-center-content {
+  padding: 12px 8px;
+}
+.si-center-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #c8a960;
+  margin-bottom: 8px;
+}
+.si-center-info {
+  font-size: 11px;
+  color: #7a8090;
+  margin-bottom: 4px;
+}
+.si-footer {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+.si-legend {
+  font-size: 12px;
+  color: #888;
+  margin-top: 3px;
+}
 
 /* ---- Vedic Dasha ---- */
-.vedic-dasha-section { margin-top: 4px; }
+.vedic-dasha-section {
+  margin-top: 4px;
+}
 
 .vedic-dasha-now {
   background: #f5f5dc;
@@ -1335,22 +1736,39 @@
   border-radius: var(--radius-sm);
 }
 
-.vedic-dasha-current    { background: var(--clr-warning-bg) !important; }
-.vedic-dasha-current td { background: var(--clr-warning-bg) !important; }
+.vedic-dasha-current {
+  background: var(--clr-warning-bg) !important;
+}
+.vedic-dasha-current td {
+  background: var(--clr-warning-bg) !important;
+}
 
-.vedic-antardasha-row td { background: var(--clr-surface-1); border-top: none; }
-.vedic-antardasha-row.vedic-dasha-current td { background: var(--clr-warning-bg) !important; }
+.vedic-antardasha-row td {
+  background: var(--clr-surface-1);
+  border-top: none;
+}
+.vedic-antardasha-row.vedic-dasha-current td {
+  background: var(--clr-warning-bg) !important;
+}
 
-.vedic-current-badge { font-size: 11px; color: var(--clr-warning); font-weight: bold; }
+.vedic-current-badge {
+  font-size: 11px;
+  color: var(--clr-warning);
+  font-weight: bold;
+}
 
 /* ============================================================
    Synastry & Composite Chart styles
    ============================================================ */
 
-.synastry-form { margin-bottom: 10px; }
+.synastry-form {
+  margin-bottom: 10px;
+}
 
 /* .synastry-load-hint / .synastry-load-btn kept for reference, button removed */
-.synastry-load-hint { margin-bottom: 8px; }
+.synastry-load-hint {
+  margin-bottom: 8px;
+}
 .synastry-load-btn {
   background: none;
   border: 1px solid var(--clr-primary);
@@ -1360,7 +1778,9 @@
   cursor: pointer;
   border-radius: var(--radius-sm);
 }
-.synastry-load-btn:hover { background: var(--clr-primary-light); }
+.synastry-load-btn:hover {
+  background: var(--clr-primary-light);
+}
 
 .synastry-persons-grid {
   display: grid;
@@ -1376,8 +1796,12 @@
   border-radius: var(--radius-md);
 }
 
-.synastry-person-block.person-a { border-left: 4px solid var(--clr-primary); }
-.synastry-person-block.person-b { border-left: 4px solid var(--clr-danger); }
+.synastry-person-block.person-a {
+  border-left: 4px solid var(--clr-primary);
+}
+.synastry-person-block.person-b {
+  border-left: 4px solid var(--clr-danger);
+}
 
 .synastry-person-label {
   font-size: 13px;
@@ -1386,10 +1810,15 @@
   color: var(--clr-text-3);
 }
 
-.synastry-submit-row { text-align: center; margin-top: 12px; }
+.synastry-submit-row {
+  text-align: center;
+  margin-top: 12px;
+}
 
 /* ---- Synastry result header ---- */
-.synastry-result { margin-top: 12px; }
+.synastry-result {
+  margin-top: 12px;
+}
 
 .synastry-result-header {
   display: flex;
@@ -1399,10 +1828,18 @@
   margin-bottom: 10px;
 }
 
-.synastry-result-header .section-heading { margin: 0; }
+.synastry-result-header .section-heading {
+  margin: 0;
+}
 
-.name-a { color: var(--clr-primary); font-weight: bold; }
-.name-b { color: var(--clr-danger);  font-weight: bold; }
+.name-a {
+  color: var(--clr-primary);
+  font-weight: bold;
+}
+.name-b {
+  color: var(--clr-danger);
+  font-weight: bold;
+}
 
 .synastry-overall-badge {
   font-size: 13px;
@@ -1413,7 +1850,9 @@
 }
 
 /* ---- Synastry chart legend ---- */
-.synastry-chart-wrap { text-align: center; }
+.synastry-chart-wrap {
+  text-align: center;
+}
 
 .synastry-chart-legend {
   font-size: 12px;
@@ -1421,12 +1860,23 @@
   color: var(--clr-text-muted);
 }
 
-.legend-a   { color: var(--clr-primary); font-size: 16px; }
-.legend-b   { color: var(--clr-danger);  font-size: 16px; }
-.legend-sep { margin: 0 8px; color: var(--clr-border); }
+.legend-a {
+  color: var(--clr-primary);
+  font-size: 16px;
+}
+.legend-b {
+  color: var(--clr-danger);
+  font-size: 16px;
+}
+.legend-sep {
+  margin: 0 8px;
+  color: var(--clr-border);
+}
 
 /* ---- Aspect list ---- */
-.synastry-aspect-list { margin-top: 6px; }
+.synastry-aspect-list {
+  margin-top: 6px;
+}
 
 .aspect-filters {
   display: flex;
@@ -1440,7 +1890,11 @@
   border-radius: var(--radius-sm);
 }
 
-.aspect-sort-label { font-size: 12px; color: var(--clr-text-muted); margin-left: 6px; }
+.aspect-sort-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-left: 6px;
+}
 
 .aspect-sort-btn {
   background: var(--clr-surface-3);
@@ -1462,19 +1916,42 @@
   box-shadow: var(--focus-ring);
 }
 
-.aspect-count { margin-left: auto; font-size: 12px; color: var(--clr-text-muted); }
+.aspect-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
 
-.aspect-row { transition: background 0.1s; }
-.aspect-row:hover { background: var(--clr-surface-2) !important; }
+.aspect-row {
+  transition: background 0.1s;
+}
+.aspect-row:hover {
+  background: var(--clr-surface-2) !important;
+}
 
-.interpretation-cell { font-size: 12px; color: var(--clr-text-3); max-width: 300px; }
-.interp-preview { color: var(--clr-text-muted); font-style: italic; }
-.interp-text    { color: var(--clr-text-2); }
+.interpretation-cell {
+  font-size: 12px;
+  color: var(--clr-text-3);
+  max-width: 300px;
+}
+.interp-preview {
+  color: var(--clr-text-muted);
+  font-style: italic;
+}
+.interp-text {
+  color: var(--clr-text-2);
+}
 
 /* ---- Composite section ---- */
-.composite-section { padding: 8px 0; }
+.composite-section {
+  padding: 8px 0;
+}
 
-.composite-header { font-size: 15px; font-weight: bold; margin-bottom: 6px; }
+.composite-header {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
 
 .composite-badge {
   background: var(--clr-text-3);
@@ -1505,7 +1982,10 @@
 }
 
 /* ---- Compatibility panel ---- */
-.compat-panel { max-width: 600px; margin: 0 auto; }
+.compat-panel {
+  max-width: 600px;
+  margin: 0 auto;
+}
 
 .compat-overall {
   text-align: center;
@@ -1516,14 +1996,34 @@
   background: var(--clr-surface-1);
 }
 
-.compat-overall-title { font-size: 15px; font-weight: bold; margin-bottom: 8px; color: var(--clr-text-3); }
-.compat-overall-stars { font-size: 28px; letter-spacing: 3px; margin-bottom: 6px; }
-.compat-overall-score { font-size: 48px; font-weight: bold; line-height: 1; }
+.compat-overall-title {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--clr-text-3);
+}
+.compat-overall-stars {
+  font-size: 28px;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+.compat-overall-score {
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1;
+}
 
 /* [H-5] Was #aaa (2.3:1) — now var(--clr-text-muted) (7.0:1) */
-.compat-overall-max { font-size: 18px; color: var(--clr-text-muted); }
+.compat-overall-max {
+  font-size: 18px;
+  color: var(--clr-text-muted);
+}
 
-.compat-overall-label { font-size: 16px; font-weight: bold; margin: 6px 0; }
+.compat-overall-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 6px 0;
+}
 
 .compat-overall-desc {
   font-size: 13px;
@@ -1532,7 +2032,11 @@
   line-height: 1.6;
 }
 
-.compat-categories { display: flex; flex-direction: column; gap: 14px; }
+.compat-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .compat-category {
   padding: 13px;
@@ -1548,9 +2052,18 @@
   margin-bottom: 6px;
 }
 
-.compat-cat-emoji { font-size: 18px; }
-.compat-cat-label { font-size: 14px; font-weight: bold; flex: 1; }
-.compat-cat-score { font-size: 16px; font-weight: bold; }
+.compat-cat-emoji {
+  font-size: 18px;
+}
+.compat-cat-label {
+  font-size: 14px;
+  font-weight: bold;
+  flex: 1;
+}
+.compat-cat-score {
+  font-size: 16px;
+  font-weight: bold;
+}
 
 .compat-bar-bg {
   height: 8px;
@@ -1584,10 +2097,14 @@
 }
 
 /* ---- Synastry tab content ---- */
-.synastry-tab-content { padding: 12px 0; }
+.synastry-tab-content {
+  padding: 12px 0;
+}
 
 /* ---- Orb Settings ---- */
-.orb-settings { margin-top: 14px; }
+.orb-settings {
+  margin-top: 14px;
+}
 
 .orb-settings-toggle {
   display: flex;
@@ -1606,7 +2123,10 @@
   text-align: left;
 }
 
-.orb-settings-toggle:hover { background: #d8e8f8; border-color: var(--clr-primary); }
+.orb-settings-toggle:hover {
+  background: #d8e8f8;
+  border-color: var(--clr-primary);
+}
 .orb-settings-toggle:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
@@ -1621,13 +2141,31 @@
   overflow-x: auto;
 }
 
-.orb-hint { margin: 0 0 var(--sp-2); font-size: 12px; color: var(--clr-text-muted); }
+.orb-hint {
+  margin: 0 0 var(--sp-2);
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
 
-.orb-table { border-collapse: collapse; font-size: 13px; }
-.orb-table th { background: var(--clr-surface-3); padding: 4px 10px; text-align: left; font-weight: bold; }
-.orb-table td { padding: 3px 10px; }
-.orb-name-cell { white-space: nowrap; }
-.orb-glyph-cell { text-align: center; }
+.orb-table {
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.orb-table th {
+  background: var(--clr-surface-3);
+  padding: 4px 10px;
+  text-align: left;
+  font-weight: bold;
+}
+.orb-table td {
+  padding: 3px 10px;
+}
+.orb-name-cell {
+  white-space: nowrap;
+}
+.orb-glyph-cell {
+  text-align: center;
+}
 
 .orb-input {
   width: 52px;
@@ -1654,7 +2192,9 @@
   font-family: inherit;
   border-radius: var(--radius-sm);
 }
-.orb-reset-btn:hover { background: var(--clr-surface-3); }
+.orb-reset-btn:hover {
+  background: var(--clr-surface-3);
+}
 .orb-reset-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
@@ -1666,16 +2206,35 @@
 
 /* ---- 768px: tablet ---- */
 @media (max-width: 768px) {
-  .transit-two-col { grid-template-columns: 1fr; }
-  .bazi-element-bar-wrap { flex: 1 1 80px; }
+  .transit-two-col {
+    grid-template-columns: 1fr;
+  }
+  .bazi-element-bar-wrap {
+    flex: 1 1 80px;
+  }
 
-  .si-cell { width: 80px; min-height: 60px; }
-  .si-cell-inner { padding: 3px 4px; min-height: 55px; }
-  .si-rashi-name { font-size: 10px; }
-  .si-planet-token { font-size: 10px; padding: 1px 2px; }
+  .si-cell {
+    width: 80px;
+    min-height: 60px;
+  }
+  .si-cell-inner {
+    padding: 3px 4px;
+    min-height: 55px;
+  }
+  .si-rashi-name {
+    font-size: 10px;
+  }
+  .si-planet-token {
+    font-size: 10px;
+    padding: 1px 2px;
+  }
 
-  .orb-settings-panel { overflow-x: auto; }
-  .synastry-person-block { padding: 10px; }
+  .orb-settings-panel {
+    overflow-x: auto;
+  }
+  .synastry-person-block {
+    padding: 10px;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1701,8 +2260,14 @@
   width: 100%;
   font-family: inherit;
 }
-.panel-toggle-btn:hover { color: var(--clr-primary-dark); }
-.panel-toggle-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+.panel-toggle-btn:hover {
+  color: var(--clr-primary-dark);
+}
+.panel-toggle-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
 
 .panel-toggle-hint {
   font-weight: normal;
@@ -1726,11 +2291,27 @@
 }
 
 /* Arabic Parts table */
-.arabic-parts-table { width: 100%; }
-.lot-name-cell { white-space: nowrap; font-size: 13px; }
-.lot-idx { color: var(--clr-text-muted); font-size: 11px; margin-right: 4px; }
-.lot-en { font-size: 11px; color: var(--clr-text-muted); }
-.lot-formula-cell { font-size: 12px; color: var(--clr-text-muted); white-space: nowrap; }
+.arabic-parts-table {
+  width: 100%;
+}
+.lot-name-cell {
+  white-space: nowrap;
+  font-size: 13px;
+}
+.lot-idx {
+  color: var(--clr-text-muted);
+  font-size: 11px;
+  margin-right: 4px;
+}
+.lot-en {
+  font-size: 11px;
+  color: var(--clr-text-muted);
+}
+.lot-formula-cell {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  white-space: nowrap;
+}
 
 /* Profections */
 .profection-controls {
@@ -1767,10 +2348,21 @@
   min-width: 64px;
   text-align: center;
 }
-.profection-detail { flex: 1; }
-.profection-sign { font-size: 15px; font-weight: bold; margin-bottom: var(--sp-1); }
-.profection-lord { font-size: 14px; margin-bottom: var(--sp-1); }
-.profection-planets { font-size: 13px; }
+.profection-detail {
+  flex: 1;
+}
+.profection-sign {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: var(--sp-1);
+}
+.profection-lord {
+  font-size: 14px;
+  margin-bottom: var(--sp-1);
+}
+.profection-planets {
+  font-size: 13px;
+}
 .profection-planet-tag {
   display: inline-block;
   background: var(--clr-primary-light);
@@ -1787,7 +2379,10 @@
   border-top: 1px solid var(--clr-border-subtle);
   padding-top: var(--sp-2);
 }
-.profection-current-row { background: var(--clr-primary-light) !important; font-weight: bold; }
+.profection-current-row {
+  background: var(--clr-primary-light) !important;
+  font-weight: bold;
+}
 
 /* Solar Return */
 .sr-controls {
@@ -1797,8 +2392,12 @@
   margin-bottom: var(--sp-3);
   flex-wrap: wrap;
 }
-.sr-calc-btn { padding: 6px 16px; }
-.sr-result { margin-top: var(--sp-3); }
+.sr-calc-btn {
+  padding: 6px 16px;
+}
+.sr-result {
+  margin-top: var(--sp-3);
+}
 .sr-datetime-card {
   background: var(--clr-cosmos);
   color: var(--clr-cosmos-text);
@@ -1820,13 +2419,22 @@
   padding: var(--sp-2) var(--sp-3);
   font-size: 13px;
 }
-.retrograde-tag { color: var(--clr-danger); font-size: 11px; }
+.retrograde-tag {
+  color: var(--clr-danger);
+  font-size: 11px;
+}
 
 /* ---- 640px: large phone / small tablet ---- */
 @media (max-width: 640px) {
-  .almuten-app { padding: 0 var(--sp-2); }
-  .site-title   { font-size: 1.3rem; }
-  .site-subtitle { font-size: 0.9rem; }
+  .almuten-app {
+    padding: 0 var(--sp-2);
+  }
+  .site-title {
+    font-size: 1.3rem;
+  }
+  .site-subtitle {
+    font-size: 0.9rem;
+  }
 
   /* Form: stack label above field */
   .form-grid {
@@ -1835,27 +2443,60 @@
     gap: 4px 0;
   }
 
-  .form-label { padding-bottom: 0; margin-top: 10px; }
+  .form-label {
+    padding-bottom: 0;
+    margin-top: 10px;
+  }
 
-  .form-input  { width: 100%; min-height: 44px; }
-  .form-input-wide { width: 100%; flex: 1 1 auto; }
-  .form-select { width: 100%; max-width: 100%; min-height: 44px; }
-  .form-select-dir { min-height: 44px; }
-  .geo-search-btn  { min-height: 44px; }
+  .form-input {
+    width: 100%;
+    min-height: 44px;
+  }
+  .form-input-wide {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+  .form-select {
+    width: 100%;
+    max-width: 100%;
+    min-height: 44px;
+  }
+  .form-select-dir {
+    min-height: 44px;
+  }
+  .geo-search-btn {
+    min-height: 44px;
+  }
 
-  .form-submit-cell { grid-column: 1; padding-top: 10px; }
-  .submit-btn { width: 100%; }
+  .form-submit-cell {
+    grid-column: 1;
+    padding-top: 10px;
+  }
+  .submit-btn {
+    width: 100%;
+  }
 
   /* Grids */
   .dignity-tables-grid,
-  .synastry-persons-grid { grid-template-columns: 1fr; }
+  .synastry-persons-grid {
+    grid-template-columns: 1fr;
+  }
 
-  .composite-angles { flex-direction: column; gap: 6px; }
+  .composite-angles {
+    flex-direction: column;
+    gap: 6px;
+  }
 
-  .profection-card  { max-width: 100%; }
-  .profection-label { min-width: 120px; }
+  .profection-card {
+    max-width: 100%;
+  }
+  .profection-label {
+    min-width: 120px;
+  }
 
-  .transit-two-col { grid-template-columns: 1fr; }
+  .transit-two-col {
+    grid-template-columns: 1fr;
+  }
 
   .synastry-result-header {
     flex-direction: column;
@@ -1863,36 +2504,77 @@
     gap: 6px;
   }
 
-  .bazi-element-bar-wrap { flex: 1 1 60px; }
+  .bazi-element-bar-wrap {
+    flex: 1 1 60px;
+  }
 }
 
 /* ---- 480px: small phone ---- */
 @media (max-width: 480px) {
-  .almuten-app   { padding: 0 var(--sp-1); }
-  .site-title    { font-size: 1.15rem; }
-  .site-title-2  { font-size: 0.82rem; }
+  .almuten-app {
+    padding: 0 var(--sp-1);
+  }
+  .site-title {
+    font-size: 1.15rem;
+  }
+  .site-title-2 {
+    font-size: 0.82rem;
+  }
 
-  .tab-btn { font-size: 12px; padding: 10px 10px; white-space: nowrap; }
+  .tab-btn {
+    font-size: 12px;
+    padding: 10px 10px;
+    white-space: nowrap;
+  }
 
-  .form-input-dms { width: 52px; min-height: 44px; }
+  .form-input-dms {
+    width: 52px;
+    min-height: 44px;
+  }
 
-  .data-table { font-size: 12px; }
+  .data-table {
+    font-size: 12px;
+  }
   .data-table th,
-  .data-table td { padding: 3px 5px; }
+  .data-table td {
+    padding: 3px 5px;
+  }
 
-  .si-cell { width: 60px; min-height: 48px; }
-  .si-rashi-name { display: none; }
+  .si-cell {
+    width: 60px;
+    min-height: 48px;
+  }
+  .si-rashi-name {
+    display: none;
+  }
 
-  .compat-overall { padding: 14px 10px; }
-  .compat-overall-score { font-size: 36px; }
+  .compat-overall {
+    padding: 14px 10px;
+  }
+  .compat-overall-score {
+    font-size: 36px;
+  }
 
-  .profection-card-row { flex-direction: column; gap: 2px; }
-  .profection-label    { min-width: 0; }
+  .profection-card-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .profection-label {
+    min-width: 0;
+  }
 
-  .flying-star-grid { max-width: 100%; }
+  .flying-star-grid {
+    max-width: 100%;
+  }
 
-  .transit-quick-btns { gap: 2px; }
-  .transit-quick-btn  { padding: 4px 7px; font-size: 11px; min-height: 36px; }
+  .transit-quick-btns {
+    gap: 2px;
+  }
+  .transit-quick-btn {
+    padding: 4px 7px;
+    font-size: 11px;
+    min-height: 36px;
+  }
 }
 
 /* ---- Chart sub-tabs ---- */
@@ -1904,7 +2586,9 @@
   scrollbar-width: none;
   display: flex;
 }
-.chart-subtab-bar::-webkit-scrollbar { display: none; }
+.chart-subtab-bar::-webkit-scrollbar {
+  display: none;
+}
 
 .chart-subtab-btn {
   padding: 5px 16px;
@@ -1924,15 +2608,21 @@
   margin-bottom: -1px;
   color: var(--clr-text-1);
 }
-.chart-subtab-btn:hover:not(.active) { background: var(--clr-surface-3); }
+.chart-subtab-btn:hover:not(.active) {
+  background: var(--clr-surface-3);
+}
 .chart-subtab-btn:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
-.chart-subtab-content { padding-top: 4px; }
+.chart-subtab-content {
+  padding-top: 4px;
+}
 
 /* ---- Reception Analysis ---- */
-.reception-section { margin-top: 4px; }
+.reception-section {
+  margin-top: 4px;
+}
 
 .mutual-reception-badge {
   display: inline-block;
@@ -1973,7 +2663,384 @@
   font-weight: bold;
 }
 
-.executability-high   { color: #4CAF50; font-weight: 600; }
-.executability-medium { color: var(--clr-text-primary); }
-.executability-low    { color: #FF9800; }
-.executability-blocked { color: #F44336; font-weight: 600; }
+.executability-high {
+  color: #4caf50;
+  font-weight: 600;
+}
+.executability-medium {
+  color: var(--clr-text-primary);
+}
+.executability-low {
+  color: #ff9800;
+}
+.executability-blocked {
+  color: #f44336;
+  font-weight: 600;
+}
+
+/* ---- Aspect Filter Bar ---- */
+.aspect-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--clr-surface-1);
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-4);
+}
+
+.aspect-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.aspect-filter-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.aspect-filter-checkbox,
+.aspect-filter-radio {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.aspect-filter-slider {
+  width: 100px;
+  accent-color: var(--clr-primary);
+}
+
+/* ---- Numerology Panel ---- */
+.numerology-details {
+  margin-top: var(--sp-4);
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-md);
+}
+
+.numerology-summary {
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  background: var(--clr-surface-1);
+  border-radius: var(--radius-md);
+  user-select: none;
+}
+
+.numerology-summary:hover {
+  background: var(--clr-surface-2);
+}
+
+.numerology-panel {
+  padding: var(--sp-4);
+}
+
+.numerology-name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.numerology-name-label {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.numerology-name-input {
+  padding: 4px 8px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  width: 220px;
+}
+
+.numerology-personal-year {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  background: var(--clr-surface-1);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-border-light);
+  flex-wrap: wrap;
+}
+
+.personal-year-label,
+.personal-month-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+
+.personal-year-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--clr-primary);
+}
+
+.personal-year-meaning {
+  font-size: 13px;
+  color: var(--clr-text-3);
+}
+
+.personal-month-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--clr-primary-dark);
+}
+
+.numerology-table {
+  width: 100%;
+}
+.numerology-row {
+  cursor: pointer;
+}
+.numerology-row:hover {
+  background: var(--clr-surface-2) !important;
+}
+.numerology-label {
+  font-size: 13px;
+  white-space: nowrap;
+}
+.numerology-value {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: var(--clr-primary);
+}
+.numerology-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.numerology-keywords {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.numerology-desc-row td {
+  padding: 6px 12px;
+}
+.numerology-desc {
+  font-size: 13px;
+  color: var(--clr-text-3);
+  background: var(--clr-surface-1);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--clr-primary);
+}
+.numerology-hint {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-top: var(--sp-2);
+}
+
+/* ---- Client Database ---- */
+.client-db {
+  padding: var(--sp-2) 0;
+}
+
+.client-db-topbar {
+  display: flex;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.client-search-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 6px 10px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+
+.client-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.client-card {
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--clr-surface);
+}
+
+.client-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  background: var(--clr-surface-1);
+  transition: background 0.1s;
+}
+
+.client-card-header:hover {
+  background: var(--clr-surface-2);
+}
+
+.client-name {
+  font-weight: bold;
+  font-size: 15px;
+}
+.client-meta {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.client-updated {
+  font-size: 11px;
+  color: var(--clr-text-muted);
+  margin-left: auto;
+}
+
+.client-tags {
+  display: flex;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+}
+
+.client-tag {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 11px;
+  border: 1px solid var(--clr-primary);
+}
+
+.client-card-details {
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--clr-border-light);
+}
+
+.client-analysis-notes {
+  font-size: 13px;
+  color: var(--clr-text-3);
+  margin-bottom: var(--sp-3);
+  white-space: pre-wrap;
+}
+
+.client-card-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.client-load-btn {
+  background: var(--clr-success);
+}
+.client-load-btn:hover {
+  background: var(--clr-success);
+  filter: brightness(0.9);
+}
+
+.edit-btn {
+  padding: 5px 14px;
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  border: 1px solid var(--clr-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+}
+.edit-btn:hover {
+  background: var(--clr-primary);
+  color: white;
+}
+
+.delete-btn {
+  padding: 5px 14px;
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger);
+  border: 1px solid var(--clr-danger);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+}
+.delete-btn:hover {
+  background: var(--clr-danger);
+  color: white;
+}
+
+/* Client form modal */
+.client-form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--sp-5);
+  overflow-y: auto;
+}
+
+.client-form-modal {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.client-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.client-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--clr-text-3);
+}
+
+.client-form-fullwidth {
+  grid-column: 1 / -1;
+}
+
+.client-form-actions {
+  display: flex;
+  gap: var(--sp-3);
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  padding: 7px 18px;
+  background: var(--clr-surface-2);
+  color: var(--clr-text-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+}
+.cancel-btn:hover {
+  background: var(--clr-surface-3);
+}
+
+@media (max-width: 500px) {
+  .client-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .aspect-filter-bar {
+    flex-direction: column;
+  }
+}

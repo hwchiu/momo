@@ -184,10 +184,7 @@ export function ReceptionAnalysis({ chart }: ReceptionAnalysisProps) {
                     <td className="planet-cell">
                       <PlanetCell planet={a.planet1} />
                     </td>
-                    <td
-                      className="aspect-cell center-cell"
-                      style={{ color: aspectInfo.color }}
-                    >
+                    <td className="aspect-cell center-cell" style={{ color: aspectInfo.color }}>
                       {aspectInfo.symbol} {aspectInfo.name}
                     </td>
                     <td className="planet-cell">

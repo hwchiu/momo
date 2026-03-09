@@ -32,8 +32,8 @@ export function ArabicPartsPanel({ chart }: ArabicPartsPanelProps) {
       {open && lots && (
         <div className="panel-body">
           <p className="panel-note">
-            ✦ 基於 Paulus Alexandrinus 與 Vettius Valens 的計算系統。
-            福運點（Lot of Fortune）是最重要的命點，代表身體、物質與命運。
+            ✦ 基於 Paulus Alexandrinus 與 Vettius Valens 的計算系統。 福運點（Lot of
+            Fortune）是最重要的命點，代表身體、物質與命運。
           </p>
           <div className="table-scroll">
             <table className="data-table arabic-parts-table" cellPadding={4} cellSpacing={0}>

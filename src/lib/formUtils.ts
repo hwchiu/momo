@@ -55,8 +55,8 @@ export function validateCoords(
   if (latDeg < 0 || latDeg > 90) return '緯度度數必須介於 0–90 之間';
   if (lonDeg < 0 || lonDeg > 180) return '經度度數必須介於 0–180 之間';
   // 90°0' is the pole; 90°01' would be invalid
-  if (latDeg === 90 && latMin > 0) return '緯度不可超過 90°00\'';
-  if (lonDeg === 180 && lonMin > 0) return '經度不可超過 180°00\'';
+  if (latDeg === 90 && latMin > 0) return "緯度不可超過 90°00'";
+  if (lonDeg === 180 && lonMin > 0) return "經度不可超過 180°00'";
   return null;
 }
 

@@ -15,12 +15,32 @@ export function VedicResult({ chart }: VedicResultProps) {
   const { input, lagnaRashi } = chart;
 
   const RASHI_NAMES = [
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
+    'Aries',
+    'Taurus',
+    'Gemini',
+    'Cancer',
+    'Leo',
+    'Virgo',
+    'Libra',
+    'Scorpio',
+    'Sagittarius',
+    'Capricorn',
+    'Aquarius',
+    'Pisces',
   ];
   const RASHI_ZH = [
-    '牡羊', '金牛', '雙子', '巨蟹', '獅子', '處女',
-    '天秤', '天蠍', '射手', '摩羯', '水瓶', '雙魚',
+    '牡羊',
+    '金牛',
+    '雙子',
+    '巨蟹',
+    '獅子',
+    '處女',
+    '天秤',
+    '天蠍',
+    '射手',
+    '摩羯',
+    '水瓶',
+    '雙魚',
   ];
 
   return (
@@ -28,8 +48,8 @@ export function VedicResult({ chart }: VedicResultProps) {
       {/* Result header */}
       <div className="vedic-result-header">
         <span className="vedic-result-title">
-          {input.locationName} &mdash;{' '}
-          {input.year}/{String(input.month).padStart(2, '0')}/{String(input.day).padStart(2, '0')}
+          {input.locationName} &mdash; {input.year}/{String(input.month).padStart(2, '0')}/
+          {String(input.day).padStart(2, '0')}
         </span>
         <span className="vedic-lagna-badge">
           Lagna: {RASHI_ZH[lagnaRashi]} ({RASHI_NAMES[lagnaRashi]})

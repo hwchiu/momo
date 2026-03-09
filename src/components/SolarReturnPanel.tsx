@@ -17,8 +17,8 @@ interface SolarReturnPanelProps {
 }
 
 function formatDegree(lon: number): string {
-  const sign = Math.floor(((lon % 360) + 360) % 360 / 30);
-  const within = ((lon % 360) + 360) % 360 % 30;
+  const sign = Math.floor((((lon % 360) + 360) % 360) / 30);
+  const within = (((lon % 360) + 360) % 360) % 30;
   const deg = Math.floor(within);
   const min = Math.floor((within - deg) * 60);
   const si = ZODIAC_SIGNS[sign as keyof typeof ZODIAC_SIGNS];
@@ -71,7 +71,9 @@ export function SolarReturnPanel({ chart }: SolarReturnPanelProps) {
       {open && (
         <div className="panel-body">
           <div className="sr-controls">
-            <label className="form-label" htmlFor="sr-year">回歸年份：</label>
+            <label className="form-label" htmlFor="sr-year">
+              回歸年份：
+            </label>
             <input
               id="sr-year"
               type="number"
@@ -92,14 +94,20 @@ export function SolarReturnPanel({ chart }: SolarReturnPanelProps) {
           </div>
 
           {loading && <LoadingMessage text="計算太陽回歸中⋯" />}
-          {error && <div className="geo-error" role="alert">{error}</div>}
+          {error && (
+            <div className="geo-error" role="alert">
+              {error}
+            </div>
+          )}
 
           {srChart && (
             <div className="sr-result">
               <div className="sr-datetime-card">
                 <strong>太陽回歸時刻（UTC）：</strong>
-                {srChart.utc.year}-{String(srChart.utc.month).padStart(2, '0')}-{String(srChart.utc.day).padStart(2, '0')}
-                &nbsp;{String(srChart.utc.hour).padStart(2, '0')}:{String(srChart.utc.minute).padStart(2, '0')}
+                {srChart.utc.year}-{String(srChart.utc.month).padStart(2, '0')}-
+                {String(srChart.utc.day).padStart(2, '0')}
+                &nbsp;{String(srChart.utc.hour).padStart(2, '0')}:
+                {String(srChart.utc.minute).padStart(2, '0')}
                 <span className="form-hint"> 地點：{chart.birthData.locationName}</span>
               </div>
 
@@ -124,9 +132,7 @@ export function SolarReturnPanel({ chart }: SolarReturnPanelProps) {
                   </thead>
                   <tbody>
                     {srChart.chart.planets.map((srPlanet, i) => {
-                      const natalPlanet = chart.planets.find(
-                        (p) => p.planet === srPlanet.planet,
-                      );
+                      const natalPlanet = chart.planets.find((p) => p.planet === srPlanet.planet);
                       const pi = PLANET_INFO[srPlanet.planet];
                       const srSi = ZODIAC_SIGNS[srPlanet.sign];
                       const nSi = natalPlanet ? ZODIAC_SIGNS[natalPlanet.sign] : null;
@@ -137,7 +143,8 @@ export function SolarReturnPanel({ chart }: SolarReturnPanelProps) {
                             {srPlanet.retrograde && <span className="retrograde-tag"> ℞</span>}
                           </td>
                           <td className="center-cell" style={{ whiteSpace: 'nowrap' }}>
-                            {srSi.glyph} {srSi.name} {srPlanet.degree}°{String(srPlanet.minute).padStart(2, '0')}'
+                            {srSi.glyph} {srSi.name} {srPlanet.degree}°
+                            {String(srPlanet.minute).padStart(2, '0')}'
                           </td>
                           <td className="center-cell">第 {srPlanet.house} 宮</td>
                           <td className="center-cell form-hint" style={{ whiteSpace: 'nowrap' }}>

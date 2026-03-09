@@ -15,18 +15,18 @@ import { ZODIAC_SIGNS, PLANET_INFO, ASPECT_INFO, ZodiacSign } from '../types/ast
 
 /** Colors for each zodiac element */
 const ELEMENT_COLORS: Record<string, string> = {
-  '火': '#E74C3C',
-  '土': '#8B7355',
-  '風': '#F0C040',
-  '水': '#3498DB',
+  火: '#E74C3C',
+  土: '#8B7355',
+  風: '#F0C040',
+  水: '#3498DB',
 };
 
 /** Light colors for zodiac sign backgrounds */
 const ELEMENT_BG_COLORS: Record<string, string> = {
-  '火': '#FDEDEC',
-  '土': '#F5F0EB',
-  '風': '#FFF9E6',
-  '水': '#EBF5FB',
+  火: '#FDEDEC',
+  土: '#F5F0EB',
+  風: '#FFF9E6',
+  水: '#EBF5FB',
 };
 
 interface ChartDimensions {
@@ -321,12 +321,7 @@ function drawPlanets(
     // Small line from actual position to glyph (if adjusted)
     const actualAngle = lonToAngle(item.planet.longitude, chart.ascendant);
     if (Math.abs(actualAngle - item.adjustedAngle) > 1) {
-      const tickInner = polarToXY(
-        dim.center,
-        dim.center,
-        dim.zodiacInnerRadius - 2,
-        actualAngle,
-      );
+      const tickInner = polarToXY(dim.center, dim.center, dim.zodiacInnerRadius - 2, actualAngle);
       g.append('line')
         .attr('x1', tickInner.x)
         .attr('y1', tickInner.y)
@@ -349,7 +344,12 @@ function drawPlanets(
 
     // Degree label under glyph
     const sign = ZODIAC_SIGNS[item.planet.sign];
-    const labelPos = polarToXY(dim.center, dim.center, dim.planetRadius - dim.size * 0.04, item.adjustedAngle);
+    const labelPos = polarToXY(
+      dim.center,
+      dim.center,
+      dim.planetRadius - dim.size * 0.04,
+      item.adjustedAngle,
+    );
     g.append('text')
       .attr('x', labelPos.x)
       .attr('y', labelPos.y)
@@ -421,11 +421,7 @@ function drawAspects(
 /**
  * Main render function: draws the complete natal chart into an SVG element.
  */
-export function renderNatalChart(
-  svgElement: SVGSVGElement,
-  chart: NatalChart,
-  size: number = 600,
-) {
+export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, size: number = 600) {
   const dim = getDimensions(size);
 
   // Clear existing content
@@ -438,12 +434,7 @@ export function renderNatalChart(
   svg.selectAll('*').remove();
 
   // Background
-  svg
-    .append('rect')
-    .attr('width', size)
-    .attr('height', size)
-    .attr('fill', '#FAFAFA')
-    .attr('rx', 8);
+  svg.append('rect').attr('width', size).attr('height', size).attr('fill', '#FAFAFA').attr('rx', 8);
 
   // Draw layers in order (back to front)
   drawAspects(svg, chart, dim);

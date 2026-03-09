@@ -156,7 +156,7 @@ function checkReceptionLevel(
   planetA: Planet,
   lonA: number,
   planetB: Planet,
-  isDaytime: boolean
+  isDaytime: boolean,
 ): ReceptionLevel {
   const signOfA = getLongitudeZodiacSign(lonA);
   const dignities = PLANETARY_DIGNITIES[planetB];
@@ -175,8 +175,8 @@ function checkReceptionLevel(
 
   // 3. 檢查三分群
   // 簡化版：根據星座元素判斷
-  const triplicityRuler = dignities.triplicity[isDaytime ? 'day' : 'night'] ||
-    dignities.triplicity['shared'];
+  const triplicityRuler =
+    dignities.triplicity[isDaytime ? 'day' : 'night'] || dignities.triplicity['shared'];
   if (triplicityRuler === planetA) {
     return ReceptionLevel.Triplicity;
   }
@@ -206,10 +206,7 @@ function getLevelStrength(level: ReceptionLevel): number {
  * 計算相位力量的增強係數
  * 基於互融等級計算
  */
-function calculateReceptionEnhancement(
-  level: ReceptionLevel,
-  isRetrograde: boolean
-): number {
+function calculateReceptionEnhancement(level: ReceptionLevel, isRetrograde: boolean): number {
   let enhancement = 0;
 
   // 基礎增強係數
@@ -249,7 +246,7 @@ export function calculateSingleReception(
   lonA: number,
   _isRetrogradA: boolean,
   planetB: Planet,
-  isDaytime: boolean
+  isDaytime: boolean,
 ): Reception | null {
   const level = checkReceptionLevel(planetA, lonA, planetB, isDaytime);
 
@@ -305,7 +302,7 @@ export function calculateReceptionMatrix(chart: NatalChart): ReceptionMatrix {
         posA.longitude,
         posA.retrograde,
         planetB,
-        true // isDaytime 簡化，待後續基於太陽計算
+        true, // isDaytime 簡化，待後續基於太陽計算
       );
 
       if (reception) {
@@ -336,10 +333,8 @@ export function calculateReceptionMatrix(chart: NatalChart): ReceptionMatrix {
       // 避免重複
       const existing = mutualReceptions.find(
         (mr) =>
-          (mr.planetA === receptionAB.planet &&
-            mr.planetB === receptionAB.dispositor) ||
-          (mr.planetA === receptionAB.dispositor &&
-            mr.planetB === receptionAB.planet)
+          (mr.planetA === receptionAB.planet && mr.planetB === receptionAB.dispositor) ||
+          (mr.planetA === receptionAB.dispositor && mr.planetB === receptionAB.planet),
       );
 
       if (!existing) {
@@ -349,9 +344,7 @@ export function calculateReceptionMatrix(chart: NatalChart): ReceptionMatrix {
           levelAtoB: receptionAB.level,
           levelBtoA: receptionBA.level,
           combinedStrength:
-            (getLevelStrength(receptionAB.level) +
-              getLevelStrength(receptionBA.level)) /
-            2,
+            (getLevelStrength(receptionAB.level) + getLevelStrength(receptionBA.level)) / 2,
           isSymmetrical: receptionAB.level === receptionBA.level,
         });
       }
@@ -372,7 +365,7 @@ export function calculateReceptionMatrix(chart: NatalChart): ReceptionMatrix {
 export function getReceptionBetween(
   planetA: Planet,
   planetB: Planet,
-  matrix: ReceptionMatrix
+  matrix: ReceptionMatrix,
 ): Reception | null {
   return matrix.receptions.get(`${planetA}->${planetB}`) || null;
 }
@@ -388,9 +381,9 @@ export function calculateAspectEnhancement(
   _lonB: number,
   _isRetrogradB: boolean,
   aspect: Aspect,
-  matrix: ReceptionMatrix
+  matrix: ReceptionMatrix,
 ): AspectEnhancement {
-  const baseStrength = Math.max(0, 100 - (aspect.orb * 2)); // 簡化計算
+  const baseStrength = Math.max(0, 100 - aspect.orb * 2); // 簡化計算
 
   let receptionEnhancementA = 0;
   let receptionEnhancementB = 0;
@@ -398,30 +391,22 @@ export function calculateAspectEnhancement(
   // 檢查 A 是否被 B 接納
   const receptionAB = getReceptionBetween(planetA, planetB, matrix);
   if (receptionAB) {
-    receptionEnhancementA = calculateReceptionEnhancement(
-      receptionAB.level,
-      false
-    ) * 100;
+    receptionEnhancementA = calculateReceptionEnhancement(receptionAB.level, false) * 100;
   }
 
   // 檢查 B 是否被 A 接納
   const receptionBA = getReceptionBetween(planetB, planetA, matrix);
   if (receptionBA) {
-    receptionEnhancementB = calculateReceptionEnhancement(
-      receptionBA.level,
-      false
-    ) * 100;
+    receptionEnhancementB = calculateReceptionEnhancement(receptionBA.level, false) * 100;
   }
 
   // 相互互融額外加成
   const mutualReception = matrix.mutualReceptions.find(
     (mr) =>
       (mr.planetA === planetA && mr.planetB === planetB) ||
-      (mr.planetA === planetB && mr.planetB === planetA)
+      (mr.planetA === planetB && mr.planetB === planetA),
   );
-  const mutualBonus = mutualReception
-    ? (mutualReception.combinedStrength / 100) * 15
-    : 0; // 額外 15% 加成
+  const mutualBonus = mutualReception ? (mutualReception.combinedStrength / 100) * 15 : 0; // 額外 15% 加成
 
   // 簡化：無逆行資訊直接設為 0
   const retrogradeReduction = 0;
@@ -434,8 +419,8 @@ export function calculateAspectEnhancement(
       baseStrength +
         (receptionEnhancementA + receptionEnhancementB) / 2 +
         mutualBonus -
-        retrogradeReduction
-    )
+        retrogradeReduction,
+    ),
   );
 
   // 判斷可執行性
@@ -481,7 +466,7 @@ export function analyzeDifficultyResolvability(
   _lonB: number,
   _isRetrogradB: boolean,
   aspect: Aspect,
-  matrix: ReceptionMatrix
+  matrix: ReceptionMatrix,
 ): DifficultyAnalysis {
   // 困難相位：square (90) 和 opposition (180)
   const isDifficult = aspect.type === AspectType.Square || aspect.type === AspectType.Opposition;
@@ -504,17 +489,12 @@ export function analyzeDifficultyResolvability(
   const mutualReception = matrix.mutualReceptions.find(
     (mr) =>
       (mr.planetA === planetA && mr.planetB === planetB) ||
-      (mr.planetA === planetB && mr.planetB === planetA)
+      (mr.planetA === planetB && mr.planetB === planetA),
   );
   const hasMutualReception = !!mutualReception;
 
-  let receptionQuality: 'excellent' | 'good' | 'fair' | 'poor' | 'none' =
-    'none';
-  let resolvability:
-    | '可完全化解'
-    | '可部分改善'
-    | '有緩解'
-    | '無解' = '無解';
+  let receptionQuality: 'excellent' | 'good' | 'fair' | 'poor' | 'none' = 'none';
+  let resolvability: '可完全化解' | '可部分改善' | '有緩解' | '無解' = '無解';
   let explanation = '';
 
   if (hasMutualReception) {

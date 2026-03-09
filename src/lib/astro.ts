@@ -107,7 +107,10 @@ export function sunLongitudeAtJDE(jde: number): number {
  * Assign a house number (1–12) to an arbitrary ecliptic longitude.
  * @internal Exported for Arabic-parts house assignment.
  */
-export function houseForLongitude(lon: number, houses: import('../types/astro').HouseCusp[]): number {
+export function houseForLongitude(
+  lon: number,
+  houses: import('../types/astro').HouseCusp[],
+): number {
   return getHouseForPlanet(lon, houses);
 }
 
@@ -132,10 +135,7 @@ function getMoonLongitude(jde: number): number {
  * Calculate the geocentric ecliptic longitude of a planet (Mercury through Neptune)
  * as seen from Earth.
  */
-function getPlanetLongitude(
-  planetName: string,
-  jde: number,
-): number {
+function getPlanetLongitude(planetName: string, jde: number): number {
   const planets = getPlanets();
   const earth = planets.earth;
   const planetObj = planets[planetName as keyof typeof planets];
@@ -198,28 +198,30 @@ function getPlutoLongitude(jde: number): number {
  * (ASC - MC) mod 360 ∈ [0°, 180°]. If the raw result falls outside that
  * range it is the DSC, so we add 180° to get the true ASC.
  */
-function calculateAscendant(jde: number, latitude: number, longitude: number, midheaven: number): number {
+function calculateAscendant(
+  jde: number,
+  latitude: number,
+  longitude: number,
+  midheaven: number,
+): number {
   // Get Greenwich mean sidereal time in seconds
   const gmst = sidereal.mean(jde);
   // Convert to degrees and add longitude to get local sidereal time
-  const lst = normalizeDeg((gmst / 240) + longitude); // 240 = seconds per degree (86400/360)
+  const lst = normalizeDeg(gmst / 240 + longitude); // 240 = seconds per degree (86400/360)
   const ramc = lst * RAD;
 
   // Obliquity of the ecliptic
   const ε = nutation.meanObliquity(jde);
   const φ = latitude * RAD;
 
-  const asc = Math.atan2(
-    -Math.cos(ramc),
-    Math.sin(ε) * Math.tan(φ) + Math.cos(ε) * Math.sin(ramc),
-  );
+  const asc = Math.atan2(-Math.cos(ramc), Math.sin(ε) * Math.tan(φ) + Math.cos(ε) * Math.sin(ramc));
 
   const ascDeg = normalizeDeg(asc * DEG);
 
   // Quadrant correction: ASC must be in the eastern hemisphere of the chart,
   // i.e. (ASC - MC) mod 360 must lie in [0°, 180°].
   // If it falls in (180°, 360°) we have picked the DSC — shift by 180°.
-  const arcFromMC = ((ascDeg - midheaven) % 360 + 360) % 360;
+  const arcFromMC = (((ascDeg - midheaven) % 360) + 360) % 360;
   return arcFromMC <= 180 ? ascDeg : normalizeDeg(ascDeg + 180);
 }
 
@@ -231,7 +233,7 @@ function calculateAscendant(jde: number, latitude: number, longitude: number, mi
  */
 function calculateMidheaven(jde: number, longitude: number): number {
   const gmst = sidereal.mean(jde);
-  const lst = normalizeDeg((gmst / 240) + longitude);
+  const lst = normalizeDeg(gmst / 240 + longitude);
   const ramc = lst * RAD;
 
   const ε = nutation.meanObliquity(jde);
@@ -265,7 +267,7 @@ function projectToEcliptic(
   );
   const lonDeg = normalizeDeg(raw * DEG);
   // Quadrant check: upper-hemisphere cusps must lie in arc [MC, MC+180°)
-  const arcFromMC = ((lonDeg - mc) % 360 + 360) % 360;
+  const arcFromMC = (((lonDeg - mc) % 360) + 360) % 360;
   return arcFromMC < 180 ? lonDeg : normalizeDeg(lonDeg + 180);
 }
 
@@ -296,7 +298,7 @@ function buildHouseCalcParams(
 ): HouseCalcParams {
   const obliquity = nutation.meanObliquity(jde);
   const gmst = sidereal.mean(jde);
-  const lst = normalizeDeg((gmst / 240) + longitude);
+  const lst = normalizeDeg(gmst / 240 + longitude);
   const ramc = lst * RAD;
   return { ascendant, midheaven, jde, latitude, longitude, obliquity, ramc };
 }
@@ -347,10 +349,10 @@ function calculateEqualHouses(ascendant: number): HouseCusp[] {
  */
 function calculatePorphyryHouses(ascendant: number, midheaven: number): HouseCusp[] {
   const cusps: number[] = new Array(12);
-  cusps[0] = ascendant;            // House 1 = ASC
+  cusps[0] = ascendant; // House 1 = ASC
   cusps[3] = normalizeDeg(midheaven + 180); // House 4 = IC
   cusps[6] = normalizeDeg(ascendant + 180); // House 7 = DSC
-  cusps[9] = midheaven;            // House 10 = MC
+  cusps[9] = midheaven; // House 10 = MC
 
   // Quadrant 1: MC → ASC (houses 10, 11, 12, 1)
   let arc = normalizeDeg(ascendant - midheaven);
@@ -389,10 +391,7 @@ function calculateAlcabitiusHouses(p: HouseCalcParams): HouseCusp[] {
 
   // Right ascension of the ASC (pure ecliptic → equatorial, no latitude)
   const ascRad = p.ascendant * RAD;
-  const raAscRad = Math.atan2(
-    Math.sin(ascRad) * Math.cos(p.obliquity),
-    Math.cos(ascRad),
-  );
+  const raAscRad = Math.atan2(Math.sin(ascRad) * Math.cos(p.obliquity), Math.cos(ascRad));
 
   // Diurnal semi-arc in equatorial degrees
   let dsaDeg = normalizeDeg(raAscRad * DEG - p.ramc * DEG);
@@ -455,7 +454,7 @@ function calculateRegiomontanusHouses(p: HouseCalcParams): HouseCusp[] {
       Math.sin(p.obliquity) * tanDecl + Math.cos(p.obliquity) * Math.sin(ramcH),
     );
     const lonDeg = normalizeDeg(raw * DEG);
-    const arcFromMC = ((lonDeg - p.midheaven) % 360 + 360) % 360;
+    const arcFromMC = (((lonDeg - p.midheaven) % 360) + 360) % 360;
     cusps[houseIndices[k]] = arcFromMC < 180 ? lonDeg : normalizeDeg(lonDeg + 180);
   }
 
@@ -500,8 +499,7 @@ function calculateCampanusHouses(p: HouseCalcParams): HouseCusp[] {
     const A = offsets[k] * RAD;
     // Campanus: azimuthal projection from prime vertical to ecliptic
     const num = Math.cos(A);
-    const denom =
-      Math.sin(A) * Math.cos(p.obliquity) + Math.tan(φ) * Math.sin(p.obliquity);
+    const denom = Math.sin(A) * Math.cos(p.obliquity) + Math.tan(φ) * Math.sin(p.obliquity);
 
     const raHouse = p.ramc + Math.atan2(num, denom);
     cusps[houseIndices[k]] = projectToEcliptic(raHouse, p.obliquity, p.latitude, p.midheaven);
@@ -539,7 +537,7 @@ function calculateKochHouses(p: HouseCalcParams): HouseCusp[] {
   // Semi-arc of MC: how long it takes MC to go from horizon to meridian
   const cosH0 = -(Math.tan(φ) * Math.tan(decMC));
   // Clamp for extreme latitudes
-  const samc = Math.abs(cosH0) < 1 ? Math.acos(cosH0) : (cosH0 < 0 ? Math.PI : 0);
+  const samc = Math.abs(cosH0) < 1 ? Math.acos(cosH0) : cosH0 < 0 ? Math.PI : 0;
 
   // Trisect the MC semi-arc for houses 11, 12
   for (let i = 1; i <= 2; i++) {
@@ -750,7 +748,10 @@ function calculatePlanetPositions(jde: number, houses: HouseCusp[]): PlanetPosit
 /**
  * Calculate aspects between all pairs of planets.
  */
-function calculateAspects(planets: PlanetPosition[], orbConfig: OrbConfig = DEFAULT_ORB_CONFIG): Aspect[] {
+function calculateAspects(
+  planets: PlanetPosition[],
+  orbConfig: OrbConfig = DEFAULT_ORB_CONFIG,
+): Aspect[] {
   const aspects: Aspect[] = [];
   const aspectTypes = [
     AspectType.Conjunction,
