@@ -788,6 +788,81 @@ function calculateAspects(planets: PlanetPosition[], orbConfig: OrbConfig = DEFA
   return aspects;
 }
 
+// ---- Planet speed calculation ----
+
+/** Typical maximum daily speeds in degrees/day for each planet */
+const TYPICAL_MAX_SPEED: Record<Planet, number> = {
+  [Planet.Sun]: 1.02,
+  [Planet.Moon]: 14.5,
+  [Planet.Mercury]: 2.2,
+  [Planet.Venus]: 1.25,
+  [Planet.Mars]: 0.75,
+  [Planet.Jupiter]: 0.24,
+  [Planet.Saturn]: 0.13,
+  [Planet.Uranus]: 0.06,
+  [Planet.Neptune]: 0.04,
+  [Planet.Pluto]: 0.04,
+};
+
+/** Speed category type */
+export type SpeedCategory = 'fast' | 'normal' | 'slow' | 'stationary' | 'retrograde';
+
+/**
+ * Returns the approximate speed of a planet in degrees/day.
+ * Positive = direct, negative = retrograde.
+ */
+export function getPlanetSpeed(planet: Planet, jde: number): number {
+  try {
+    const getLon = (j: number): number => {
+      switch (planet) {
+        case Planet.Sun:
+          return getSunLongitude(j);
+        case Planet.Moon:
+          return getMoonLongitude(j);
+        case Planet.Mercury:
+          return getPlanetLongitude('mercury', j);
+        case Planet.Venus:
+          return getPlanetLongitude('venus', j);
+        case Planet.Mars:
+          return getPlanetLongitude('mars', j);
+        case Planet.Jupiter:
+          return getPlanetLongitude('jupiter', j);
+        case Planet.Saturn:
+          return getPlanetLongitude('saturn', j);
+        case Planet.Uranus:
+          return getPlanetLongitude('uranus', j);
+        case Planet.Neptune:
+          return getPlanetLongitude('neptune', j);
+        case Planet.Pluto:
+          return getPlutoLongitude(j);
+        default:
+          return 0;
+      }
+    };
+
+    const lonAfter = getLon(jde + 0.5);
+    const lonBefore = getLon(jde - 0.5);
+    let diff = lonAfter - lonBefore;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    return diff;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Categorises a planet's speed relative to its typical maximum.
+ */
+export function getSpeedCategory(planet: Planet, speed: number): SpeedCategory {
+  if (speed < 0) return 'retrograde';
+  const typical = TYPICAL_MAX_SPEED[planet] ?? 1;
+  if (Math.abs(speed) < 0.05) return 'stationary';
+  if (speed > typical * 1.2) return 'fast';
+  if (speed < typical * 0.5) return 'slow';
+  return 'normal';
+}
+
 /**
  * Main entry point: calculate a complete natal chart from birth data.
  *

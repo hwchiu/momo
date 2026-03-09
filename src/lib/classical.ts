@@ -469,3 +469,20 @@ export const CLASSICAL_PLANETS: Planet[] = [
 ];
 
 export const OUTER_PLANETS: Planet[] = [Planet.Uranus, Planet.Neptune, Planet.Pluto];
+
+/** Returns true if the planet has no essential dignities at the given position. */
+export function isPeregrine(
+  planet: Planet,
+  sign: ZodiacSign,
+  degree: number,
+  isDaytime: boolean,
+): boolean {
+  const score = calculateDignityScore(planet, sign, degree, isDaytime);
+  return (
+    score.domicile === 0 &&
+    score.exaltation === 0 &&
+    score.triplicity === 0 &&
+    score.term === 0 &&
+    score.face === 0
+  );
+}
