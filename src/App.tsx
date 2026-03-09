@@ -32,6 +32,7 @@ import { SynastryResult } from './components/SynastryResult';
 import { LoadingMessage } from './components/LoadingMessage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NumerologyPanel } from './components/NumerologyPanel';
+import { FengshuiPanel } from './components/FengshuiPanel';
 import { ClientDatabase } from './components/ClientDatabase';
 import type { ClientRecord } from './types/client';
 import './App.css';
@@ -68,7 +69,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 
 function App() {
   const [activeTab, setActiveTab] = useState<
-    'natal' | 'bazi' | 'vedic' | 'synastry' | 'numerology' | 'clients'
+    'natal' | 'bazi' | 'vedic' | 'synastry' | 'numerology' | 'fengshui' | 'clients'
   >('natal');
 
   // Shared aspect orb config (natal chart + synastry)
@@ -305,6 +306,16 @@ function App() {
         </button>
         <button
           role="tab"
+          aria-selected={activeTab === 'fengshui'}
+          aria-controls="panel-fengshui"
+          id="tab-fengshui"
+          className={`tab-btn ${activeTab === 'fengshui' ? 'active' : ''}`}
+          onClick={() => setActiveTab('fengshui')}
+        >
+          格局風水
+        </button>
+        <button
+          role="tab"
           aria-selected={activeTab === 'clients'}
           aria-controls="panel-clients"
           id="tab-clients"
@@ -427,6 +438,15 @@ function App() {
               <section className="quick-chart-section">
                 <h3 className="section-heading">數字學分析</h3>
                 <NumerologyPanel initialBirthData={chart ? chart.birthData : undefined} />
+              </section>
+            </div>
+          )}
+
+          {activeTab === 'fengshui' && (
+            <div role="tabpanel" id="panel-fengshui" aria-labelledby="tab-fengshui">
+              <section className="quick-chart-section">
+                <h3 className="section-heading">格局風水・飛星分析</h3>
+                <FengshuiPanel />
               </section>
             </div>
           )}

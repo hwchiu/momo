@@ -3044,3 +3044,230 @@
     flex-direction: column;
   }
 }
+
+/* ============================================================
+   格局風水・飛星分析 panel styles
+   ============================================================ */
+
+.fengshui-panel {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sp-4);
+  align-items: flex-start;
+}
+
+.fengshui-controls {
+  flex: 0 0 280px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+}
+
+.fengshui-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clr-text-3);
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.fengshui-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--clr-text-3);
+}
+
+.fengshui-input {
+  padding: 5px 8px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface-1);
+  color: var(--clr-text-2);
+  font-size: 13px;
+}
+
+.fengshui-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--clr-text-3);
+  cursor: pointer;
+}
+
+.fengshui-range {
+  width: 100%;
+  accent-color: var(--clr-primary);
+}
+
+.fengshui-divider {
+  height: 1px;
+  background: var(--clr-border);
+  margin: var(--sp-2) 0;
+}
+
+.fengshui-upload-btn {
+  padding: 7px 12px;
+  background: var(--clr-primary-btn);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  text-align: center;
+}
+
+.fengshui-upload-btn:hover {
+  background: var(--clr-primary-dark);
+}
+
+.fengshui-clear-btn {
+  background: var(--clr-danger);
+  margin-top: 4px;
+}
+
+.fengshui-clear-btn:hover {
+  background: var(--clr-danger-dark);
+}
+
+.fengshui-year-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  line-height: 1.5;
+}
+
+/* ---- Display area ---- */
+
+.fengshui-display {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.fengshui-container {
+  position: relative;
+  min-height: 400px;
+  background: #1a1308;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.fengshui-bg-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.fengshui-bg-placeholder {
+  width: 100%;
+  min-height: 400px;
+  background: linear-gradient(135deg, #1a1308 0%, #261e0c 100%);
+}
+
+.fengshui-svg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Star legend ---- */
+
+.fengshui-legend {
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+}
+
+.fengshui-legend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--sp-2);
+}
+
+.fengshui-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.fengshui-legend-dot {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.fengshui-legend-name {
+  font-weight: 600;
+  color: var(--clr-text-2);
+  min-width: 68px;
+}
+
+.fengshui-legend-badge {
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.fengshui-legend-badge--auspicious {
+  background: var(--clr-success-bg);
+  color: var(--clr-success);
+  border: 1px solid #b8ddb8;
+}
+
+.fengshui-legend-badge--inauspicious {
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger);
+  border: 1px solid #f0b8b8;
+}
+
+.fengshui-legend-badge--neutral {
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning);
+  border: 1px solid var(--clr-warning-border);
+}
+
+.fengshui-legend-element {
+  color: var(--clr-text-muted);
+  min-width: 60px;
+}
+
+.fengshui-legend-desc {
+  color: var(--clr-text-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .fengshui-panel {
+    flex-direction: column;
+  }
+  .fengshui-controls {
+    flex: none;
+    width: 100%;
+  }
+}
