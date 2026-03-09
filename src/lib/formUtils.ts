@@ -89,3 +89,30 @@ export function localToUtc(
   }
   return { year: year0, month: month0, day: day0, hour, minute };
 }
+
+/** Convert UTC date/time back to local date string and time string given a timezone offset. */
+export function utcToLocal(
+  utc: { year: number; month: number; day: number; hour: number; minute: number },
+  tzOffset: number,
+): { dateStr: string; timeStr: string } {
+  const totalMinutes = utc.hour * 60 + utc.minute + Math.round(tzOffset * 60);
+  let dayOffset = 0;
+  if (totalMinutes < 0) dayOffset = -1;
+  else if (totalMinutes >= 24 * 60) dayOffset = 1;
+  const localMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
+  const localHour = Math.floor(localMinutes / 60);
+  const localMinute = localMinutes % 60;
+
+  let year = utc.year;
+  let month = utc.month;
+  let day = utc.day;
+  if (dayOffset !== 0) {
+    const d = new Date(utc.year, utc.month - 1, utc.day + dayOffset);
+    year = d.getFullYear();
+    month = d.getMonth() + 1;
+    day = d.getDate();
+  }
+  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const timeStr = `${String(localHour).padStart(2, '0')}:${String(localMinute).padStart(2, '0')}`;
+  return { dateStr, timeStr };
+}

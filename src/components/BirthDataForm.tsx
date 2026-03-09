@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import type { GeocodingResult } from '../lib/geocode';
@@ -7,10 +7,19 @@ import {
   decimalToDMS,
   dmsToDecimal,
   localToUtc,
+  utcToLocal,
   validateCoords,
 } from '../lib/formUtils';
 import { useGeoSearch } from '../hooks/useGeoSearch';
 import { OrbSettings } from './OrbSettings';
+
+interface PrefillData {
+  birthData: BirthData;
+  houseSystem: HouseSystem;
+  tzOffset: number;
+  /** Increment this to force a re-fill even when data is identical */
+  key: number;
+}
 
 interface BirthDataFormProps {
   onSubmit: (data: BirthData, houseSystem: HouseSystem) => void;
@@ -18,6 +27,7 @@ interface BirthDataFormProps {
   defaultHouseSystem?: HouseSystem;
   orbConfig: OrbConfig;
   onOrbChange: (config: OrbConfig) => void;
+  prefillData?: PrefillData | null;
 }
 
 export function BirthDataForm({
@@ -26,6 +36,7 @@ export function BirthDataForm({
   defaultHouseSystem = HouseSystem.Alcabitius,
   orbConfig,
   onOrbChange,
+  prefillData,
 }: BirthDataFormProps) {
   const [dateStr, setDateStr] = useState('2026-03-04');
   const [timeStr, setTimeStr] = useState('04:26');
@@ -41,6 +52,28 @@ export function BirthDataForm({
 
   const [coordError, setCoordError] = useState<string | null>(null);
   const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
+
+  // Sync form fields whenever prefillData changes (client loaded from DB)
+  useEffect(() => {
+    if (!prefillData) return;
+    const { birthData: bd, houseSystem: hs, tzOffset: tz } = prefillData;
+    const { dateStr: ds, timeStr: ts } = utcToLocal(bd, tz);
+    setDateStr(ds);
+    setTimeStr(ts);
+    setTzOffset(tz);
+    setLocationName(bd.locationName);
+    const latDMS = decimalToDMS(Math.abs(bd.latitude));
+    setLatDeg(latDMS.deg);
+    setLatMin(latDMS.min);
+    setLatDir(bd.latitude >= 0 ? 'N' : 'S');
+    const lonDMS = decimalToDMS(Math.abs(bd.longitude));
+    setLonDeg(lonDMS.deg);
+    setLonMin(lonDMS.min);
+    setLonDir(bd.longitude >= 0 ? 'E' : 'W');
+    setHouseSystem(hs);
+    setCoordError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefillData?.key]);
 
   const handleSelectGeoResult = (result: GeocodingResult) => {
     const latDMS = decimalToDMS(result.latitude);

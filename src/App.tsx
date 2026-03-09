@@ -67,14 +67,23 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic' | 'synastry' | 'clients'>(
-    'natal',
-  );
+  const [activeTab, setActiveTab] = useState<
+    'natal' | 'bazi' | 'vedic' | 'synastry' | 'numerology' | 'clients'
+  >('natal');
 
   // Shared aspect orb config (natal chart + synastry)
   const [orbConfig, setOrbConfig] = useState<OrbConfig>(DEFAULT_ORB_CONFIG);
   // Store last birth data so orb changes can re-trigger calculation
   const lastNatalRef = useRef<{ birthData: BirthData; houseSystem: HouseSystem } | null>(null);
+
+  // Prefill data for BirthDataForm (set when loading a client)
+  const [prefillData, setPrefillData] = useState<{
+    birthData: BirthData;
+    houseSystem: HouseSystem;
+    tzOffset: number;
+    key: number;
+  } | null>(null);
+  const prefillKeyRef = useRef(0);
 
   // Natal chart state
   const [chart, setChart] = useState<NatalChartData | null>(null);
@@ -146,20 +155,26 @@ function App() {
       const hs = Object.values(HouseSystem).includes(client.houseSystem as HouseSystem)
         ? (client.houseSystem as HouseSystem)
         : HouseSystem.Alcabitius;
-      runCalculation(
-        {
-          year: client.birthData.year,
-          month: client.birthData.month,
-          day: client.birthData.day,
-          hour: client.birthData.hour,
-          minute: client.birthData.minute,
-          latitude: client.birthData.latitude,
-          longitude: client.birthData.longitude,
-          locationName: client.birthData.locationName,
-        },
-        hs,
-        orbConfig,
-      );
+      const birthData: BirthData = {
+        year: client.birthData.year,
+        month: client.birthData.month,
+        day: client.birthData.day,
+        hour: client.birthData.hour,
+        minute: client.birthData.minute,
+        latitude: client.birthData.latitude,
+        longitude: client.birthData.longitude,
+        locationName: client.birthData.locationName,
+      };
+      // Pre-fill the form fields so the user sees the client's data
+      prefillKeyRef.current += 1;
+      setPrefillData({
+        birthData,
+        houseSystem: hs,
+        tzOffset: client.birthData.tzOffset ?? 8,
+        key: prefillKeyRef.current,
+      });
+      // Also trigger chart calculation immediately
+      runCalculation(birthData, hs, orbConfig);
     },
     [runCalculation, orbConfig],
   );
@@ -280,6 +295,16 @@ function App() {
         </button>
         <button
           role="tab"
+          aria-selected={activeTab === 'numerology'}
+          aria-controls="panel-numerology"
+          id="tab-numerology"
+          className={`tab-btn ${activeTab === 'numerology' ? 'active' : ''}`}
+          onClick={() => setActiveTab('numerology')}
+        >
+          數字學
+        </button>
+        <button
+          role="tab"
           aria-selected={activeTab === 'clients'}
           aria-controls="panel-clients"
           id="tab-clients"
@@ -303,6 +328,7 @@ function App() {
                   isLoading={isLoading}
                   orbConfig={orbConfig}
                   onOrbChange={setOrbConfig}
+                  prefillData={prefillData}
                 />
               </section>
 
@@ -316,10 +342,6 @@ function App() {
                     <NatalChart chart={chart} size={540} />
                   </div>
                   <ChartDetails chart={chart} />
-                  <details className="numerology-details">
-                    <summary className="numerology-summary">🔢 數字學分析</summary>
-                    <NumerologyPanel birthData={chart.birthData} />
-                  </details>
                   <TransitPanel natalChart={chart} />
                   <ArabicPartsPanel chart={chart} />
                   <ProfectionsPanel chart={chart} />
@@ -397,6 +419,15 @@ function App() {
                   <SynastryResult result={synastryResult} />
                 </section>
               )}
+            </div>
+          )}
+
+          {activeTab === 'numerology' && (
+            <div role="tabpanel" id="panel-numerology" aria-labelledby="tab-numerology">
+              <section className="quick-chart-section">
+                <h3 className="section-heading">數字學分析</h3>
+                <NumerologyPanel initialBirthData={chart ? chart.birthData : undefined} />
+              </section>
             </div>
           )}
 

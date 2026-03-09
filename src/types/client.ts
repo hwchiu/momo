@@ -14,6 +14,7 @@ export interface ClientRecord {
     latitude: number;
     longitude: number;
     locationName: string;
+    tzOffset: number;
   };
   houseSystem: string;
   analysisNotes: string;

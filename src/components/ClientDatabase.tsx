@@ -23,6 +23,7 @@ interface ClientFormData {
   day: string;
   hour: string;
   minute: string;
+  tzOffset: string;
   locationName: string;
   latitude: string;
   longitude: string;
@@ -39,6 +40,7 @@ function emptyForm(): ClientFormData {
     day: '',
     hour: '0',
     minute: '0',
+    tzOffset: '8',
     locationName: '',
     latitude: '',
     longitude: '',
@@ -56,6 +58,7 @@ function clientToForm(c: ClientRecord): ClientFormData {
     day: String(c.birthData.day),
     hour: String(c.birthData.hour),
     minute: String(c.birthData.minute),
+    tzOffset: String(c.birthData.tzOffset ?? 8),
     locationName: c.birthData.locationName,
     latitude: String(c.birthData.latitude),
     longitude: String(c.birthData.longitude),
@@ -117,6 +120,7 @@ export function ClientDatabase({ onLoadClient }: ClientDatabaseProps) {
         day: parseInt(form.day) || 1,
         hour: parseInt(form.hour) || 0,
         minute: parseInt(form.minute) || 0,
+        tzOffset: parseFloat(form.tzOffset) || 8,
         latitude: parseFloat(form.latitude) || 0,
         longitude: parseFloat(form.longitude) || 0,
         locationName: form.locationName,
@@ -233,6 +237,18 @@ export function ClientDatabase({ onLoadClient }: ClientDatabaseProps) {
                   max={59}
                   value={form.minute}
                   onChange={(e) => setField('minute', e.target.value)}
+                />
+              </label>
+              <label>
+                時區 (UTC±)
+                <input
+                  type="number"
+                  className="form-input"
+                  min={-12}
+                  max={14}
+                  step={0.5}
+                  value={form.tzOffset}
+                  onChange={(e) => setField('tzOffset', e.target.value)}
                 />
               </label>
               <label>
