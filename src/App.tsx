@@ -25,6 +25,7 @@ import { FlyingStarsPanel } from './components/FlyingStarsPanel';
 import { DateSelectTool } from './components/DateSelectTool';
 import { QiMenPanel } from './components/QiMenPanel';
 import { ZiWeiPanel } from './components/ZiWeiPanel';
+import { NumerologyPanel } from './components/NumerologyPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
@@ -62,7 +63,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'ziwei' | 'vedic' | 'synastry'>('natal');
+  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'ziwei' | 'numerology' | 'vedic' | 'synastry'>('natal');
 
   // Shared aspect orb config (natal chart + synastry)
   const [orbConfig, setOrbConfig] = useState<OrbConfig>(DEFAULT_ORB_CONFIG);
@@ -246,6 +247,16 @@ function App() {
         </button>
         <button
           role="tab"
+          aria-selected={activeTab === 'numerology'}
+          aria-controls="panel-numerology"
+          id="tab-numerology"
+          className={`tab-btn ${activeTab === 'numerology' ? 'active' : ''}`}
+          onClick={() => setActiveTab('numerology')}
+        >
+          數字學
+        </button>
+        <button
+          role="tab"
           aria-selected={activeTab === 'vedic'}
           aria-controls="panel-vedic"
           id="tab-vedic"
@@ -357,6 +368,15 @@ function App() {
             <section className="quick-chart-section">
               <h3 className="section-heading">紫微斗數命盤</h3>
               <ZiWeiPanel />
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'numerology' && (
+          <div role="tabpanel" id="panel-numerology" aria-labelledby="tab-numerology">
+            <section className="quick-chart-section">
+              <h3 className="section-heading">數字學</h3>
+              <NumerologyPanel />
             </section>
           </div>
         )}

@@ -2082,3 +2082,309 @@
   .zw-input-year { width: 68px; }
   .zw-input-sm { width: 48px; }
 }
+
+/* ============================================================
+   數字學 (Numerology)
+   ============================================================ */
+
+.num-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.num-fieldset {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--clr-surface-1);
+}
+
+.num-fieldset legend {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  padding: 0 var(--sp-1);
+}
+
+.num-form-row {
+  display: flex;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+
+.num-form-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 0.9rem;
+}
+
+.num-form-row input[type='number'] {
+  width: 72px;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+/* Results */
+.num-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.num-section {
+  background: var(--clr-surface-1);
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+}
+
+.num-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  margin: 0 0 var(--sp-4) 0;
+  padding-bottom: var(--sp-2);
+  border-bottom: 2px solid var(--clr-primary-light);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.num-section-sub {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--clr-text-muted);
+}
+
+/* Core number cards */
+.num-core-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-4);
+}
+
+.num-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  position: relative;
+}
+
+.num-card--master {
+  border-color: #9b59b6;
+  background: #fdf6ff;
+}
+
+.num-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-2);
+}
+
+.num-card-label {
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  font-weight: 600;
+}
+
+.num-card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--clr-primary);
+  line-height: 1;
+}
+
+.num-card--master .num-card-value {
+  color: #7d3c98;
+}
+
+.num-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--clr-text-2);
+  margin-bottom: var(--sp-2);
+}
+
+.num-card-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+
+.num-keyword {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.num-card--master .num-keyword {
+  background: #f0d9f9;
+  color: #6c3483;
+}
+
+.num-card-desc {
+  font-size: 0.85rem;
+  color: var(--clr-text-3);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.num-card-sub {
+  margin-top: var(--sp-2);
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+}
+
+/* Personal cycles */
+.num-cycles-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3);
+}
+
+.num-cycle-box {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+  text-align: center;
+}
+
+.num-cycle-label {
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+}
+
+.num-cycle-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--clr-primary);
+  line-height: 1.1;
+}
+
+.num-cycle-desc {
+  font-size: 0.78rem;
+  color: var(--clr-text-3);
+  margin-top: var(--sp-1);
+}
+
+/* Challenge numbers */
+.num-challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+
+.num-challenge-cell {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+}
+
+.num-challenge-label {
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+}
+
+.num-challenge-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--clr-warning);
+  line-height: 1.1;
+  margin-bottom: var(--sp-2);
+}
+
+.num-challenge-desc {
+  font-size: 0.82rem;
+  color: var(--clr-text-3);
+  line-height: 1.5;
+}
+
+/* Pinnacle cycles */
+.num-pinnacle-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.num-pinnacle-row {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.num-pinnacle-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.num-pinnacle-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--clr-text-2);
+}
+
+.num-pinnacle-ages {
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+}
+
+.num-pinnacle-years {
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+}
+
+.num-pinnacle-number {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--clr-primary);
+  min-width: 36px;
+  text-align: center;
+}
+
+.num-pinnacle-name {
+  font-size: 0.82rem;
+  color: var(--clr-text-3);
+  text-align: right;
+  min-width: 90px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .num-cycles-row {
+    grid-template-columns: 1fr;
+  }
+
+  .num-pinnacle-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
+
+  .num-pinnacle-name {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
