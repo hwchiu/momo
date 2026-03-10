@@ -26,6 +26,7 @@ import { DateSelectTool } from './components/DateSelectTool';
 import { QiMenPanel } from './components/QiMenPanel';
 import { ZiWeiPanel } from './components/ZiWeiPanel';
 import { NumerologyPanel } from './components/NumerologyPanel';
+import { CRMPanel } from './components/CRMPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
@@ -63,7 +64,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'ziwei' | 'numerology' | 'vedic' | 'synastry'>('natal');
+  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'ziwei' | 'numerology' | 'vedic' | 'synastry' | 'crm'>('natal');
 
   // Shared aspect orb config (natal chart + synastry)
   const [orbConfig, setOrbConfig] = useState<OrbConfig>(DEFAULT_ORB_CONFIG);
@@ -275,6 +276,16 @@ function App() {
         >
           雙人合盤
         </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'crm'}
+          aria-controls="panel-crm"
+          id="tab-crm"
+          className={`tab-btn ${activeTab === 'crm' ? 'active' : ''}`}
+          onClick={() => setActiveTab('crm')}
+        >
+          客戶管理
+        </button>
       </div>
 
       {/* ---- Main content ---- */}
@@ -402,6 +413,12 @@ function App() {
                 <VedicResult chart={vedicChart} />
               </section>
             )}
+          </div>
+        )}
+
+        {activeTab === 'crm' && (
+          <div role="tabpanel" id="panel-crm" aria-labelledby="tab-crm">
+            <CRMPanel />
           </div>
         )}
 
