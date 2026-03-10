@@ -13,12 +13,12 @@ describe('BirthDataForm', () => {
 
   it('should render the submit button with correct text', () => {
     render(<BirthDataForm onSubmit={vi.fn()} />);
-    expect(screen.getByRole('button', { name: '製作星盤' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /製作星盤/ })).toBeInTheDocument();
   });
 
   it('should show loading state when isLoading is true', () => {
     render(<BirthDataForm onSubmit={vi.fn()} isLoading={true} />);
-    const button = screen.getByRole('button', { name: '計算中...' });
+    const button = screen.getByRole('button', { name: /推算中/ });
     expect(button).toBeDisabled();
   });
 
@@ -34,7 +34,7 @@ describe('BirthDataForm', () => {
     const onSubmit = vi.fn();
     render(<BirthDataForm onSubmit={onSubmit} />);
 
-    fireEvent.submit(screen.getByRole('button', { name: '製作星盤' }).closest('form')!);
+    fireEvent.submit(screen.getByRole('button', { name: /製作星盤/ }).closest('form')!);
 
     expect(onSubmit).toHaveBeenCalledOnce();
   });
