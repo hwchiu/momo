@@ -140,6 +140,22 @@ describe('calculateBazi - day pillar', () => {
       expect(chart.dayPillar.branch).toBeLessThanOrEqual(11);
     }
   });
+
+  it('子時跨日: birth at 23:xx uses next day pillar', () => {
+    // 2000-01-01 甲戌 day (stem=0 branch=10); at 23:00 the day advances to 乙亥
+    const before = calculateBazi({ year: 2000, month: 1, day: 1, hour: 22, minute: 59, gender: 'male' });
+    const after  = calculateBazi({ year: 2000, month: 1, day: 1, hour: 23, minute: 0,  gender: 'male' });
+    expect(before.dayPillar.stem).toBe(0);   // 甲 (still Jan 1)
+    expect(after.dayPillar.stem).toBe(1);    // 乙 (advances to Jan 2)
+    expect(after.dayPillar.branch).toBe(11); // 亥
+  });
+
+  it('1988-07-28 22:29 is 庚子 day (not 甲申)', () => {
+    // 22:29 is 亥時 (21:00-23:00), does NOT trigger 子時跨日
+    const chart = calculateBazi({ year: 1988, month: 7, day: 28, hour: 22, minute: 29, gender: 'male' });
+    expect(chart.dayPillar.stem).toBe(6);   // 庚
+    expect(chart.dayPillar.branch).toBe(0); // 子
+  });
 });
 
 // ---- Year Pillar ----
