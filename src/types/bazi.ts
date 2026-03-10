@@ -117,7 +117,20 @@ export const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未',
 export const STEM_ELEMENTS = ['木', '木', '火', '火', '土', '土', '金', '金', '水', '水'];
 
 /** Wu-xing element for each Earthly Branch (index 0-11) */
-export const BRANCH_ELEMENTS = ['水', '土', '木', '木', '土', '火', '火', '土', '金', '金', '土', '水'];
+export const BRANCH_ELEMENTS = [
+  '水',
+  '土',
+  '木',
+  '木',
+  '土',
+  '火',
+  '火',
+  '土',
+  '金',
+  '金',
+  '土',
+  '水',
+];
 
 /** Yin/Yang polarity for each Heavenly Stem */
 export const STEM_YIN_YANG = ['陽', '陰', '陽', '陰', '陽', '陰', '陽', '陰', '陽', '陰'];
@@ -207,5 +220,16 @@ export const KUA_NAMES: Record<number, string> = {
 
 /** 十二建星 (Twelve Officers) names */
 export const TWELVE_OFFICERS = [
-  '建', '除', '滿', '平', '定', '執', '破', '危', '成', '收', '開', '閉',
+  '建',
+  '除',
+  '滿',
+  '平',
+  '定',
+  '執',
+  '破',
+  '危',
+  '成',
+  '收',
+  '開',
+  '閉',
 ];

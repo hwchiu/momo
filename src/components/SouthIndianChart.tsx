@@ -117,8 +117,7 @@ export function SouthIndianChart({ chart }: SouthIndianChartProps) {
       </div>
       <div className="si-legend">
         <span style={{ color: '#DAA520' }}>■</span> 吉星&nbsp;&nbsp;
-        <span style={{ color: '#DC143C' }}>■</span> 凶星&nbsp;&nbsp;
-        ℞ 逆行
+        <span style={{ color: '#DC143C' }}>■</span> 凶星&nbsp;&nbsp; ℞ 逆行
       </div>
     </div>
   );

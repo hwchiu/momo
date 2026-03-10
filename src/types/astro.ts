@@ -46,7 +46,10 @@ export const HOUSE_SYSTEM_INFO: Record<HouseSystem, { name: string; description:
   [HouseSystem.WholeSign]: { name: '整個星座宮位制', description: '最古老的制度' },
   [HouseSystem.EqualHouse]: { name: '等宮制', description: '以上升點為起點，每宮 30°' },
   [HouseSystem.Porphyry]: { name: 'Porphyry 波菲利制', description: '象限三等分' },
-  [HouseSystem.Alcabitius]: { name: 'Alcabitius 阿卡比特制', description: '中世紀常用，日弧三等分' },
+  [HouseSystem.Alcabitius]: {
+    name: 'Alcabitius 阿卡比特制',
+    description: '中世紀常用，日弧三等分',
+  },
   [HouseSystem.Regiomontanus]: {
     name: 'Regiomontanus 雷喬蒙塔努斯制',
     description: '赤道三等分',
@@ -131,10 +134,7 @@ export interface NatalChart {
 }
 
 /** Zodiac sign display info */
-export const ZODIAC_SIGNS: Record<
-  ZodiacSign,
-  { name: string; glyph: string; element: string }
-> = {
+export const ZODIAC_SIGNS: Record<ZodiacSign, { name: string; glyph: string; element: string }> = {
   [ZodiacSign.Aries]: { name: '牡羊座', glyph: '\u2648', element: '火' },
   [ZodiacSign.Taurus]: { name: '金牛座', glyph: '\u2649', element: '土' },
   [ZodiacSign.Gemini]: { name: '雙子座', glyph: '\u264A', element: '風' },
@@ -200,14 +200,14 @@ export interface OrbConfig {
 
 /** Classical moiety values (Ptolemaic tradition) */
 export const DEFAULT_ORB_CONFIG: OrbConfig = {
-  [Planet.Sun]:     15,
-  [Planet.Moon]:    12,
-  [Planet.Mercury]:  7,
-  [Planet.Venus]:    7,
-  [Planet.Mars]:     8,
-  [Planet.Jupiter]:  9,
-  [Planet.Saturn]:   9,
-  [Planet.Uranus]:   5,
-  [Planet.Neptune]:  5,
-  [Planet.Pluto]:    5,
+  [Planet.Sun]: 15,
+  [Planet.Moon]: 12,
+  [Planet.Mercury]: 7,
+  [Planet.Venus]: 7,
+  [Planet.Mars]: 8,
+  [Planet.Jupiter]: 9,
+  [Planet.Saturn]: 9,
+  [Planet.Uranus]: 5,
+  [Planet.Neptune]: 5,
+  [Planet.Pluto]: 5,
 };

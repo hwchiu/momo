@@ -50,8 +50,6 @@ it('compares our engine with reference', () => {
     latitude: 25.05, longitude: 121.5,
     locationName: '台北市',
   }, HouseSystem.Alcabitius);
-
-  const planetOrder = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
   
   console.log('\n=== 行星位置對比 ===');
   console.log('行星       我們的結果          參考          差距(°) 落宮比較');

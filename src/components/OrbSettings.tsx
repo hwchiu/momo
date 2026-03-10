@@ -35,18 +35,12 @@ export function OrbSettings({ orbConfig, onChange }: OrbSettingsProps) {
 
   return (
     <div className="orb-settings">
-      <button
-        type="button"
-        className="orb-settings-toggle"
-        onClick={() => setOpen((v) => !v)}
-      >
+      <button type="button" className="orb-settings-toggle" onClick={() => setOpen((v) => !v)}>
         {open ? '▲' : '▼'} 容許度設定（古典星體制）
       </button>
       {open && (
         <div className="orb-settings-panel">
-          <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#666' }}>
-            兩星之間的容許度 = (星體A + 星體B) / 2
-          </p>
+          <p className="orb-hint">兩星之間的容許度 = (星體A + 星體B) / 2</p>
           <table className="orb-table" cellPadding={2} cellSpacing={0}>
             <thead>
               <tr>
@@ -60,8 +54,8 @@ export function OrbSettings({ orbConfig, onChange }: OrbSettingsProps) {
                 const info = PLANET_INFO[planet];
                 return (
                   <tr key={planet}>
-                    <td style={{ whiteSpace: 'nowrap' }}>{info.name}</td>
-                    <td style={{ textAlign: 'center' }}>{info.glyph}</td>
+                    <td className="orb-name-cell">{info.name}</td>
+                    <td className="orb-glyph-cell">{info.glyph}</td>
                     <td>
                       <input
                         type="number"

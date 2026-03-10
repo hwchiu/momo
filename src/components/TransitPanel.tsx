@@ -53,13 +53,7 @@ function addYears(dateStr: string, years: number): string {
 
 // ---- Planet row display ----
 
-function PlanetPositionTable({
-  planets,
-  label,
-}: {
-  planets: TransitPlanetRow[];
-  label: string;
-}) {
+function PlanetPositionTable({ planets, label }: { planets: TransitPlanetRow[]; label: string }) {
   return (
     <div className="transit-pos-section">
       <div className="transit-pos-label">{label}</div>
@@ -132,10 +126,7 @@ function AspectTable({
                   <span className="planet-glyph">{PLANET_INFO[a.transitPlanet].glyph}</span>
                   {PLANET_INFO[a.transitPlanet].name}
                 </td>
-                <td
-                  className="aspect-cell"
-                  style={{ color: aspectInfo.color }}
-                >
+                <td className="aspect-cell" style={{ color: aspectInfo.color }}>
                   {aspectInfo.symbol} {aspectInfo.name}
                 </td>
                 <td className="planet-cell" style={{ whiteSpace: 'nowrap' }}>
@@ -185,11 +176,7 @@ function TightAspectsBanner({ aspects }: { aspects: TransitAspect[] }) {
 
 function calcAge(natalChart: NatalChart, date: Date): string {
   const birth = new Date(
-    Date.UTC(
-      natalChart.birthData.year,
-      natalChart.birthData.month - 1,
-      natalChart.birthData.day,
-    ),
+    Date.UTC(natalChart.birthData.year, natalChart.birthData.month - 1, natalChart.birthData.day),
   );
   const ms = date.getTime() - birth.getTime();
   if (ms < 0) return '出生前';
@@ -255,13 +242,27 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
         />
         <span className="transit-age-badge">{age}</span>
         <div className="transit-quick-btns">
-          <button className="transit-quick-btn" onClick={() => setDateStr(todayStr())}>今日</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, -1))}>−1月</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 1))}>+1月</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 3))}>+3月</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 6))}>+6月</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addYears(dateStr, 1))}>+1年</button>
-          <button className="transit-quick-btn" onClick={() => setDateStr(addYears(dateStr, -1))}>−1年</button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(todayStr())}>
+            今日
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, -1))}>
+            −1月
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 1))}>
+            +1月
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 3))}>
+            +3月
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addMonths(dateStr, 6))}>
+            +6月
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addYears(dateStr, 1))}>
+            +1年
+          </button>
+          <button className="transit-quick-btn" onClick={() => setDateStr(addYears(dateStr, -1))}>
+            −1年
+          </button>
         </div>
       </div>
 
@@ -291,14 +292,33 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
           <div className="orb-settings-panel">
             <table className="orb-table" cellPadding={2} cellSpacing={0}>
               <thead>
-                <tr><th>技法</th><th>容許度（°）</th><th>說明</th></tr>
+                <tr>
+                  <th>技法</th>
+                  <th>容許度（°）</th>
+                  <th>說明</th>
+                </tr>
               </thead>
               <tbody>
                 {(
                   [
-                    ['transit',     transitOrbs.transit,     '過境相位容許度',   (v: number) => setTransitOrbs((o) => ({ ...o, transit: v }))],
-                    ['progression', transitOrbs.progression, '二次推運容許度',   (v: number) => setTransitOrbs((o) => ({ ...o, progression: v }))],
-                    ['solarArc',    transitOrbs.solarArc,    '太陽弧容許度',     (v: number) => setTransitOrbs((o) => ({ ...o, solarArc: v }))],
+                    [
+                      'transit',
+                      transitOrbs.transit,
+                      '過境相位容許度',
+                      (v: number) => setTransitOrbs((o) => ({ ...o, transit: v })),
+                    ],
+                    [
+                      'progression',
+                      transitOrbs.progression,
+                      '二次推運容許度',
+                      (v: number) => setTransitOrbs((o) => ({ ...o, progression: v })),
+                    ],
+                    [
+                      'solarArc',
+                      transitOrbs.solarArc,
+                      '太陽弧容許度',
+                      (v: number) => setTransitOrbs((o) => ({ ...o, solarArc: v })),
+                    ],
                   ] as [string, number, string, (v: number) => void][]
                 ).map(([key, val, label, setter]) => (
                   <tr key={key}>
@@ -314,7 +334,9 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
                         className="orb-input"
                       />
                     </td>
-                    <td style={{ fontSize: '11px', color: '#888' }}>預設 {DEFAULT_TRANSIT_ORB_CONFIG[key as keyof TransitOrbConfig]}°</td>
+                    <td style={{ fontSize: '11px', color: '#888' }}>
+                      預設 {DEFAULT_TRANSIT_ORB_CONFIG[key as keyof TransitOrbConfig]}°
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -338,7 +360,11 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
             <PlanetPositionTable planets={transitResult.planets} label="過境行星位置" />
             <div className="transit-aspects-col">
               <div className="transit-pos-label">過境→本命 相位（容許 2°）</div>
-              <AspectTable aspects={transitResult.aspects} transitLabel="過境星體" highlight={0.5} />
+              <AspectTable
+                aspects={transitResult.aspects}
+                transitLabel="過境星體"
+                highlight={0.5}
+              />
             </div>
           </div>
         </div>
@@ -348,16 +374,20 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
       {mode === 'progressions' && progressedResult && (
         <div className="transit-content">
           <div className="transit-info-bar">
-            推運年齡 {progressedResult.progressedAge.toFixed(2)} 年 &nbsp;|&nbsp;
-            推運 ASC：{formatLon(progressedResult.progressedAsc)} &nbsp;|&nbsp;
-            推運 MC：{formatLon(progressedResult.progressedMC)}
+            推運年齡 {progressedResult.progressedAge.toFixed(2)} 年 &nbsp;|&nbsp; 推運 ASC：
+            {formatLon(progressedResult.progressedAsc)} &nbsp;|&nbsp; 推運 MC：
+            {formatLon(progressedResult.progressedMC)}
           </div>
           <TightAspectsBanner aspects={progressedResult.aspects} />
           <div className="transit-two-col">
             <PlanetPositionTable planets={progressedResult.planets} label="推運行星位置" />
             <div className="transit-aspects-col">
               <div className="transit-pos-label">推運→本命 相位（容許 2°）</div>
-              <AspectTable aspects={progressedResult.aspects} transitLabel="推運星體" highlight={0.5} />
+              <AspectTable
+                aspects={progressedResult.aspects}
+                transitLabel="推運星體"
+                highlight={0.5}
+              />
             </div>
           </div>
         </div>
@@ -367,14 +397,19 @@ export function TransitPanel({ natalChart }: TransitPanelProps) {
       {mode === 'solar_arc' && solarArcResult && (
         <div className="transit-content">
           <div className="transit-info-bar">
-            太陽弧：{solarArcResult.solarArc.toFixed(3)}°（約 {solarArcResult.solarArc.toFixed(0)} 年）
+            太陽弧：{solarArcResult.solarArc.toFixed(3)}°（約 {solarArcResult.solarArc.toFixed(0)}{' '}
+            年）
           </div>
           <TightAspectsBanner aspects={solarArcResult.aspects} />
           <div className="transit-two-col">
             <PlanetPositionTable planets={solarArcResult.planets} label="太陽弧指向位置" />
             <div className="transit-aspects-col">
               <div className="transit-pos-label">太陽弧→本命 相位（容許 1°）</div>
-              <AspectTable aspects={solarArcResult.aspects} transitLabel="SA 星體" highlight={0.3} />
+              <AspectTable
+                aspects={solarArcResult.aspects}
+                transitLabel="SA 星體"
+                highlight={0.3}
+              />
             </div>
           </div>
         </div>
@@ -409,22 +444,20 @@ function fmtFirdariaLord(lord: FirdariaLord): { glyph: string; name: string } {
   return { glyph: PLANET_INFO[lord].glyph, name: PLANET_INFO[lord].name };
 }
 
-function FirdariaDisplay({
-  result,
-  targetDate,
-}: {
-  result: FirdariaResult;
-  targetDate: Date;
-}) {
+function FirdariaDisplay({ result, targetDate }: { result: FirdariaResult; targetDate: Date }) {
   const { isDay, allPeriods, currentPeriod, currentSubPeriod } = result;
   const mainInfo = fmtFirdariaLord(currentPeriod.lord);
   const subInfo = fmtFirdariaLord(currentSubPeriod.lord);
 
   // Sub-period progress within the main period
-  const subProgress = Math.min(100, Math.round(
-    ((targetDate.getTime() - currentSubPeriod.startDate.getTime()) /
-     (currentSubPeriod.endDate.getTime() - currentSubPeriod.startDate.getTime())) * 100,
-  ));
+  const subProgress = Math.min(
+    100,
+    Math.round(
+      ((targetDate.getTime() - currentSubPeriod.startDate.getTime()) /
+        (currentSubPeriod.endDate.getTime() - currentSubPeriod.startDate.getTime())) *
+        100,
+    ),
+  );
 
   return (
     <div>
@@ -432,7 +465,9 @@ function FirdariaDisplay({
       <div className="profection-card">
         <div className="profection-card-row">
           <span className="profection-label">盤型</span>
-          <span className="profection-value">{isDay ? '日間盤（太陽在地平線上）' : '夜間盤（太陽在地平線下）'}</span>
+          <span className="profection-value">
+            {isDay ? '日間盤（太陽在地平線上）' : '夜間盤（太陽在地平線下）'}
+          </span>
         </div>
         <div className="profection-card-row">
           <span className="profection-label">當前大限主星</span>
@@ -454,20 +489,30 @@ function FirdariaDisplay({
         </div>
         {/* Sub-period progress bar */}
         <div style={{ margin: '8px 0 4px' }}>
-          <div style={{ fontSize: '11px', color: '#666', marginBottom: '3px' }}>小限進度 {subProgress}%</div>
+          <div style={{ fontSize: '11px', color: '#666', marginBottom: '3px' }}>
+            小限進度 {subProgress}%
+          </div>
           <div style={{ background: '#e0e0e0', borderRadius: '4px', height: '8px', width: '100%' }}>
-            <div style={{ background: '#2c6fad', borderRadius: '4px', height: '8px', width: `${subProgress}%` }} />
+            <div
+              style={{
+                background: '#2c6fad',
+                borderRadius: '4px',
+                height: '8px',
+                width: `${subProgress}%`,
+              }}
+            />
           </div>
         </div>
         <div className="profection-card-note">
-          法達（Firdāriyyāt）是古典阿拉伯行星時主術。日間盤自太陽始，夜間盤自月亮始，
-          75 年一大循環；每大限再分 7 小限，小限主星依序輪轉。
+          法達（Firdāriyyāt）是古典阿拉伯行星時主術。日間盤自太陽始，夜間盤自月亮始， 75
+          年一大循環；每大限再分 7 小限，小限主星依序輪轉。
         </div>
       </div>
 
       {/* Sub-periods of current main period */}
       <h4 className="section-title">
-        {mainInfo.glyph} {mainInfo.name} 大限的七小限（{fmtDate(currentPeriod.startDate)} — {fmtDate(currentPeriod.endDate)}）
+        {mainInfo.glyph} {mainInfo.name} 大限的七小限（{fmtDate(currentPeriod.startDate)} —{' '}
+        {fmtDate(currentPeriod.endDate)}）
       </h4>
       <div className="table-scroll">
         <table className="data-table">
@@ -485,16 +530,25 @@ function FirdariaDisplay({
               const isPast = targetDate >= sp.endDate;
               const spInfo = fmtFirdariaLord(sp.lord);
               return (
-                <tr key={i} className={isCurrent ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'}>
+                <tr
+                  key={i}
+                  className={
+                    isCurrent ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'
+                  }
+                >
                   <td className="planet-cell">
                     <span className="planet-glyph">{spInfo.glyph}</span> {spInfo.name}
                   </td>
                   <td className="center-cell">{fmtDate(sp.startDate)}</td>
                   <td className="center-cell">{fmtDate(sp.endDate)}</td>
                   <td className="center-cell">
-                    {isCurrent ? <span style={{ color: '#1a7a1a', fontWeight: 'bold' }}>▶ 當前</span>
-                     : isPast ? <span style={{ color: '#999' }}>已過</span>
-                     : <span style={{ color: '#666' }}>未至</span>}
+                    {isCurrent ? (
+                      <span style={{ color: '#1a7a1a', fontWeight: 'bold' }}>▶ 當前</span>
+                    ) : isPast ? (
+                      <span style={{ color: '#999' }}>已過</span>
+                    ) : (
+                      <span style={{ color: '#666' }}>未至</span>
+                    )}
                   </td>
                 </tr>
               );
@@ -528,7 +582,9 @@ function FirdariaDisplay({
               return (
                 <tr
                   key={i}
-                  className={isCurrentMain ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'}
+                  className={
+                    isCurrentMain ? 'profection-current-row' : i % 2 === 0 ? 'row-even' : 'row-odd'
+                  }
                   style={isPastMain && !isCurrentMain ? { opacity: 0.55 } : undefined}
                 >
                   <td className="planet-cell">
@@ -538,9 +594,14 @@ function FirdariaDisplay({
                   <td className="center-cell">{fmtDate(p.startDate)}</td>
                   <td className="center-cell">{fmtDate(p.endDate)}</td>
                   <td className="center-cell">
-                    {activeSubInfo
-                      ? <><span className="planet-glyph">{activeSubInfo.glyph}</span> {activeSubInfo.name}</>
-                      : '—'}
+                    {activeSubInfo ? (
+                      <>
+                        <span className="planet-glyph">{activeSubInfo.glyph}</span>{' '}
+                        {activeSubInfo.name}
+                      </>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                 </tr>
               );
@@ -549,7 +610,10 @@ function FirdariaDisplay({
         </table>
       </div>
       <div style={{ fontSize: '11px', color: '#888', marginTop: '6px' }}>
-        法達循環 75 年後重新開始。{isDay ? '日間盤序列：太陽→金星→水星→月亮→土星→木星→火星→北交→南交' : '夜間盤序列：月亮→土星→木星→火星→太陽→金星→水星→北交→南交'}
+        法達循環 75 年後重新開始。
+        {isDay
+          ? '日間盤序列：太陽→金星→水星→月亮→土星→木星→火星→北交→南交'
+          : '夜間盤序列：月亮→土星→木星→火星→太陽→金星→水星→北交→南交'}
       </div>
     </div>
   );
@@ -576,7 +640,22 @@ function ProfectionDisplay({
     const houseCusp = natalChart.houses[h];
     const sign = houseCusp.sign;
     const lordPl =
-      ({ [ZodiacSign.Aries]: Planet.Mars, [ZodiacSign.Taurus]: Planet.Venus, [ZodiacSign.Gemini]: Planet.Mercury, [ZodiacSign.Cancer]: Planet.Moon, [ZodiacSign.Leo]: Planet.Sun, [ZodiacSign.Virgo]: Planet.Mercury, [ZodiacSign.Libra]: Planet.Venus, [ZodiacSign.Scorpio]: Planet.Mars, [ZodiacSign.Sagittarius]: Planet.Jupiter, [ZodiacSign.Capricorn]: Planet.Saturn, [ZodiacSign.Aquarius]: Planet.Saturn, [ZodiacSign.Pisces]: Planet.Jupiter } as Record<ZodiacSign, Planet>)[sign] ?? Planet.Sun;
+      (
+        {
+          [ZodiacSign.Aries]: Planet.Mars,
+          [ZodiacSign.Taurus]: Planet.Venus,
+          [ZodiacSign.Gemini]: Planet.Mercury,
+          [ZodiacSign.Cancer]: Planet.Moon,
+          [ZodiacSign.Leo]: Planet.Sun,
+          [ZodiacSign.Virgo]: Planet.Mercury,
+          [ZodiacSign.Libra]: Planet.Venus,
+          [ZodiacSign.Scorpio]: Planet.Mars,
+          [ZodiacSign.Sagittarius]: Planet.Jupiter,
+          [ZodiacSign.Capricorn]: Planet.Saturn,
+          [ZodiacSign.Aquarius]: Planet.Saturn,
+          [ZodiacSign.Pisces]: Planet.Jupiter,
+        } as Record<ZodiacSign, Planet>
+      )[sign] ?? Planet.Sun;
     rows.push({ age: i, house: h + 1, sign, lord: lordPl });
   }
 
@@ -615,8 +694,7 @@ function ProfectionDisplay({
           </div>
         )}
         <div className="profection-card-note">
-          本年過境到達本年主星的時間點特別重要，
-          與本命盤中主星相關的行星過境也值得特別關注。
+          本年過境到達本年主星的時間點特別重要， 與本命盤中主星相關的行星過境也值得特別關注。
         </div>
       </div>
 
@@ -636,7 +714,13 @@ function ProfectionDisplay({
             {rows.map((r) => (
               <tr
                 key={r.age}
-                className={r.age === result.age ? 'profection-current-row' : r.age % 2 === 0 ? 'row-even' : 'row-odd'}
+                className={
+                  r.age === result.age
+                    ? 'profection-current-row'
+                    : r.age % 2 === 0
+                      ? 'row-even'
+                      : 'row-odd'
+                }
               >
                 <td className="center-cell">{r.age}</td>
                 <td className="center-cell">第 {r.house} 宮</td>

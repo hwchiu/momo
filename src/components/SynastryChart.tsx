@@ -15,13 +15,13 @@ import type { SynastryAspect } from '../types/synastry';
 
 const CX = 250;
 const CY = 250;
-const R_OUTER = 230;        // zodiac outer boundary
-const R_ZODIAC = 200;       // zodiac inner boundary / planet B outer edge
-const R_B = 183;            // Person B planet ring
-const R_A = 152;            // Person A planet ring
+const R_OUTER = 230; // zodiac outer boundary
+const R_ZODIAC = 200; // zodiac inner boundary / planet B outer edge
+const R_B = 183; // Person B planet ring
+const R_A = 152; // Person A planet ring
 const R_INNER_CIRCLE = 120; // separator circle
-const R_ASPECT_A = 148;     // aspect line endpoint (A side)
-const R_ASPECT_B = 178;     // aspect line endpoint (B side)
+const R_ASPECT_A = 148; // aspect line endpoint (A side)
+const R_ASPECT_B = 178; // aspect line endpoint (B side)
 
 /** Convert ecliptic longitude to SVG angle (radians). ASC at 9 o'clock (π). */
 function lonToAngle(lon: number, asc: number): number {
@@ -83,9 +83,12 @@ function ZodiacWheel({ asc }: ZodiacWheelProps) {
           <g key={sign}>
             <path d={d} fill={SECTOR_COLORS[i % 2]} stroke="#aaa" strokeWidth={0.5} />
             <text
-              x={gmid.x} y={gmid.y}
-              textAnchor="middle" dominantBaseline="middle"
-              fontSize={11} fill="#555"
+              x={gmid.x}
+              y={gmid.y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize={11}
+              fill="#555"
             >
               {ZODIAC_SIGNS[sign].glyph}
             </text>
@@ -102,7 +105,9 @@ function ZodiacWheel({ asc }: ZodiacWheelProps) {
         const a = lonToAngle(sign * 30, asc);
         const p1 = polarToXY(a, R_ZODIAC);
         const p2 = polarToXY(a, R_OUTER);
-        return <line key={sign} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#888" strokeWidth={1} />;
+        return (
+          <line key={sign} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#888" strokeWidth={1} />
+        );
       })}
     </>
   );
@@ -130,17 +135,18 @@ function PlanetMarker({ pos, asc, r, rLabel, color, bgColor, offsetDeg = 0 }: Pl
     <g>
       <circle cx={dot.x} cy={dot.y} r={5} fill={color} stroke={bgColor} strokeWidth={1.5} />
       <text
-        x={label.x} y={label.y}
-        textAnchor="middle" dominantBaseline="middle"
-        fontSize={10} fill={color} fontWeight="bold"
+        x={label.x}
+        y={label.y}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize={10}
+        fill={color}
+        fontWeight="bold"
       >
         {info.glyph}
       </text>
       {pos.retrograde && (
-        <text
-          x={label.x + 7} y={label.y - 4}
-          fontSize={7} fill={color}
-        >
+        <text x={label.x + 7} y={label.y - 4} fontSize={7} fill={color}>
           ℞
         </text>
       )}
@@ -190,8 +196,10 @@ function AspectLine({ asp, asc, planetsA, planetsB }: AspectLineProps) {
 
   return (
     <line
-      x1={xyA.x} y1={xyA.y}
-      x2={xyB.x} y2={xyB.y}
+      x1={xyA.x}
+      y1={xyA.y}
+      x2={xyB.x}
+      y2={xyB.y}
       stroke={info.color}
       strokeWidth={strokeWidth}
       strokeOpacity={opacity}
@@ -211,7 +219,14 @@ interface SynastryChartProps {
   size?: number;
 }
 
-export function SynastryChart({ nameA, nameB, chartA, chartB, aspects, size = 500 }: SynastryChartProps) {
+export function SynastryChart({
+  nameA,
+  nameB,
+  chartA,
+  chartB,
+  aspects,
+  size = 500,
+}: SynastryChartProps) {
   const asc = chartA.ascendant;
   const offsetsA = applyOffsets(chartA.planets);
   const offsetsB = applyOffsets(chartB.planets);
@@ -233,7 +248,8 @@ export function SynastryChart({ nameA, nameB, chartA, chartB, aspects, size = 50
         <span className="legend-b">●</span> {nameB}（B）外圈
       </div>
       <svg
-        width={size} height={size}
+        width={size}
+        height={size}
         viewBox={`0 0 ${CX * 2} ${CY * 2}`}
         style={{ display: 'block', margin: '0 auto' }}
       >
@@ -250,13 +266,36 @@ export function SynastryChart({ nameA, nameB, chartA, chartB, aspects, size = 50
         <circle cx={CX} cy={CY} r={2} fill="#888" />
 
         {/* ASC/DSC axis */}
-        <line x1={ascPt1.x} y1={ascPt1.y} x2={ascPt2.x} y2={ascPt2.y} stroke="#666" strokeWidth={1.5} />
-        <line x1={dscPt1.x} y1={dscPt1.y} x2={dscPt2.x} y2={dscPt2.y} stroke="#666" strokeWidth={1} strokeDasharray="4 3" />
-        <text x={ascPt2.x - 3} y={ascPt2.y - 4} fontSize={9} fill="#444" textAnchor="middle">ASC</text>
+        <line
+          x1={ascPt1.x}
+          y1={ascPt1.y}
+          x2={ascPt2.x}
+          y2={ascPt2.y}
+          stroke="#666"
+          strokeWidth={1.5}
+        />
+        <line
+          x1={dscPt1.x}
+          y1={dscPt1.y}
+          x2={dscPt2.x}
+          y2={dscPt2.y}
+          stroke="#666"
+          strokeWidth={1}
+          strokeDasharray="4 3"
+        />
+        <text x={ascPt2.x - 3} y={ascPt2.y - 4} fontSize={9} fill="#444" textAnchor="middle">
+          ASC
+        </text>
 
         {/* Aspect lines (drawn before planets so planets are on top) */}
         {aspects.slice(0, 30).map((asp, i) => (
-          <AspectLine key={i} asp={asp} asc={asc} planetsA={chartA.planets} planetsB={chartB.planets} />
+          <AspectLine
+            key={i}
+            asp={asp}
+            asc={asc}
+            planetsA={chartA.planets}
+            planetsB={chartB.planets}
+          />
         ))}
 
         {/* Person B planets (outer ring, red) */}
@@ -291,7 +330,9 @@ export function SynastryChart({ nameA, nameB, chartA, chartB, aspects, size = 50
         <text x={CX} y={CY - 14} textAnchor="middle" fontSize={10} fill="#1a5ca8" fontWeight="bold">
           {nameA}
         </text>
-        <text x={CX} y={CY + 4} textAnchor="middle" fontSize={9} fill="#888">A 內圈 / B 外圈</text>
+        <text x={CX} y={CY + 4} textAnchor="middle" fontSize={9} fill="#888">
+          A 內圈 / B 外圈
+        </text>
         <text x={CX} y={CY + 18} textAnchor="middle" fontSize={10} fill="#c0392b" fontWeight="bold">
           {nameB}
         </text>

@@ -110,12 +110,16 @@ function PinnaclesTable({ pinnacles, birthYear }: PinnaclesTableProps) {
 
 // ── main component ────────────────────────────────────────────────────────────
 
-export function NumerologyPanel() {
+interface NumerologyPanelProps {
+  initialBirthData?: { year: number; month: number; day: number };
+}
+
+export function NumerologyPanel({ initialBirthData }: NumerologyPanelProps) {
   const today = todayYMD();
 
-  const [birthYear, setBirthYear] = useState(1990);
-  const [birthMonth, setBirthMonth] = useState(1);
-  const [birthDay, setBirthDay] = useState(1);
+  const [birthYear, setBirthYear] = useState(initialBirthData?.year ?? 1990);
+  const [birthMonth, setBirthMonth] = useState(initialBirthData?.month ?? 1);
+  const [birthDay, setBirthDay] = useState(initialBirthData?.day ?? 1);
   const [refYear, setRefYear] = useState(today.year);
   const [refMonth, setRefMonth] = useState(today.month);
   const [refDay, setRefDay] = useState(today.day);

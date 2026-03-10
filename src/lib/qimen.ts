@@ -279,7 +279,6 @@ export function calculateQiMen(dt: {
   const noonJde = dayJdn - 0.5; // noon of the effective Chinese day
   const { termIdx, daysFromTermStart } = solarTermInfo(noonJde);
   const isYangDun = termIdx < 12;
-  const dun: QiMenDun = isYangDun ? '陽遁' : '陰遁';
   const solarTermName = SOLAR_TERM_NAMES[termIdx];
 
   const pentadIdx = Math.min(2, Math.floor(daysFromTermStart / 5));

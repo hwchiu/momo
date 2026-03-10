@@ -61,7 +61,9 @@ export function DateSelectTool({ defaultYearBranch }: DateSelectToolProps) {
             onChange={(e) => setMonth(parseInt(e.target.value, 10))}
           >
             {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-              <option key={m} value={m}>{m} 月</option>
+              <option key={m} value={m}>
+                {m} 月
+              </option>
             ))}
           </select>
         </div>
@@ -74,7 +76,9 @@ export function DateSelectTool({ defaultYearBranch }: DateSelectToolProps) {
           >
             <option value={-1}>不設定</option>
             {BRANCHES.map((b, i) => (
-              <option key={i} value={i}>{b}</option>
+              <option key={i} value={i}>
+                {b}
+              </option>
             ))}
           </select>
         </div>
@@ -119,10 +123,20 @@ export function DateSelectTool({ defaultYearBranch }: DateSelectToolProps) {
                   <td className="center-cell">{d.dateStr.slice(5)}</td>
                   <td className="center-cell">（{weekday}）</td>
                   <td className="center-cell">
-                    <span style={{ color: ELEMENT_COLORS[STEM_ELEMENTS[d.dayPillar.stem]], fontWeight: 'bold' }}>
+                    <span
+                      style={{
+                        color: ELEMENT_COLORS[STEM_ELEMENTS[d.dayPillar.stem]],
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {STEMS[d.dayPillar.stem]}
                     </span>
-                    <span style={{ color: ELEMENT_COLORS[BRANCH_ELEMENTS[d.dayPillar.branch]], fontWeight: 'bold' }}>
+                    <span
+                      style={{
+                        color: ELEMENT_COLORS[BRANCH_ELEMENTS[d.dayPillar.branch]],
+                        fontWeight: 'bold',
+                      }}
+                    >
                       {BRANCHES[d.dayPillar.branch]}
                     </span>
                   </td>
@@ -136,7 +150,9 @@ export function DateSelectTool({ defaultYearBranch }: DateSelectToolProps) {
                     </span>
                   </td>
                   <td className="center-cell">
-                    <span className={`officer-tag officer-${GOOD_OFFICERS.has(d.officer) ? 'good' : BAD_OFFICERS.has(d.officer) ? 'bad' : 'neutral'}`}>
+                    <span
+                      className={`officer-tag officer-${GOOD_OFFICERS.has(d.officer) ? 'good' : BAD_OFFICERS.has(d.officer) ? 'bad' : 'neutral'}`}
+                    >
                       {d.officer}
                     </span>
                   </td>

@@ -39,8 +39,17 @@ function fmtPlanetPos(planet: Planet, result: SynastryResult, side: 'A' | 'B') {
 /** Grouped overview: each A planet → its cross-aspects to B planets (with full sign/house) */
 function OverviewTable({ result }: { result: SynastryResult }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const toggle = (key: string) =>
-    setExpanded((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
+  const toggle = (key: string) => {
+    setExpanded((prev) => {
+      const n = new Set(prev);
+      if (n.has(key)) {
+        n.delete(key);
+      } else {
+        n.add(key);
+      }
+      return n;
+    });
+  };
 
   // Group aspects by A planet
   const byPlanetA = new Map<Planet, SynastryAspect[]>();
@@ -64,7 +73,9 @@ function OverviewTable({ result }: { result: SynastryResult }) {
               <th colSpan={3} style={{ borderRight: '2px solid #bbb', background: '#d0e4f7' }}>
                 {result.nameA}（A）
               </th>
-              <th colSpan={2} style={{ borderRight: '2px solid #bbb' }}>相位</th>
+              <th colSpan={2} style={{ borderRight: '2px solid #bbb' }}>
+                相位
+              </th>
               <th colSpan={3} style={{ borderRight: '2px solid #bbb', background: '#fde8e8' }}>
                 {result.nameB}（B）
               </th>
@@ -95,11 +106,24 @@ function OverviewTable({ result }: { result: SynastryResult }) {
                     <td className="planet-cell" style={{ color: '#1a5ca8' }}>
                       <span className="planet-glyph">{pAInfo.glyph}</span> {pAInfo.name}
                     </td>
-                    <td className="center-cell" style={{ color: '#1a5ca8' }}>{fA.sign}</td>
-                    <td className="center-cell" style={{ color: '#1a5ca8', fontWeight: 'bold', borderRight: '2px solid #ddd' }}>
+                    <td className="center-cell" style={{ color: '#1a5ca8' }}>
+                      {fA.sign}
+                    </td>
+                    <td
+                      className="center-cell"
+                      style={{
+                        color: '#1a5ca8',
+                        fontWeight: 'bold',
+                        borderRight: '2px solid #ddd',
+                      }}
+                    >
                       {fA.house}
                     </td>
-                    <td className="center-cell" colSpan={6} style={{ color: '#999', fontStyle: 'italic' }}>
+                    <td
+                      className="center-cell"
+                      colSpan={6}
+                      style={{ color: '#999', fontStyle: 'italic' }}
+                    >
                       — 無顯著相位 —
                     </td>
                   </tr>
@@ -123,23 +147,45 @@ function OverviewTable({ result }: { result: SynastryResult }) {
                     {/* A planet — only shown on first aspect row */}
                     {ai === 0 ? (
                       <>
-                        <td className="planet-cell" style={{ color: '#1a5ca8' }} rowSpan={asps.length}>
+                        <td
+                          className="planet-cell"
+                          style={{ color: '#1a5ca8' }}
+                          rowSpan={asps.length}
+                        >
                           <span className="planet-glyph">{pAInfo.glyph}</span> {pAInfo.name}
                         </td>
-                        <td className="center-cell" style={{ color: '#1a5ca8', whiteSpace: 'nowrap' }} rowSpan={asps.length}>
+                        <td
+                          className="center-cell"
+                          style={{ color: '#1a5ca8', whiteSpace: 'nowrap' }}
+                          rowSpan={asps.length}
+                        >
                           <div>{fA.sign}</div>
                           <div style={{ fontSize: '11px' }}>{fA.deg}</div>
                         </td>
-                        <td className="center-cell" style={{ color: '#1a5ca8', fontWeight: 'bold', borderRight: '2px solid #ddd' }} rowSpan={asps.length}>
+                        <td
+                          className="center-cell"
+                          style={{
+                            color: '#1a5ca8',
+                            fontWeight: 'bold',
+                            borderRight: '2px solid #ddd',
+                          }}
+                          rowSpan={asps.length}
+                        >
                           {fA.house}
                         </td>
                       </>
                     ) : null}
                     {/* Aspect */}
-                    <td className="aspect-cell" style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    <td
+                      className="aspect-cell"
+                      style={{ color: aspInfo.color, textAlign: 'center', whiteSpace: 'nowrap' }}
+                    >
                       {aspInfo.symbol} {aspInfo.name}
                     </td>
-                    <td className="center-cell" style={{ borderRight: '2px solid #ddd', fontSize: '12px' }}>
+                    <td
+                      className="center-cell"
+                      style={{ borderRight: '2px solid #ddd', fontSize: '12px' }}
+                    >
                       {asp.orb.toFixed(2)}°
                     </td>
                     {/* B planet */}
@@ -150,13 +196,31 @@ function OverviewTable({ result }: { result: SynastryResult }) {
                       <div>{fB.sign}</div>
                       <div style={{ fontSize: '11px' }}>{fB.deg}</div>
                     </td>
-                    <td className="center-cell" style={{ color: '#c0392b', fontWeight: 'bold', borderRight: '2px solid #ddd' }}>
+                    <td
+                      className="center-cell"
+                      style={{
+                        color: '#c0392b',
+                        fontWeight: 'bold',
+                        borderRight: '2px solid #ddd',
+                      }}
+                    >
                       {fB.house}
                     </td>
                     {/* Nature + interpretation */}
                     <td className="interpretation-cell">
-                      <span style={{ color: NATURE_COLORS[asp.nature], fontWeight: 'bold', fontSize: '11px', marginRight: '4px' }}>
-                        {asp.nature === 'harmonious' ? '✦ 和諧' : asp.nature === 'challenging' ? '✧ 挑戰' : '◆ 中性'}
+                      <span
+                        style={{
+                          color: NATURE_COLORS[asp.nature],
+                          fontWeight: 'bold',
+                          fontSize: '11px',
+                          marginRight: '4px',
+                        }}
+                      >
+                        {asp.nature === 'harmonious'
+                          ? '✦ 和諧'
+                          : asp.nature === 'challenging'
+                            ? '✧ 挑戰'
+                            : '◆ 中性'}
                       </span>
                       {isOpen ? (
                         <span className="interp-text">{asp.interpretation}</span>
@@ -195,8 +259,8 @@ function CompositeTable({ result }: { result: SynastryResult }) {
 
       <div className="composite-angles">
         <span>
-          <strong>合成上升點（ASC）</strong>：{ZODIAC_SIGNS[ascSign].glyph} {ZODIAC_SIGNS[ascSign].name}{' '}
-          {ascDeg}° {String(ascMin).padStart(2, '0')}'
+          <strong>合成上升點（ASC）</strong>：{ZODIAC_SIGNS[ascSign].glyph}{' '}
+          {ZODIAC_SIGNS[ascSign].name} {ascDeg}° {String(ascMin).padStart(2, '0')}'
         </span>
         <span>
           <strong>合成中天（MC）</strong>：{ZODIAC_SIGNS[mcSign].glyph} {ZODIAC_SIGNS[mcSign].name}{' '}
@@ -236,7 +300,9 @@ function CompositeTable({ result }: { result: SynastryResult }) {
       </div>
 
       {/* Composite planet pair comparison */}
-      <h4 className="section-title" style={{ marginTop: '16px' }}>兩人行星位置對照</h4>
+      <h4 className="section-title" style={{ marginTop: '16px' }}>
+        兩人行星位置對照
+      </h4>
       <div className="table-scroll">
         <table className="data-table" cellPadding={4} cellSpacing={0}>
           <thead>
@@ -257,7 +323,7 @@ function CompositeTable({ result }: { result: SynastryResult }) {
               const fmtPos = (pos: typeof pa) => {
                 if (!pos) return '-';
                 const si = ZODIAC_SIGNS[pos.sign];
-                return `${si.glyph} ${pos.degree}°${String(pos.minute).padStart(2,'0')}'`;
+                return `${si.glyph} ${pos.degree}°${String(pos.minute).padStart(2, '0')}'`;
               };
 
               return (
@@ -265,11 +331,15 @@ function CompositeTable({ result }: { result: SynastryResult }) {
                   <td className="planet-cell">
                     <span className="planet-glyph">{pInfo.glyph}</span> {pInfo.name}
                   </td>
-                  <td className="center-cell" style={{ color: '#1a5ca8' }}>{fmtPos(pa)}</td>
-                  <td className="center-cell" style={{ fontWeight: 'bold' }}>
-                    {sInfo.glyph} {cp.degree}°{String(cp.minute).padStart(2,'0')}'
+                  <td className="center-cell" style={{ color: '#1a5ca8' }}>
+                    {fmtPos(pa)}
                   </td>
-                  <td className="center-cell" style={{ color: '#c0392b' }}>{fmtPos(pb)}</td>
+                  <td className="center-cell" style={{ fontWeight: 'bold' }}>
+                    {sInfo.glyph} {cp.degree}°{String(cp.minute).padStart(2, '0')}'
+                  </td>
+                  <td className="center-cell" style={{ color: '#c0392b' }}>
+                    {fmtPos(pb)}
+                  </td>
                 </tr>
               );
             })}
@@ -278,7 +348,9 @@ function CompositeTable({ result }: { result: SynastryResult }) {
       </div>
 
       {/* Composite house cusps */}
-      <h4 className="section-title" style={{ marginTop: '16px' }}>合成宮位</h4>
+      <h4 className="section-title" style={{ marginTop: '16px' }}>
+        合成宮位
+      </h4>
       <div className="table-scroll">
         <table className="data-table" cellPadding={4} cellSpacing={0}>
           <thead>
@@ -298,17 +370,23 @@ function CompositeTable({ result }: { result: SynastryResult }) {
               const fmtHouse = (h: typeof ha) => {
                 if (!h) return '-';
                 const si = ZODIAC_SIGNS[h.sign];
-                return `${si.glyph} ${h.degree}°${String(Math.floor(((h.longitude % 30) - h.degree) * 60)).padStart(2,'0')}'`;
+                return `${si.glyph} ${h.degree}°${String(Math.floor(((h.longitude % 30) - h.degree) * 60)).padStart(2, '0')}'`;
               };
 
               return (
                 <tr key={ch.house} className={i % 2 === 0 ? 'row-even' : 'row-odd'}>
-                  <td className="center-cell"><strong>第 {ch.house} 宮</strong></td>
-                  <td className="center-cell" style={{ color: '#1a5ca8' }}>{fmtHouse(ha)}</td>
-                  <td className="center-cell" style={{ fontWeight: 'bold' }}>
-                    {csInfo.glyph} {ch.degree}°{String(ch.minute).padStart(2,'0')}'
+                  <td className="center-cell">
+                    <strong>第 {ch.house} 宮</strong>
                   </td>
-                  <td className="center-cell" style={{ color: '#c0392b' }}>{fmtHouse(hb)}</td>
+                  <td className="center-cell" style={{ color: '#1a5ca8' }}>
+                    {fmtHouse(ha)}
+                  </td>
+                  <td className="center-cell" style={{ fontWeight: 'bold' }}>
+                    {csInfo.glyph} {ch.degree}°{String(ch.minute).padStart(2, '0')}'
+                  </td>
+                  <td className="center-cell" style={{ color: '#c0392b' }}>
+                    {fmtHouse(hb)}
+                  </td>
                 </tr>
               );
             })}
@@ -335,14 +413,26 @@ export function SynastryResult({ result }: Props) {
       <div className="synastry-result-header">
         <h3 className="section-heading">
           合盤分析：
-          <span className="name-a">{result.nameA}</span>
-          {' '}✦{' '}
+          <span className="name-a">{result.nameA}</span> ✦{' '}
           <span className="name-b">{result.nameB}</span>
         </h3>
-        <div className="synastry-overall-badge" style={{
-          backgroundColor: result.score.overall >= 68 ? '#d4edda' : result.score.overall >= 50 ? '#fff3cd' : '#f8d7da',
-          color: result.score.overall >= 68 ? '#1a7a1a' : result.score.overall >= 50 ? '#856404' : '#c0392b',
-        }}>
+        <div
+          className="synastry-overall-badge"
+          style={{
+            backgroundColor:
+              result.score.overall >= 68
+                ? '#d4edda'
+                : result.score.overall >= 50
+                  ? '#fff3cd'
+                  : '#f8d7da',
+            color:
+              result.score.overall >= 68
+                ? '#1a7a1a'
+                : result.score.overall >= 50
+                  ? '#856404'
+                  : '#c0392b',
+          }}
+        >
           整體相容 {result.score.overall} 分 · {result.score.overallLabel}
         </div>
       </div>
@@ -361,9 +451,7 @@ export function SynastryResult({ result }: Props) {
       </div>
 
       <div className="synastry-tab-content">
-        {activeTab === 'overview' && (
-          <OverviewTable result={result} />
-        )}
+        {activeTab === 'overview' && <OverviewTable result={result} />}
 
         {activeTab === 'synastry' && (
           <SynastryChart
@@ -376,9 +464,7 @@ export function SynastryResult({ result }: Props) {
           />
         )}
 
-        {activeTab === 'composite' && (
-          <CompositeTable result={result} />
-        )}
+        {activeTab === 'composite' && <CompositeTable result={result} />}
 
         {activeTab === 'aspects' && (
           <SynastryAspectList
@@ -391,11 +477,7 @@ export function SynastryResult({ result }: Props) {
         )}
 
         {activeTab === 'score' && (
-          <CompatibilityPanel
-            score={result.score}
-            nameA={result.nameA}
-            nameB={result.nameB}
-          />
+          <CompatibilityPanel score={result.score} nameA={result.nameA} nameB={result.nameB} />
         )}
       </div>
     </div>

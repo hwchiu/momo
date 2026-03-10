@@ -143,7 +143,10 @@ export function FlyingStarsPanel() {
       <div className="flying-star-legend">
         {(['大吉', '吉', '凶', '大凶'] as const).map((q) => (
           <span key={q} className="fs-legend-item" style={{ color: QUALITY_COLOR[q] }}>
-            <span className="fs-legend-dot" style={{ backgroundColor: QUALITY_BG[q], borderColor: QUALITY_COLOR[q] }} />
+            <span
+              className="fs-legend-dot"
+              style={{ backgroundColor: QUALITY_BG[q], borderColor: QUALITY_COLOR[q] }}
+            />
             {q}
           </span>
         ))}
@@ -153,8 +156,14 @@ export function FlyingStarsPanel() {
         <h4>各星簡介</h4>
         <div className="fs-star-list">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => (
-            <div key={s} className="fs-star-item" style={{ borderLeftColor: QUALITY_COLOR[STAR_QUALITY[s]] }}>
-              <span className="fs-star-num" style={{ color: QUALITY_COLOR[STAR_QUALITY[s]] }}>{s}</span>
+            <div
+              key={s}
+              className="fs-star-item"
+              style={{ borderLeftColor: QUALITY_COLOR[STAR_QUALITY[s]] }}
+            >
+              <span className="fs-star-num" style={{ color: QUALITY_COLOR[STAR_QUALITY[s]] }}>
+                {s}
+              </span>
               <span className="fs-star-full-name">{STAR_BRIEF[s]}</span>
             </div>
           ))}

@@ -24,16 +24,11 @@ function MahaDashaRow({ maha, defaultOpen }: { maha: MahaDasha; defaultOpen: boo
   return (
     <>
       <tr
-        className={maha.isCurrent ? 'vedic-dasha-current' : ''}
-        style={{ cursor: 'pointer' }}
+        className={`row-clickable${maha.isCurrent ? ' vedic-dasha-current' : ''}`}
         onClick={() => setOpen(!open)}
       >
-        <td className="center-cell" style={{ fontSize: '11px', color: '#888' }}>
-          {open ? '▼' : '▶'}
-        </td>
-        <td style={{ fontWeight: 'bold', color, whiteSpace: 'nowrap' }}>
-          {maha.lord}
-        </td>
+        <td className="center-cell form-hint">{open ? '▼' : '▶'}</td>
+        <td style={{ fontWeight: 'bold', color, whiteSpace: 'nowrap' }}>{maha.lord}</td>
         <td>{maha.lordZh}</td>
         <td className="longitude-cell">{fmtDate(maha.startDate)}</td>
         <td className="longitude-cell">{fmtDate(maha.endDate)}</td>
@@ -49,13 +44,17 @@ function MahaDashaRow({ maha, defaultOpen }: { maha: MahaDasha; defaultOpen: boo
             className={`vedic-antardasha-row${a.isCurrent ? ' vedic-dasha-current' : ''}`}
           >
             <td></td>
-            <td style={{ color: PLANET_COLORS[a.lord] ?? '#555', paddingLeft: '20px', fontSize: '12px' }}>
+            {/* planet color is dynamic — must stay inline */}
+            <td
+              className="vedic-antardasha-cell"
+              style={{ color: PLANET_COLORS[a.lord] ?? '#555' }}
+            >
               └ {a.lord}
             </td>
-            <td style={{ fontSize: '12px' }}>{a.lordZh}</td>
-            <td className="longitude-cell" style={{ fontSize: '12px' }}>{fmtDate(a.startDate)}</td>
-            <td className="longitude-cell" style={{ fontSize: '12px' }}>{fmtDate(a.endDate)}</td>
-            <td style={{ fontSize: '12px' }}>
+            <td className="vedic-antardasha-cell">{a.lordZh}</td>
+            <td className="longitude-cell vedic-antardasha-cell">{fmtDate(a.startDate)}</td>
+            <td className="longitude-cell vedic-antardasha-cell">{fmtDate(a.endDate)}</td>
+            <td className="vedic-antardasha-cell">
               {fmtDuration((a.endDate.getTime() - a.startDate.getTime()) / (365.2425 * 86400000))}
             </td>
             <td className="center-cell">
@@ -75,34 +74,33 @@ export function VedicDasha({ chart }: VedicDashaProps) {
 
   return (
     <div className="vedic-dasha-section">
-      {/* Current dasha summary */}
       {currentMaha && (
         <div className="vedic-dasha-now">
           <strong>當前大運：</strong>
+          {/* PLANET_COLORS is dynamic — must stay inline */}
           <span style={{ color: PLANET_COLORS[currentMaha.lord], fontWeight: 'bold' }}>
             {currentMaha.lord}（{currentMaha.lordZh}）
           </span>
           {currentAntar && (
             <>
-              {' '}/ 子運{' '}
+              {' '}
+              / 子運{' '}
               <span style={{ color: PLANET_COLORS[currentAntar.lord], fontWeight: 'bold' }}>
                 {currentAntar.lord}（{currentAntar.lordZh}）
-              </span>
-              {' '}至 {fmtDate(currentAntar.endDate)}
+              </span>{' '}
+              至 {fmtDate(currentAntar.endDate)}
             </>
           )}
         </div>
       )}
 
-      {/* Moon info */}
       {moon && (
-        <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
+        <div className="vedic-moon-info">
           月亮星宿：{NAKSHATRAS[moon.nakshatra]}（第 {moon.nakshatra + 1} 宿），Pada {moon.pada}，
-          Rashi {Math.floor(moon.siderealLon)}° {(moon.siderealLon % 1 * 60).toFixed(0)}'
+          Rashi {Math.floor(moon.siderealLon)}° {((moon.siderealLon % 1) * 60).toFixed(0)}'
         </div>
       )}
 
-      {/* Dasha table */}
       <div className="table-scroll">
         <table className="data-table">
           <thead>
@@ -118,12 +116,16 @@ export function VedicDasha({ chart }: VedicDashaProps) {
           </thead>
           <tbody>
             {dashas.map((maha) => (
-              <MahaDashaRow key={maha.lord + maha.startDate.getFullYear()} maha={maha} defaultOpen={maha.isCurrent} />
+              <MahaDashaRow
+                key={maha.lord + maha.startDate.getFullYear()}
+                maha={maha}
+                defaultOpen={maha.isCurrent}
+              />
             ))}
           </tbody>
         </table>
       </div>
-      <div style={{ fontSize: '11px', color: '#888', marginTop: '6px' }}>
+      <div className="form-hint" style={{ marginTop: '6px' }}>
         點擊大運列可展開/收合子運（Antardasha）。Vimshottari 總週期 120 年。
       </div>
     </div>

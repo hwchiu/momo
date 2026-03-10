@@ -1,9 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { BirthData, OrbConfig } from '../types/astro';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
-import { geocode } from '../lib/geocode';
 import type { GeocodingResult } from '../lib/geocode';
+import {
+  TIMEZONES,
+  decimalToDMS,
+  dmsToDecimal,
+  localToUtc,
+  utcToLocal,
+  validateCoords,
+} from '../lib/formUtils';
+import { useGeoSearch } from '../hooks/useGeoSearch';
 import { OrbSettings } from './OrbSettings';
+
+interface PrefillData {
+  birthData: BirthData;
+  houseSystem: HouseSystem;
+  tzOffset: number;
+  /** Increment this to force a re-fill even when data is identical */
+  key: number;
+}
 
 interface BirthDataFormProps {
   onSubmit: (data: BirthData, houseSystem: HouseSystem) => void;
@@ -11,37 +27,8 @@ interface BirthDataFormProps {
   defaultHouseSystem?: HouseSystem;
   orbConfig: OrbConfig;
   onOrbChange: (config: OrbConfig) => void;
+  prefillData?: PrefillData | null;
 }
-
-// Timezone options
-const TIMEZONES = [
-  { label: 'GMT-12', value: -12 },
-  { label: 'GMT-11', value: -11 },
-  { label: 'GMT-10', value: -10 },
-  { label: 'GMT-9', value: -9 },
-  { label: 'GMT-8', value: -8 },
-  { label: 'GMT-7', value: -7 },
-  { label: 'GMT-6', value: -6 },
-  { label: 'GMT-5', value: -5 },
-  { label: 'GMT-4', value: -4 },
-  { label: 'GMT-3', value: -3 },
-  { label: 'GMT-2', value: -2 },
-  { label: 'GMT-1', value: -1 },
-  { label: 'GMT+0 (UTC)', value: 0 },
-  { label: 'GMT+1', value: 1 },
-  { label: 'GMT+2', value: 2 },
-  { label: 'GMT+3', value: 3 },
-  { label: 'GMT+4', value: 4 },
-  { label: 'GMT+5', value: 5 },
-  { label: 'GMT+5:30 (印度)', value: 5.5 },
-  { label: 'GMT+6', value: 6 },
-  { label: 'GMT+7', value: 7 },
-  { label: 'GMT+8 (台灣/中國/香港)', value: 8 },
-  { label: 'GMT+9 (日本/韓國)', value: 9 },
-  { label: 'GMT+10', value: 10 },
-  { label: 'GMT+11', value: 11 },
-  { label: 'GMT+12', value: 12 },
-];
 
 export function BirthDataForm({
   onSubmit,
@@ -49,53 +36,44 @@ export function BirthDataForm({
   defaultHouseSystem = HouseSystem.Alcabitius,
   orbConfig,
   onOrbChange,
+  prefillData,
 }: BirthDataFormProps) {
-  // Date fields
   const [dateStr, setDateStr] = useState('2026-03-04');
-  // Time fields
   const [timeStr, setTimeStr] = useState('04:26');
-  // Location
   const [locationName, setLocationName] = useState('台北市');
-  // Latitude DMS
   const [latDeg, setLatDeg] = useState(25);
   const [latMin, setLatMin] = useState(3);
   const [latDir, setLatDir] = useState<'N' | 'S'>('N');
-  // Longitude DMS
   const [lonDeg, setLonDeg] = useState(121);
   const [lonMin, setLonMin] = useState(30);
   const [lonDir, setLonDir] = useState<'E' | 'W'>('E');
-  // Timezone offset hours
   const [tzOffset, setTzOffset] = useState(8);
-  // House system
   const [houseSystem, setHouseSystem] = useState<HouseSystem>(defaultHouseSystem);
-  // Ayanamsa
-  const [ayanamsa, setAyanamsa] = useState('tropical');
-  // Geocoding
-  const [geoResults, setGeoResults] = useState<GeocodingResult[]>([]);
-  const [geoLoading, setGeoLoading] = useState(false);
-  const [geoError, setGeoError] = useState('');
 
-  /** Convert a decimal-degree value to degrees + whole minutes */
-  function decimalToDMS(decimal: number): { deg: number; min: number } {
-    const abs = Math.abs(decimal);
-    return { deg: Math.floor(abs), min: Math.round((abs % 1) * 60) };
-  }
+  const [coordError, setCoordError] = useState<string | null>(null);
+  const { geoLoading, geoError, geoResults, search: searchGeo, clearResults } = useGeoSearch();
 
-  const handleGeoSearch = async () => {
-    if (!locationName.trim()) return;
-    setGeoLoading(true);
-    setGeoError('');
-    setGeoResults([]);
-    try {
-      const results = await geocode(locationName);
-      if (results.length === 0) setGeoError('找不到地點，請換個關鍵字');
-      else setGeoResults(results);
-    } catch {
-      setGeoError('地址查詢失敗，請稍後再試');
-    } finally {
-      setGeoLoading(false);
-    }
-  };
+  // Sync form fields whenever prefillData changes (client loaded from DB)
+  useEffect(() => {
+    if (!prefillData) return;
+    const { birthData: bd, houseSystem: hs, tzOffset: tz } = prefillData;
+    const { dateStr: ds, timeStr: ts } = utcToLocal(bd, tz);
+    setDateStr(ds);
+    setTimeStr(ts);
+    setTzOffset(tz);
+    setLocationName(bd.locationName);
+    const latDMS = decimalToDMS(Math.abs(bd.latitude));
+    setLatDeg(latDMS.deg);
+    setLatMin(latDMS.min);
+    setLatDir(bd.latitude >= 0 ? 'N' : 'S');
+    const lonDMS = decimalToDMS(Math.abs(bd.longitude));
+    setLonDeg(lonDMS.deg);
+    setLonMin(lonDMS.min);
+    setLonDir(bd.longitude >= 0 ? 'E' : 'W');
+    setHouseSystem(hs);
+    setCoordError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefillData?.key]);
 
   const handleSelectGeoResult = (result: GeocodingResult) => {
     const latDMS = decimalToDMS(result.latitude);
@@ -107,66 +85,34 @@ export function BirthDataForm({
     setLonMin(lonDMS.min);
     setLonDir(result.longitude >= 0 ? 'E' : 'W');
     setLocationName(result.displayName.split(',')[0]);
-    setGeoResults([]);
+    clearResults();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Parse date
-    const [yearStr, monthStr, dayStr] = dateStr.split('-');
-    let year = parseInt(yearStr, 10);
-    let month = parseInt(monthStr, 10);
-    let day = parseInt(dayStr, 10);
-
-    // Parse time
-    const [hourStr, minuteStr] = timeStr.split(':');
-    let hour = parseInt(hourStr, 10);
-    let minute = parseInt(minuteStr, 10);
-
-    // Convert local time to UTC
-    // UTC = local time - tzOffset
-    const totalMinutes = hour * 60 + minute - Math.round(tzOffset * 60);
-
-    // Determine day offset caused by crossing midnight
-    let dayOffset = 0;
-    if (totalMinutes < 0) dayOffset = -1;
-    else if (totalMinutes >= 24 * 60) dayOffset = 1;
-
-    const utcMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
-    hour = Math.floor(utcMinutes / 60);
-    minute = utcMinutes % 60;
-
-    // Adjust calendar date if UTC time crossed midnight
-    if (dayOffset !== 0) {
-      const d = new Date(year, month - 1, day + dayOffset);
-      year = d.getFullYear();
-      month = d.getMonth() + 1;
-      day = d.getDate();
+    const coordErr = validateCoords(latDeg, latMin, lonDeg, lonMin);
+    if (coordErr) {
+      setCoordError(coordErr);
+      return;
     }
-
-    // Convert DMS to decimal degrees
-    const lat = (latDeg + latMin / 60) * (latDir === 'S' ? -1 : 1);
-    const lon = (lonDeg + lonMin / 60) * (lonDir === 'W' ? -1 : 1);
-
+    setCoordError(null);
+    const utc = localToUtc(dateStr, timeStr, tzOffset);
+    if (!utc) return;
     const birthData: BirthData = {
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      latitude: lat,
-      longitude: lon,
+      ...utc,
+      latitude: dmsToDecimal(latDeg, latMin, latDir),
+      longitude: dmsToDecimal(lonDeg, lonMin, lonDir),
       locationName,
     };
-
     onSubmit(birthData, houseSystem);
   };
 
   return (
     <form className="quick-chart-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label className="form-label" htmlFor="bf-date">日期</label>
+        <label className="form-label" htmlFor="bf-date">
+          日期
+        </label>
         <div className="form-field">
           <input
             id="bf-date"
@@ -177,7 +123,9 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label" htmlFor="bf-time">時間</label>
+        <label className="form-label" htmlFor="bf-time">
+          時間
+        </label>
         <div className="form-field">
           <input
             id="bf-time"
@@ -188,7 +136,9 @@ export function BirthDataForm({
           />
         </div>
 
-        <label className="form-label" htmlFor="bf-location">地點名稱</label>
+        <label className="form-label" htmlFor="bf-location">
+          地點名稱
+        </label>
         <div className="form-field">
           <div className="location-wrapper">
             <input
@@ -196,14 +146,19 @@ export function BirthDataForm({
               type="text"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeoSearch(); } }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  searchGeo(locationName);
+                }
+              }}
               className="form-input form-input-wide"
               placeholder="城市名稱"
             />
             <button
               type="button"
               className="geo-search-btn"
-              onClick={handleGeoSearch}
+              onClick={() => searchGeo(locationName)}
               disabled={geoLoading}
             >
               {geoLoading ? '查詢中' : '搜尋'}
@@ -221,7 +176,9 @@ export function BirthDataForm({
           </div>
         </div>
 
-        <label className="form-label" htmlFor="bf-lat-deg">北緯/南緯</label>
+        <label className="form-label" htmlFor="bf-lat-deg">
+          北緯/南緯
+        </label>
         <div className="form-field dms-cell">
           <input
             id="bf-lat-deg"
@@ -255,7 +212,9 @@ export function BirthDataForm({
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label" htmlFor="bf-lon-deg">東經/西經</label>
+        <label className="form-label" htmlFor="bf-lon-deg">
+          東經/西經
+        </label>
         <div className="form-field dms-cell">
           <input
             id="bf-lon-deg"
@@ -289,7 +248,9 @@ export function BirthDataForm({
           <span className="dms-sep">'</span>
         </div>
 
-        <label className="form-label" htmlFor="bf-tz">時區</label>
+        <label className="form-label" htmlFor="bf-tz">
+          時區
+        </label>
         <div className="form-field">
           <select
             id="bf-tz"
@@ -305,7 +266,9 @@ export function BirthDataForm({
           </select>
         </div>
 
-        <label className="form-label" htmlFor="bf-house">宮位制度</label>
+        <label className="form-label" htmlFor="bf-house">
+          宮位制度
+        </label>
         <div className="form-field">
           <select
             id="bf-house"
@@ -321,23 +284,17 @@ export function BirthDataForm({
           </select>
         </div>
 
-        <label className="form-label" htmlFor="bf-ayanamsa">黃道系統</label>
-        <div className="form-field">
-          <select
-            id="bf-ayanamsa"
-            value={ayanamsa}
-            onChange={(e) => setAyanamsa(e.target.value)}
-            className="form-select"
-          >
-            <option value="tropical">回歸黃道（Tropical）</option>
-            <option value="sidereal_lahiri">恆星黃道 - Lahiri</option>
-            <option value="sidereal_fagan">恆星黃道 - Fagan/Bradley</option>
-          </select>
-        </div>
-
         <div className="form-submit-cell">
           <OrbSettings orbConfig={orbConfig} onChange={onOrbChange} />
         </div>
+
+        {coordError && (
+          <div className="form-submit-cell">
+            <div className="geo-error" role="alert">
+              {coordError}
+            </div>
+          </div>
+        )}
 
         <div className="form-submit-cell">
           <button type="submit" className="submit-btn" disabled={isLoading}>

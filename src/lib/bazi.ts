@@ -84,7 +84,7 @@ function solarTermJDE(year: number, targetLon: number): number {
   const lonJan1 = sunLongitude(jde);
 
   // Estimate how many degrees ahead targetLon is from Jan 1 (going forward in time)
-  let degDelta = ((targetLon - lonJan1 + 360) % 360);
+  let degDelta = (targetLon - lonJan1 + 360) % 360;
   // If more than ~350°, it's effectively the same term from previous year — go backward
   if (degDelta > 355) degDelta -= 360;
   jde += (degDelta / 360) * 365.2422;
@@ -154,20 +154,20 @@ function calcMonthPillar(birthJDE: number, yearStem: number): Pillar {
   const monthIndex = Math.floor(((sunLon - 315 + 360) % 360) / 30);
   const branch = (monthIndex + 2) % 12; // 寅=2, 卯=3, ...
   // 五虎遁年起月: stem = (yearStem%5 * 2 + 2 + monthIndex) % 10
-  const stem = (((yearStem % 5) * 2 + 2 + monthIndex) % 10 + 10) % 10;
+  const stem = ((((yearStem % 5) * 2 + 2 + monthIndex) % 10) + 10) % 10;
   return { stem, branch };
 }
 
 /** Compute day pillar from Julian Day Number. Reference: JDN 2451545 = 甲戌 (index 10). */
 function calcDayPillar(jdn: number): Pillar {
-  const dayIndex = ((jdn + 5) % 60 + 60) % 60;
+  const dayIndex = (((jdn + 5) % 60) + 60) % 60;
   return { stem: dayIndex % 10, branch: dayIndex % 12 };
 }
 
 /** Compute hour pillar from local hour and day stem. */
 function calcHourPillar(hour: number, dayStem: number): Pillar {
   const branch = Math.floor((hour + 1) / 2) % 12;
-  const stem = (((dayStem % 5) * 2 + branch) % 10 + 10) % 10;
+  const stem = ((((dayStem % 5) * 2 + branch) % 10) + 10) % 10;
   return { stem, branch };
 }
 
@@ -208,7 +208,7 @@ function calcLuckCycles(
 
   const cycles: LuckCycle[] = [];
   for (let i = 0; i < 8; i++) {
-    const cycleIdx = ((monthSexag + delta * (i + 1)) % 60 + 60) % 60;
+    const cycleIdx = (((monthSexag + delta * (i + 1)) % 60) + 60) % 60;
     cycles.push({
       index: i,
       pillar: sexagToPillar(cycleIdx),
@@ -406,7 +406,11 @@ export function findBranchInteractions(chart: BaziChart): BranchInteraction[] {
     const posA = branches.indexOf(a);
     const posB = branches.indexOf(b);
     if (posA !== -1 && posB !== -1) {
-      result.push({ type: '六沖', branches: [a, b], pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]] });
+      result.push({
+        type: '六沖',
+        branches: [a, b],
+        pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]],
+      });
     }
   }
 
@@ -414,14 +418,27 @@ export function findBranchInteractions(chart: BaziChart): BranchInteraction[] {
   for (const { branches: group, name } of SAN_XING) {
     const positions = group.map((b) => branches.indexOf(b));
     if (positions.every((p) => p !== -1)) {
-      result.push({ type: '三刑', branches: group, pillars: positions.map((p) => PILLAR_NAMES[p]), result: name });
+      result.push({
+        type: '三刑',
+        branches: group,
+        pillars: positions.map((p) => PILLAR_NAMES[p]),
+        result: name,
+      });
     }
   }
   // 自刑
   for (const b of SELF_XING) {
-    const occurrences = branches.reduce<number[]>((acc, br, i) => (br === b ? [...acc, i] : acc), []);
+    const occurrences = branches.reduce<number[]>(
+      (acc, br, i) => (br === b ? [...acc, i] : acc),
+      [],
+    );
     if (occurrences.length >= 2) {
-      result.push({ type: '三刑', branches: [b, b], pillars: occurrences.map((p) => PILLAR_NAMES[p]), result: '自刑' });
+      result.push({
+        type: '三刑',
+        branches: [b, b],
+        pillars: occurrences.map((p) => PILLAR_NAMES[p]),
+        result: '自刑',
+      });
     }
   }
 
@@ -430,7 +447,11 @@ export function findBranchInteractions(chart: BaziChart): BranchInteraction[] {
     const posA = branches.indexOf(a);
     const posB = branches.indexOf(b);
     if (posA !== -1 && posB !== -1) {
-      result.push({ type: '六破', branches: [a, b], pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]] });
+      result.push({
+        type: '六破',
+        branches: [a, b],
+        pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]],
+      });
     }
   }
 
@@ -439,7 +460,11 @@ export function findBranchInteractions(chart: BaziChart): BranchInteraction[] {
     const posA = branches.indexOf(a);
     const posB = branches.indexOf(b);
     if (posA !== -1 && posB !== -1) {
-      result.push({ type: '六害', branches: [a, b], pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]] });
+      result.push({
+        type: '六害',
+        branches: [a, b],
+        pillars: [PILLAR_NAMES[posA], PILLAR_NAMES[posB]],
+      });
     }
   }
 
@@ -471,10 +496,14 @@ export function analyzeDayMaster(chart: BaziChart): DayMasterAnalysis {
   const monthMainStem = BRANCH_HIDDEN_STEMS[chart.monthPillar.branch][0];
   const monthElem = Math.floor(monthMainStem / 2);
   let score = 0;
-  if (monthElem === dayElem) score += 3; // 得令比劫
-  else if ((monthElem + 1) % 5 === dayElem) score += 3; // 得令印
-  else if ((dayElem + 1) % 5 === monthElem) score -= 1; // 泄
-  else if ((dayElem + 2) % 5 === monthElem) score -= 1; // 財
+  if (monthElem === dayElem)
+    score += 3; // 得令比劫
+  else if ((monthElem + 1) % 5 === dayElem)
+    score += 3; // 得令印
+  else if ((dayElem + 1) % 5 === monthElem)
+    score -= 1; // 泄
+  else if ((dayElem + 2) % 5 === monthElem)
+    score -= 1; // 財
   else score -= 2; // 官殺剋
 
   // Score remaining 7 characters (stems of year/month/hour + main hidden stems of 4 branches)
@@ -512,7 +541,13 @@ export function analyzeDayMaster(chart: BaziChart): DayMasterAnalysis {
     description = '日主中和，視四柱組合選取調候用神。';
   }
 
-  return { score: Math.round(score * 10) / 10, strength, favorableElement, avoidElement, description };
+  return {
+    score: Math.round(score * 10) / 10,
+    strength,
+    favorableElement,
+    avoidElement,
+    description,
+  };
 }
 
 // ---- Kua Number (本命卦) ----
@@ -541,7 +576,14 @@ export function calculateKua(year: number, gender: 'male' | 'female'): KuaInfo {
 
   const group = [1, 3, 4, 9].includes(kua) ? '東四命' : '西四命';
   const dirTypes: KuaInfo['directions'][number]['type'][] = [
-    '生氣', '天醫', '延年', '伏位', '禍害', '六煞', '五鬼', '絕命',
+    '生氣',
+    '天醫',
+    '延年',
+    '伏位',
+    '禍害',
+    '六煞',
+    '五鬼',
+    '絕命',
   ];
   const dirs = KUA_DIRECTIONS[kua] ?? KUA_DIRECTIONS[2];
   const directions = dirTypes.map((type, i) => ({
@@ -575,7 +617,7 @@ const DISPLAY_TO_OFFSET = [8, 4, 6, 7, 0, 2, 3, 5, 1];
 /** Calculate the annual flying star grid for a given year. */
 export function getAnnualFlyingStars(year: number): FlyingStarGrid {
   // Center star formula: reference 1864=1, decreasing by 1 each year, wrapping 1-9
-  const raw = ((1 - (year - 1864)) % 9 + 9) % 9;
+  const raw = (((1 - (year - 1864)) % 9) + 9) % 9;
   const centerStar = raw === 0 ? 9 : raw;
 
   const palaces = PALACE_ORDER.map(({ direction, dirShort }, displayIdx) => {
@@ -655,7 +697,7 @@ export function getMonthDays(year: number, month: number, clientYearBranch?: num
     const dayBranch = dayPillar.branch;
 
     // 十二建星: offset from month branch
-    const officerIdx = ((dayBranch - monthBranch) % 12 + 12) % 12;
+    const officerIdx = (((dayBranch - monthBranch) % 12) + 12) % 12;
     const officer = TWELVE_OFFICERS[officerIdx];
 
     // Check clash with client's year branch (六沖: branches 6 apart)
@@ -664,7 +706,20 @@ export function getMonthDays(year: number, month: number, clientYearBranch?: num
     if (clientYearBranch !== undefined) {
       if ((dayBranch + 6) % 12 === clientYearBranch || (clientYearBranch + 6) % 12 === dayBranch) {
         clash = true;
-        const BRANCHES_LOCAL = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const BRANCHES_LOCAL = [
+          '子',
+          '丑',
+          '寅',
+          '卯',
+          '辰',
+          '巳',
+          '午',
+          '未',
+          '申',
+          '酉',
+          '戌',
+          '亥',
+        ];
         clashWith = BRANCHES_LOCAL[clientYearBranch];
       }
     }

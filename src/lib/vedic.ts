@@ -34,11 +34,7 @@ import type {
   AntarDasha,
   VedicAyanamsha,
 } from '../types/vedic';
-import {
-  DASHA_ORDER,
-  DASHA_ORDER_ZH,
-  DASHA_YEARS,
-} from '../types/vedic';
+import { DASHA_ORDER, DASHA_ORDER_ZH, DASHA_YEARS } from '../types/vedic';
 
 const RAD = Math.PI / 180;
 const DEG = 180 / Math.PI;
@@ -100,7 +96,7 @@ function getAyanamsha(jde: number, type: VedicAyanamsha): number {
     case 'lahiri':
       return 23.85317 + T_years * rate;
     case 'raman':
-      return 22.460 + T_years * rate;
+      return 22.46 + T_years * rate;
     case 'krishnamurti':
       return 23.7262 + T_years * rate;
   }
@@ -123,8 +119,10 @@ function tropicalPlanet(name: string, jde: number): number {
   const planet = vp[name as keyof typeof vp];
   const ep = earth.position2000(jde);
   const pp = planet.position2000(jde);
-  const dx = pp.range * Math.cos(pp.lat) * Math.cos(pp.lon) - ep.range * Math.cos(ep.lat) * Math.cos(ep.lon);
-  const dy = pp.range * Math.cos(pp.lat) * Math.sin(pp.lon) - ep.range * Math.cos(ep.lat) * Math.sin(ep.lon);
+  const dx =
+    pp.range * Math.cos(pp.lat) * Math.cos(pp.lon) - ep.range * Math.cos(ep.lat) * Math.cos(ep.lon);
+  const dy =
+    pp.range * Math.cos(pp.lat) * Math.sin(pp.lon) - ep.range * Math.cos(ep.lat) * Math.sin(ep.lon);
   return norm(Math.atan2(dy, dx) * DEG);
 }
 
@@ -151,10 +149,13 @@ function tropicalLagna(jde: number, latitude: number, longitude: number): number
   const mcRad = Math.atan2(Math.sin(ramc), Math.cos(eps) * Math.cos(ramc));
   const mc = norm(mcRad * DEG);
 
-  const ascRad = Math.atan2(-Math.cos(ramc), Math.sin(eps) * Math.tan(phi) + Math.cos(eps) * Math.sin(ramc));
+  const ascRad = Math.atan2(
+    -Math.cos(ramc),
+    Math.sin(eps) * Math.tan(phi) + Math.cos(eps) * Math.sin(ramc),
+  );
   const asc = norm(ascRad * DEG);
 
-  const arcFromMC = ((asc - mc) % 360 + 360) % 360;
+  const arcFromMC = (((asc - mc) % 360) + 360) % 360;
   return arcFromMC <= 180 ? asc : norm(asc + 180);
 }
 
@@ -172,13 +173,21 @@ function isRetrograde(getLon: (j: number) => number, jde: number): boolean {
 // ---- Dignity ----
 
 const EXALTATION_SIGN: Partial<Record<string, number>> = {
-  Sun: 0 /* Aries */, Moon: 1 /* Taurus */, Mars: 9 /* Capricorn */,
-  Mercury: 5 /* Virgo */, Jupiter: 3 /* Cancer */, Venus: 11 /* Pisces */,
+  Sun: 0 /* Aries */,
+  Moon: 1 /* Taurus */,
+  Mars: 9 /* Capricorn */,
+  Mercury: 5 /* Virgo */,
+  Jupiter: 3 /* Cancer */,
+  Venus: 11 /* Pisces */,
   Saturn: 6 /* Libra */,
 };
 const DEBILITATION_SIGN: Partial<Record<string, number>> = {
-  Sun: 6 /* Libra */, Moon: 7 /* Scorpio */, Mars: 3 /* Cancer */,
-  Mercury: 11 /* Pisces */, Jupiter: 9 /* Capricorn */, Venus: 5 /* Virgo */,
+  Sun: 6 /* Libra */,
+  Moon: 7 /* Scorpio */,
+  Mars: 3 /* Cancer */,
+  Mercury: 11 /* Pisces */,
+  Jupiter: 9 /* Capricorn */,
+  Venus: 5 /* Virgo */,
   Saturn: 0 /* Aries */,
 };
 
