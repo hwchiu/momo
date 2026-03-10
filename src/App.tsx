@@ -23,6 +23,7 @@ import { BaziResult } from './components/BaziResult';
 import { KuaPanel } from './components/KuaPanel';
 import { FlyingStarsPanel } from './components/FlyingStarsPanel';
 import { DateSelectTool } from './components/DateSelectTool';
+import { QiMenPanel } from './components/QiMenPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
@@ -331,6 +332,11 @@ function App() {
             <section className="quick-chart-section">
               <h3 className="section-heading">擇日工具</h3>
               <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
+            </section>
+
+            <section className="quick-chart-section">
+              <h3 className="section-heading">奇門遁甲</h3>
+              <QiMenPanel />
             </section>
           </div>
         )}

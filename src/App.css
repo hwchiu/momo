@@ -1693,3 +1693,185 @@
   .transit-quick-btns { gap: 2px; }
   .transit-quick-btn  { padding: 4px 7px; font-size: 11px; min-height: 36px; }
 }
+
+/* ===== Sprint 2: 奇門遁甲 (Qi Men Dun Jia) ===== */
+
+.qm-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.qm-datetime-input {
+  padding: 6px 10px;
+  border: 1px solid var(--clr-border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  flex: 1 1 180px;
+  min-height: 38px;
+}
+
+.qm-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--clr-primary);
+  border-radius: 6px;
+  background: var(--clr-primary);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 38px;
+  transition: opacity 0.15s;
+}
+.qm-btn:hover { opacity: 0.85; }
+.qm-btn-now {
+  background: var(--clr-surface);
+  color: var(--clr-primary);
+}
+.qm-btn-now:hover { background: var(--clr-primary-light, color-mix(in srgb, var(--clr-primary) 10%, transparent)); }
+
+/* Meta strip */
+.qm-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.qm-dun-badge,
+.qm-ju-badge {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.qm-yang { background: #fff4e0; color: #c85a00; border: 1px solid #f4a04c; }
+.qm-yin  { background: #e8eeff; color: #2a4fa0; border: 1px solid #7090d8; }
+.qm-ju-badge { background: var(--clr-surface-2, #f4f4f6); border: 1px solid var(--clr-border); color: var(--clr-text); }
+.qm-yuan,
+.qm-term,
+.qm-xun { color: var(--clr-muted, #666); font-size: 13px; }
+
+/* Ganzhi pillars row */
+.qm-pillars-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.qm-pillar-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.qm-pillar-label { font-size: 11px; color: var(--clr-muted, #888); }
+.qm-pillar-val { font-size: 18px; font-weight: 600; letter-spacing: 1px; color: var(--clr-text); }
+
+/* Duty row */
+.qm-duty-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--clr-muted, #666);
+  margin-bottom: 12px;
+}
+.qm-duty-row strong { color: var(--clr-text); }
+
+/* 9-palace grid */
+.qm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 12px;
+  max-width: 540px;
+}
+
+.qm-palace {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 110px;
+  font-size: 13px;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.qm-palace-center {
+  background: var(--clr-surface-2, #f7f7fa);
+}
+
+.qm-duty-star { border-color: var(--clr-primary); border-width: 2px; }
+.qm-duty-door { box-shadow: inset 0 0 0 2px var(--clr-accent, #8b6914); }
+
+.qm-palace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--clr-muted, #888);
+}
+.qm-palace-gua { font-weight: 700; font-size: 13px; color: var(--clr-text); }
+.qm-palace-dir { font-size: 10px; }
+
+.qm-stems-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.qm-heaven-stem { color: var(--clr-primary); }
+.qm-stem-divider { font-size: 10px; color: var(--clr-muted, #999); }
+.qm-earth-stem { color: var(--clr-text); }
+
+.qm-star { font-size: 12px; font-weight: 600; }
+.qm-door { font-size: 11px; }
+.qm-deity { font-size: 11px; color: var(--clr-muted, #777); }
+
+/* Quality colours */
+.qm-great-good { color: #1a5ca8; }
+.qm-good       { color: #1a7a1a; }
+.qm-bad        { color: #8b6914; }
+.qm-great-bad  { color: #c0392b; }
+
+/* Badges */
+.qm-badges { display: flex; gap: 3px; flex-wrap: wrap; margin-top: auto; }
+.qm-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.qm-badge-star { background: var(--clr-primary); color: #fff; }
+.qm-badge-door { background: #8b6914; color: #fff; }
+
+/* Legend */
+.qm-legend {
+  font-size: 12px;
+  color: var(--clr-muted, #888);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .qm-grid { max-width: 100%; gap: 2px; }
+  .qm-palace { padding: 5px 4px; min-height: 90px; font-size: 12px; }
+  .qm-stems-row { font-size: 14px; }
+  .qm-star { font-size: 11px; }
+  .qm-door,
+  .qm-deity { font-size: 10px; }
+  .qm-pillars-row { gap: 10px; }
+  .qm-pillar-val { font-size: 16px; }
+}
