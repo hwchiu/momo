@@ -24,6 +24,7 @@ import { KuaPanel } from './components/KuaPanel';
 import { FlyingStarsPanel } from './components/FlyingStarsPanel';
 import { DateSelectTool } from './components/DateSelectTool';
 import { QiMenPanel } from './components/QiMenPanel';
+import { ZiWeiPanel } from './components/ZiWeiPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
@@ -61,7 +62,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'vedic' | 'synastry'>('natal');
+  const [activeTab, setActiveTab] = useState<'natal' | 'bazi' | 'ziwei' | 'vedic' | 'synastry'>('natal');
 
   // Shared aspect orb config (natal chart + synastry)
   const [orbConfig, setOrbConfig] = useState<OrbConfig>(DEFAULT_ORB_CONFIG);
@@ -235,6 +236,16 @@ function App() {
         </button>
         <button
           role="tab"
+          aria-selected={activeTab === 'ziwei'}
+          aria-controls="panel-ziwei"
+          id="tab-ziwei"
+          className={`tab-btn ${activeTab === 'ziwei' ? 'active' : ''}`}
+          onClick={() => setActiveTab('ziwei')}
+        >
+          紫微斗數
+        </button>
+        <button
+          role="tab"
           aria-selected={activeTab === 'vedic'}
           aria-controls="panel-vedic"
           id="tab-vedic"
@@ -337,6 +348,15 @@ function App() {
             <section className="quick-chart-section">
               <h3 className="section-heading">奇門遁甲</h3>
               <QiMenPanel />
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'ziwei' && (
+          <div role="tabpanel" id="panel-ziwei" aria-labelledby="tab-ziwei">
+            <section className="quick-chart-section">
+              <h3 className="section-heading">紫微斗數命盤</h3>
+              <ZiWeiPanel />
             </section>
           </div>
         )}

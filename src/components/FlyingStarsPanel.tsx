@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { STAR_QUALITY } from '../types/bazi';
-import { getAnnualFlyingStars } from '../lib/bazi';
+import { getAnnualFlyingStars, getMonthlyFlyingStars } from '../lib/bazi';
+import type { FlyingStarPalace } from '../types/bazi';
 
 const QUALITY_BG: Record<string, string> = {
   大吉: '#d4edda',
@@ -16,78 +17,127 @@ const QUALITY_COLOR: Record<string, string> = {
 };
 
 // Display grid rows: [SE, S, SW], [E, C, W], [NE, N, NW]
-// palaces array is in order: SE=0,S=1,SW=2,E=3,C=4,W=5,NE=6,N=7,NW=8
 const GRID_LAYOUT = [
-  [0, 1, 2], // top row: SE, S, SW
-  [3, 4, 5], // mid row: E, C, W
-  [6, 7, 8], // bot row: NE, N, NW
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
 ];
 
-export function FlyingStarsPanel() {
-  const currentYear = new Date().getFullYear();
-  const [year, setYear] = useState(currentYear);
+const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月',
+  '七月', '八月', '九月', '十月', '十一月', '十二月'];
 
-  const grid = getAnnualFlyingStars(year);
-
-  // Find 五黃 palace
-  const wuHuangPalace = grid.palaces.find((p) => p.star === 5);
-
+function StarGrid({ palaces, compact }: { palaces: FlyingStarPalace[]; compact?: boolean }) {
   return (
-    <div className="flying-stars-panel">
-      <div className="flying-stars-controls">
-        <label className="form-label">選擇年份</label>
-        <input
-          type="number"
-          className="form-input flying-star-year-input"
-          value={year}
-          min={1900}
-          max={2100}
-          onChange={(e) => setYear(parseInt(e.target.value, 10) || currentYear)}
-        />
-        <span className="flying-star-center-info">
-          {year} 年中宮飛星：
-          <strong style={{ color: QUALITY_COLOR[STAR_QUALITY[grid.centerStar]] }}>
-            {grid.centerStar}（{grid.palaces[4]?.starName}）
-          </strong>
-        </span>
-      </div>
-
-      {wuHuangPalace && (
-        <div className="flying-star-warning">
-          ⚠ 本年五黃凶星飛臨「{wuHuangPalace.direction}」方，此方宜靜勿動，避免裝修施工。
-        </div>
-      )}
-
-      <div className="flying-star-grid">
-        {GRID_LAYOUT.map((row, ri) => (
-          <div key={ri} className="flying-star-row">
-            {row.map((palaceIdx) => {
-              const palace = grid.palaces[palaceIdx];
-              const bg = QUALITY_BG[palace.quality];
-              const color = QUALITY_COLOR[palace.quality];
-              return (
-                <div
-                  key={palaceIdx}
-                  className="flying-star-cell"
-                  style={{ backgroundColor: bg, borderColor: color + '66' }}
-                >
-                  <div className="fs-direction" style={{ color: '#666' }}>
-                    {palace.direction}
-                  </div>
-                  <div className="fs-star-number" style={{ color }}>
-                    {palace.star}
-                  </div>
-                  <div className="fs-star-name" style={{ color }}>
-                    {palace.starName}
-                  </div>
+    <div className={`flying-star-grid ${compact ? 'flying-star-grid-compact' : ''}`}>
+      {GRID_LAYOUT.map((row, ri) => (
+        <div key={ri} className="flying-star-row">
+          {row.map((palaceIdx) => {
+            const palace = palaces[palaceIdx];
+            const bg = QUALITY_BG[palace.quality];
+            const color = QUALITY_COLOR[palace.quality];
+            return (
+              <div
+                key={palaceIdx}
+                className="flying-star-cell"
+                style={{ backgroundColor: bg, borderColor: color + '66' }}
+              >
+                <div className="fs-direction" style={{ color: '#666' }}>
+                  {palace.direction}
+                </div>
+                <div className="fs-star-number" style={{ color }}>
+                  {palace.star}
+                </div>
+                <div className="fs-star-name" style={{ color }}>
+                  {palace.starName}
+                </div>
+                {!compact && (
                   <div className="fs-quality" style={{ color }}>
                     {palace.quality}
                   </div>
-                </div>
-              );
-            })}
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function FlyingStarsPanel() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(currentMonth);
+
+  const annualGrid = getAnnualFlyingStars(year);
+  const monthlyGrid = getMonthlyFlyingStars(year, month);
+
+  const wuHuangAnnual = annualGrid.palaces.find((p) => p.star === 5);
+  const wuHuangMonthly = monthlyGrid.palaces.find((p) => p.star === 5);
+
+  return (
+    <div className="flying-stars-panel">
+      {/* Controls */}
+      <div className="flying-stars-controls">
+        <div className="fs-control-group">
+          <label className="form-label">年份</label>
+          <input
+            type="number"
+            className="form-input flying-star-year-input"
+            value={year}
+            min={1900}
+            max={2100}
+            onChange={(e) => setYear(parseInt(e.target.value, 10) || currentYear)}
+          />
+        </div>
+        <div className="fs-control-group">
+          <label className="form-label">月份</label>
+          <select
+            className="form-input"
+            value={month}
+            onChange={(e) => setMonth(Number(e.target.value))}
+          >
+            {MONTH_NAMES.map((name, i) => (
+              <option key={i + 1} value={i + 1}>{name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Dual grid */}
+      <div className="fs-dual-grid-wrapper">
+        <div className="fs-grid-section">
+          <div className="fs-grid-label">
+            {year} 年飛星
+            <span className="fs-center-badge" style={{ color: QUALITY_COLOR[STAR_QUALITY[annualGrid.centerStar]] }}>
+              中宮 {annualGrid.centerStar} 白
+            </span>
           </div>
-        ))}
+          <StarGrid palaces={annualGrid.palaces} />
+          {wuHuangAnnual && (
+            <div className="flying-star-warning">
+              ⚠ 年五黃飛臨「{wuHuangAnnual.direction}」，宜靜勿動
+            </div>
+          )}
+        </div>
+
+        <div className="fs-grid-section">
+          <div className="fs-grid-label">
+            {MONTH_NAMES[month - 1]}月飛星
+            <span className="fs-center-badge" style={{ color: QUALITY_COLOR[STAR_QUALITY[monthlyGrid.centerStar]] }}>
+              中宮 {monthlyGrid.centerStar} 白
+            </span>
+          </div>
+          <StarGrid palaces={monthlyGrid.palaces} compact />
+          {wuHuangMonthly && (
+            <div className="flying-star-warning">
+              ⚠ 月五黃飛臨「{wuHuangMonthly.direction}」，本月宜靜
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flying-star-legend">

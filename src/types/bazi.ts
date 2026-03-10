@@ -92,6 +92,7 @@ export interface FlyingStarPalace {
 
 export interface FlyingStarGrid {
   year: number;
+  month?: number; // present for monthly grids
   centerStar: number;
   palaces: FlyingStarPalace[]; // 9 palaces in display order (SE,S,SW,E,C,W,NE,N,NW)
 }

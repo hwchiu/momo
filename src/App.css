@@ -1875,3 +1875,210 @@
   .qm-pillars-row { gap: 10px; }
   .qm-pillar-val { font-size: 16px; }
 }
+
+/* ===== 月飛星 dual grid ===== */
+
+.fs-dual-grid-wrapper {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.fs-grid-section {
+  flex: 1 1 240px;
+  min-width: 220px;
+}
+
+.fs-grid-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--clr-text);
+}
+
+.fs-center-badge {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fs-control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flying-star-grid-compact .flying-star-cell {
+  min-height: 64px;
+  padding: 5px 4px;
+}
+
+.flying-star-grid-compact .fs-star-number {
+  font-size: 20px;
+}
+
+.flying-star-grid-compact .fs-star-name {
+  font-size: 10px;
+}
+
+/* ===== 紫微斗數 (Zi Wei Dou Shu) ===== */
+
+.zw-form { margin-bottom: 14px; }
+
+.zw-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.zw-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zw-input-year { width: 84px; }
+.zw-input-sm   { width: 58px; }
+
+.zw-submit-btn {
+  padding: 8px 22px;
+  background: var(--clr-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 38px;
+  transition: opacity 0.15s;
+}
+.zw-submit-btn:hover:not(:disabled) { opacity: 0.85; }
+.zw-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Summary strip */
+.zw-summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: var(--clr-muted, #666);
+}
+.zw-summary-item strong { color: var(--clr-text); }
+.zw-ju { color: var(--clr-primary); }
+
+/* 4×4 grid */
+.zw-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, auto);
+  gap: 4px;
+  margin-bottom: 14px;
+  max-width: 700px;
+}
+
+/* Center 2×2 info block spans rows 2-3, cols 2-3 */
+.zw-center-info {
+  grid-column: 2 / 4;
+  grid-row: 2 / 4;
+  background: var(--clr-surface-2, #f7f7fa);
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.zw-center-row {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.zw-center-label {
+  color: var(--clr-muted, #888);
+  min-width: 38px;
+  font-size: 11px;
+}
+.zw-center-val { font-weight: 600; color: var(--clr-text); }
+
+/* Individual palace cell */
+.zw-palace {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 6px;
+  padding: 6px 5px;
+  min-height: 100px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: background 0.15s;
+}
+
+.zw-life-palace {
+  border-color: var(--clr-primary);
+  border-width: 2px;
+  background: color-mix(in srgb, var(--clr-primary) 4%, var(--clr-surface));
+}
+
+.zw-palace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.zw-branch { font-weight: 700; font-size: 13px; color: var(--clr-text); }
+.zw-stem { font-size: 10px; color: var(--clr-muted, #888); }
+.zw-palace-name {
+  font-size: 11px;
+  color: var(--clr-muted, #777);
+  border-bottom: 1px solid var(--clr-border);
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+}
+
+/* Stars */
+.zw-main-stars, .zw-aux-stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.zw-star {
+  font-size: 11px;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.zw-main-star { font-weight: 600; }
+.zw-star-ji      { color: #1a5ca8; background: #e8f0fb; }
+.zw-star-xiong   { color: #c0392b; background: #fdecea; }
+.zw-star-neutral { color: #5a4a00; background: #fdf5e0; }
+.zw-aux-star     { color: var(--clr-muted, #666); background: var(--clr-surface-2, #f4f4f6); font-size: 10px; }
+
+.zw-empty { /* invisible placeholder for corners */ }
+
+/* Legend */
+.zw-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .zw-grid { max-width: 100%; gap: 2px; }
+  .zw-palace { padding: 4px 3px; min-height: 82px; font-size: 11px; }
+  .zw-star { font-size: 10px; padding: 1px 3px; }
+  .zw-branch { font-size: 12px; }
+  .zw-center-info { padding: 6px 8px; }
+  .zw-center-label { min-width: 30px; }
+  .zw-form-row { gap: 6px; }
+  .zw-input-year { width: 68px; }
+  .zw-input-sm { width: 48px; }
+}
