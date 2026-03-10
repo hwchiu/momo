@@ -9,8 +9,30 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { calculateQiMen, hourBranchFromHour, hourStemFromDayStem } from '../../src/lib/qimen';
+import {
+  calculateQiMen,
+  calculateQiMenDay,
+  calculateQiMenYear,
+  hourBranchFromHour,
+  hourStemFromDayStem,
+} from '../../src/lib/qimen';
 import { YANG_JU_TABLE, YIN_JU_TABLE, SOLAR_TERM_NAMES, QIMEN_STARS, QIMEN_DOORS } from '../../src/types/qimen';
+
+function expectValidChart(chart: ReturnType<typeof calculateQiMen>) {
+  expect(chart.palaces).toHaveLength(9);
+  const palaceNums = chart.palaces.map((p) => p.palace).sort((a, b) => a - b);
+  expect(palaceNums).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  expect(chart.ju).toBeGreaterThanOrEqual(1);
+  expect(chart.ju).toBeLessThanOrEqual(9);
+  expect(['陽遁', '陰遁']).toContain(chart.dun);
+  expect(['上元', '中元', '下元']).toContain(chart.yuan);
+  const dutyStars = chart.palaces.filter((p) => p.isDutyStar);
+  const dutyDoors = chart.palaces.filter((p) => p.isDutyDoor);
+  expect(dutyStars).toHaveLength(1);
+  expect(dutyDoors).toHaveLength(1);
+  expect(dutyStars[0].palace).toBe(chart.dutyStarPalace);
+  expect(dutyDoors[0].palace).toBe(chart.dutyDoorPalace);
+}
 
 // ---- hourBranchFromHour ----
 
@@ -361,6 +383,112 @@ describe('ju tables structure', () => {
     for (const row of YIN_JU_TABLE) {
       const unique = new Set(row);
       expect(unique.size).toBe(3);
+    }
+  });
+});
+
+// ── calculateQiMenDay (日盤) ───────────────────────────────────────────────
+
+describe('calculateQiMenDay (日盤)', () => {
+  it('produces a valid chart for 2024-03-20', () => {
+    expectValidChart(calculateQiMenDay({ year: 2024, month: 3, day: 20 }));
+  });
+
+  it('summer date → 陰遁', () => {
+    const chart = calculateQiMenDay({ year: 2024, month: 8, day: 1 });
+    expectValidChart(chart);
+    expect(chart.dun).toBe('陰遁');
+  });
+
+  it('winter date → 陽遁', () => {
+    const chart = calculateQiMenDay({ year: 2024, month: 1, day: 10 });
+    expectValidChart(chart);
+    expect(chart.dun).toBe('陽遁');
+  });
+
+  it('datetime.hour=0, datetime.minute=0', () => {
+    const chart = calculateQiMenDay({ year: 2024, month: 5, day: 10 });
+    expect(chart.datetime.hour).toBe(0);
+    expect(chart.datetime.minute).toBe(0);
+  });
+
+  it('shares xunShou and day pillar with 時盤 of the same date', () => {
+    const dt = { year: 2024, month: 9, day: 15 };
+    const dayChart = calculateQiMenDay(dt);
+    const hourChart = calculateQiMen({ ...dt, hour: 6, minute: 0 });
+    expect(dayChart.xunShou).toBe(hourChart.xunShou);
+    expect(dayChart.pillarDay.full).toBe(hourChart.pillarDay.full);
+  });
+
+  it('all 9 stars appear exactly once', () => {
+    const chart = calculateQiMenDay({ year: 2024, month: 6, day: 15 });
+    const stars = chart.palaces.map((p) => p.star).sort();
+    expect(stars).toEqual(Object.values(QIMEN_STARS).sort());
+  });
+
+  it('all 8 doors appear exactly once among non-center palaces', () => {
+    const chart = calculateQiMenDay({ year: 2024, month: 6, day: 15 });
+    const doors = chart.palaces
+      .filter((p) => !p.isCenter)
+      .map((p) => p.door!)
+      .sort();
+    const expected = Object.values(QIMEN_DOORS).filter(Boolean).sort() as string[];
+    expect(doors).toEqual(expected);
+  });
+
+  it('works for year-end boundary date', () => {
+    expectValidChart(calculateQiMenDay({ year: 2024, month: 12, day: 31 }));
+  });
+});
+
+// ── calculateQiMenYear (年盤) ──────────────────────────────────────────────
+
+describe('calculateQiMenYear (年盤)', () => {
+  it('produces a valid chart for 2024', () => {
+    expectValidChart(calculateQiMenYear(2024));
+  });
+
+  it('is always 陽遁', () => {
+    for (const year of [2020, 2021, 2022, 2023, 2024, 2025, 2026]) {
+      expect(calculateQiMenYear(year).dun).toBe('陽遁');
+    }
+  });
+
+  it('solarTermName is 冬至', () => {
+    expect(calculateQiMenYear(2024).solarTermName).toBe('冬至');
+  });
+
+  it('datetime.month=12, datetime.day=22', () => {
+    const chart = calculateQiMenYear(2024);
+    expect(chart.datetime.month).toBe(12);
+    expect(chart.datetime.day).toBe(22);
+  });
+
+  it('different years have different year pillars', () => {
+    const y1 = calculateQiMenYear(2024).pillarYear.full;
+    const y2 = calculateQiMenYear(2025).pillarYear.full;
+    expect(y1).not.toBe(y2);
+  });
+
+  it('year pillar is 2 characters', () => {
+    expect(calculateQiMenYear(2024).pillarYear.full).toHaveLength(2);
+  });
+
+  it('all 9 stars appear exactly once', () => {
+    const chart = calculateQiMenYear(2024);
+    const stars = chart.palaces.map((p) => p.star).sort();
+    expect(stars).toEqual(Object.values(QIMEN_STARS).sort());
+  });
+
+  it('year pillar matches 時盤 year pillar for same year', () => {
+    const yearChart = calculateQiMenYear(2024);
+    const hourChart = calculateQiMen({ year: 2024, month: 6, day: 15, hour: 10, minute: 0 });
+    expect(yearChart.pillarYear.full).toBe(hourChart.pillarYear.full);
+  });
+
+  it('xunShou starts with 甲', () => {
+    for (const year of [2020, 2024, 2025, 2026]) {
+      expect(calculateQiMenYear(year).xunShou[0]).toBe('甲');
     }
   });
 });

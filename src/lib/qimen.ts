@@ -156,6 +156,107 @@ function makePillar(stemIdx: number, branchIdx: number) {
 // ---- Main calculation ----
 
 /**
+ * Core palace-building logic shared by 時盤, 日盤, and 年盤.
+ * `totalOffset` drives the star/door/deity rotation:
+ *   時盤: dayInXun * 12 + hourBranch
+ *   日盤: dayInXun
+ *   年盤: yearInXun
+ */
+function buildChart(params: {
+  datetime: QiMenChart['datetime'];
+  isYangDun: boolean;
+  solarTermName: string;
+  ju: number;
+  yuan: '上元' | '中元' | '下元';
+  pillarYear: ReturnType<typeof makePillar>;
+  pillarMonth: ReturnType<typeof makePillar>;
+  pillarDay: ReturnType<typeof makePillar>;
+  pillarHour: ReturnType<typeof makePillar>;
+  xunPalace: number;
+  xunShou: string;
+  totalOffset: number;
+}): QiMenChart {
+  const {
+    datetime, isYangDun, solarTermName, ju, yuan,
+    pillarYear, pillarMonth, pillarDay, pillarHour,
+    xunPalace, xunShou, totalOffset,
+  } = params;
+
+  const dun: QiMenDun = isYangDun ? '陽遁' : '陰遁';
+  const direction = isYangDun ? 1 : -1;
+
+  // Star rotation in Lo Shu 9-palace path
+  const starOffset = totalOffset % 9;
+  const xunPalaceIdx = LO_SHU_IDX[xunPalace];
+  const dutyStarPalaceIdx = ((xunPalaceIdx + direction * starOffset) % 9 + 9) % 9;
+  const dutyStarPalace = LO_SHU_PATH[dutyStarPalaceIdx];
+  const dutyStar = QIMEN_STARS[xunPalace];
+
+  const rotOffset = ((dutyStarPalaceIdx - xunPalaceIdx) * direction + 9 * 10) % 9;
+
+  // Door rotation in 8-palace path
+  const doorOffset = totalOffset % 8;
+  const xunEightIdx = EIGHT_IDX[xunPalace];
+  const dutyDoorPalaceEightIdx = ((xunEightIdx + direction * doorOffset) % 8 + 8) % 8;
+  const dutyDoorPalace = EIGHT_PALACE_PATH[dutyDoorPalaceEightIdx];
+  const dutyDoor = QIMEN_DOORS[dutyDoorPalace] ?? '休門';
+
+  const deities = isYangDun ? DEITIES_YANG : DEITIES_YIN;
+
+  const palaces: QiMenPalace[] = LO_SHU_PATH.map((p) => {
+    const meta = PALACE_META[p];
+    const isCenter = p === 5;
+
+    const heavenStemSourceIdx = ((LO_SHU_IDX[p] - direction * rotOffset) % 9 + 9) % 9;
+    const heavenStemSourcePalace = LO_SHU_PATH[heavenStemSourceIdx];
+    const heavenStem = EARTH_STEMS[heavenStemSourcePalace];
+    const star = QIMEN_STARS[heavenStemSourcePalace];
+    const door = isCenter ? null : QIMEN_DOORS[p];
+
+    let deity: string | null = null;
+    if (!isCenter) {
+      const eightIdx = EIGHT_IDX[p];
+      const dutyStarEightIdx = EIGHT_IDX[dutyStarPalace] ?? 0;
+      const deityStep = ((eightIdx - dutyStarEightIdx) * direction + 8 * 10) % 8;
+      deity = deities[deityStep];
+    }
+
+    return {
+      palace: p,
+      gua: meta.gua,
+      direction: meta.direction,
+      dirShort: meta.dirShort,
+      earthStem: EARTH_STEMS[p],
+      heavenStem,
+      star,
+      door,
+      deity,
+      isDutyStar: p === dutyStarPalace,
+      isDutyDoor: p === dutyDoorPalace,
+      isCenter,
+    };
+  });
+
+  return {
+    datetime,
+    dun,
+    ju,
+    yuan,
+    solarTermName,
+    pillarYear,
+    pillarMonth,
+    pillarDay,
+    pillarHour,
+    xunShou,
+    dutyStar,
+    dutyDoor,
+    dutyStarPalace,
+    dutyDoorPalace,
+    palaces,
+  };
+}
+
+/**
  * Calculate a Qi Men Dun Jia hourly time chart (時盤) for the given datetime.
  * The datetime is treated as local time (no timezone conversion).
  */
@@ -227,90 +328,136 @@ export function calculateQiMen(dt: {
   const dayInXun = dayIdx % 10; // 0–9
   const totalHourOffset = dayInXun * 12 + hourBranch; // 0–119
 
-  const direction = isYangDun ? 1 : -1;
-
-  // --- 值符星 palace (九星 rotation in Lo Shu 9-palace path) ---
-  const starOffset = totalHourOffset % 9;
-  const xunPalaceIdx = LO_SHU_IDX[xunPalace];
-  const dutyStarPalaceIdx =
-    ((xunPalaceIdx + direction * starOffset) % 9 + 9) % 9;
-  const dutyStarPalace = LO_SHU_PATH[dutyStarPalaceIdx];
-  const dutyStar = QIMEN_STARS[xunPalace]; // 値符星 is the earth-plate star at xunPalace
-
-  // Rotation offset: how far 天盤 is shifted from 地盤 (in Lo Shu path steps)
-  const rotOffset =
-    ((dutyStarPalaceIdx - xunPalaceIdx) * direction + 9 * 10) % 9;
-
-  // --- 值使門 palace (八門 rotation in 8-palace path) ---
-  const doorOffset = totalHourOffset % 8;
-  const xunEightIdx = EIGHT_IDX[xunPalace];
-  const dutyDoorPalaceEightIdx =
-    ((xunEightIdx + direction * doorOffset) % 8 + 8) % 8;
-  const dutyDoorPalace = EIGHT_PALACE_PATH[dutyDoorPalaceEightIdx];
-  const dutyDoor = QIMEN_DOORS[dutyDoorPalace] ?? '休門';
-
-  // --- Build 9 palaces ---
-  const deities = isYangDun ? DEITIES_YANG : DEITIES_YIN;
-
-  const palaces: QiMenPalace[] = LO_SHU_PATH.map((p) => {
-    const meta = PALACE_META[p];
-    const isCenter = p === 5;
-
-    // Heaven plate stem: ground plate stem at the palace that is `rotOffset` steps behind p
-    const heavenStemSourceIdx = ((LO_SHU_IDX[p] - direction * rotOffset) % 9 + 9) % 9;
-    const heavenStemSourcePalace = LO_SHU_PATH[heavenStemSourceIdx];
-    const heavenStem = EARTH_STEMS[heavenStemSourcePalace];
-
-    // Heaven plate star: same rotation logic (each palace maps to the star of its source)
-    const star = QIMEN_STARS[heavenStemSourcePalace];
-
-    // Eight door: fixed to ground plate (earth plate position)
-    const door = isCenter ? null : QIMEN_DOORS[p];
-
-    // Eight deity: cycles through the 8 non-center palaces starting from dutyStarPalace
-    let deity: string | null = null;
-    if (!isCenter) {
-      const eightIdx = EIGHT_IDX[p];
-      const dutyStarEightIdx = EIGHT_IDX[dutyStarPalace] ?? 0;
-      const deityStep =
-        ((eightIdx - dutyStarEightIdx) * direction + 8 * 10) % 8;
-      deity = deities[deityStep];
-    }
-
-    return {
-      palace: p,
-      gua: meta.gua,
-      direction: meta.direction,
-      dirShort: meta.dirShort,
-      earthStem: EARTH_STEMS[p],
-      heavenStem,
-      star,
-      door,
-      deity,
-      isDutyStar: p === dutyStarPalace,
-      isDutyDoor: p === dutyDoorPalace,
-      isCenter,
-    };
-  });
-
-  // Fallback: if dutyStarPalace is center (5) which has no EIGHT_IDX, deity placement wraps
-  // (this is handled gracefully by the EIGHT_IDX lookup above returning undefined → 0)
-
-  return {
+  return buildChart({
     datetime: { ...dt },
-    dun,
+    isYangDun,
+    solarTermName,
     ju,
     yuan: yuanLabel,
-    solarTermName,
     pillarYear,
     pillarMonth,
     pillarDay,
     pillarHour,
+    xunPalace,
     xunShou,
-    dutyStar,
-    dutyDoor,
-    dutyStarPalace,
-    dutyDoorPalace,
-    palaces,
-  };
+    totalOffset: totalHourOffset,
+  });
+}
+
+/**
+ * Calculate a Qi Men Dun Jia daily chart (日盤) for the given date.
+ * Uses day-level rotation (1 step per day) instead of hour-level.
+ */
+export function calculateQiMenDay(dt: {
+  year: number;
+  month: number;
+  day: number;
+}): QiMenChart {
+  const jdn = dateToJDN(dt.year, dt.month, dt.day);
+  const noonJde = jdn - 0.5;
+  const { termIdx, daysFromTermStart } = solarTermInfo(noonJde);
+  const isYangDun = termIdx < 12;
+  const solarTermName = SOLAR_TERM_NAMES[termIdx];
+
+  const pentadIdx = Math.min(2, Math.floor(daysFromTermStart / 5));
+  const pentadIndexInYear = termIdx * 3 + pentadIdx;
+  const yyuan = yearYuanOffset(dt.year);
+  const pYuan = pentadYuan(yyuan, pentadIndexInYear);
+  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][pYuan] as '上元' | '中元' | '下元';
+  const juTable = isYangDun ? YANG_JU_TABLE : YIN_JU_TABLE;
+  const ju = juTable[termIdx % 12][pYuan];
+
+  const dayIdx = dayGanzhiIndex(jdn);
+  const dayStem = dayIdx % 10;
+  const dayBranch = dayIdx % 12;
+
+  const yearIdx = yearGanzhiIndex(dt.year);
+  const yearStem = yearIdx % 10;
+  const yearBranch = yearIdx % 12;
+
+  const monthStartStem = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8][yearStem];
+  const solarMonthOffset = (dt.month - 2 + 12) % 12;
+  const monthStem = (monthStartStem + solarMonthOffset) % 10;
+  const monthBranch = (2 + solarMonthOffset) % 12;
+
+  const xunIdx = Math.floor(dayIdx / 10) % 6;
+  const xunShou = XUN_NAMES[xunIdx];
+  const xunPalace = XUN_PALACES[xunIdx];
+
+  // 日盤: offset = day's position within its 旬 (0–9), no hour component
+  const dayInXun = dayIdx % 10;
+
+  // Hour pillar for reference (子時, first hour of day)
+  const hourStem = hourStemFromDayStem(dayStem, 0);
+  const pillarHour = makePillar(hourStem, 0);
+
+  return buildChart({
+    datetime: { ...dt, hour: 0, minute: 0 },
+    isYangDun,
+    solarTermName,
+    ju,
+    yuan: yuanLabel,
+    pillarYear: makePillar(yearStem, yearBranch),
+    pillarMonth: makePillar(monthStem, monthBranch),
+    pillarDay: makePillar(dayStem, dayBranch),
+    pillarHour,
+    xunPalace,
+    xunShou,
+    totalOffset: dayInXun,
+  });
+}
+
+/**
+ * Calculate a Qi Men Dun Jia annual chart (年盤) for the given year.
+ * Uses year-level rotation (1 step per year within the 10-year 旬).
+ * Based on 冬至 (winter solstice) as the year's anchor.
+ */
+export function calculateQiMenYear(year: number): QiMenChart {
+  // 冬至 falls around Dec 22; use that as the annual anchor
+  const jdn = dateToJDN(year, 12, 22);
+
+  // Year yuan (上中下元) determined by year ganzhi cycle
+  const yyuan = yearYuanOffset(year);
+  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][yyuan] as '上元' | '中元' | '下元';
+
+  // 年盤 is always 陽遁 (based on 冬至 anchor, which starts 陽遁 cycle)
+  const ju = YANG_JU_TABLE[0][yyuan]; // 冬至 (term 0) ju for this yuan
+
+  // Year ganzhi
+  const yearIdx = yearGanzhiIndex(year);
+  const yearStem = yearIdx % 10;
+  const yearBranch = yearIdx % 12;
+
+  // 旬 is determined by year ganzhi: every 10 years = 1 旬
+  const yearXunIdx = Math.floor(yearIdx / 10) % 6;
+  const xunShou = XUN_NAMES[yearXunIdx];
+  const xunPalace = XUN_PALACES[yearXunIdx];
+
+  // Offset = year's position within its 10-year 旬 (0–9)
+  const yearInXun = yearIdx % 10;
+
+  // Month pillar: 子月 (冬至 month) — branch 11, stem derived from year stem
+  const monthStartStem = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8][yearStem];
+  const monthStem = (monthStartStem + 9) % 10; // 子月 is 9th solar month offset from 寅
+  const pillarMonth = makePillar(monthStem, 11); // branch 11 = 子
+
+  // Day pillar: 冬至 day ganzhi
+  const dayIdx = dayGanzhiIndex(jdn);
+  const pillarDay = makePillar(dayIdx % 10, dayIdx % 12);
+  const pillarHour = makePillar(hourStemFromDayStem(dayIdx % 10, 0), 0);
+
+  return buildChart({
+    datetime: { year, month: 12, day: 22, hour: 0, minute: 0 },
+    isYangDun: true,
+    solarTermName: '冬至',
+    ju,
+    yuan: yuanLabel,
+    pillarYear: makePillar(yearStem, yearBranch),
+    pillarMonth,
+    pillarDay,
+    pillarHour,
+    xunPalace,
+    xunShou,
+    totalOffset: yearInXun,
+  });
 }

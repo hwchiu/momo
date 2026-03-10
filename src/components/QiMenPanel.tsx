@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { calculateQiMen } from '../lib/qimen';
+import { calculateQiMen, calculateQiMenDay, calculateQiMenYear } from '../lib/qimen';
 import type { QiMenChart, QiMenPalace } from '../types/qimen';
 import { STAR_QUALITY, DOOR_QUALITY } from '../types/qimen';
 
@@ -9,6 +9,8 @@ import { STAR_QUALITY, DOOR_QUALITY } from '../types/qimen';
 // Row 1 (Middle): 震(3) 中(5) 兌(7)
 // Row 2 (North):  艮(8) 坎(1) 乾(6)
 const GRID_LAYOUT = [4, 9, 2, 3, 5, 7, 8, 1, 6] as const;
+
+type Mode = '時盤' | '日盤' | '年盤';
 
 function qualityClass(q: string): string {
   if (q === '大吉') return 'qm-great-good';
@@ -90,8 +92,18 @@ function fromDatetimeLocal(s: string) {
   return { year, month, day, hour, minute };
 }
 
+function toDateInput(dt: { year: number; month: number; day: number }): string {
+  return `${dt.year}-${padTwo(dt.month)}-${padTwo(dt.day)}`;
+}
+
+function fromDateInput(s: string) {
+  const [year, month, day] = s.split('-').map(Number);
+  return { year, month, day };
+}
+
 export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<Mode>('時盤');
 
   const now = new Date();
   const initDt = defaultDatetime ?? {
@@ -102,19 +114,35 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
     minute: now.getMinutes(),
   };
 
+  // 時盤 state
   const [dtStr, setDtStr] = useState(toDatetimeLocal(initDt));
+  // 日盤 state
+  const [dateStr, setDateStr] = useState(toDateInput(initDt));
+  // 年盤 state
+  const [yearInput, setYearInput] = useState(now.getFullYear());
+
   const [chart, setChart] = useState<QiMenChart | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const compute = useCallback((str: string) => {
-    try {
-      const dt = fromDatetimeLocal(str);
-      setChart(calculateQiMen(dt));
-      setError(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : '計算失敗');
-    }
-  }, []);
+  const compute = useCallback(
+    (currentMode: Mode, dtStrVal: string, dateStrVal: string, yearVal: number) => {
+      try {
+        let c: QiMenChart;
+        if (currentMode === '時盤') {
+          c = calculateQiMen(fromDatetimeLocal(dtStrVal));
+        } else if (currentMode === '日盤') {
+          c = calculateQiMenDay(fromDateInput(dateStrVal));
+        } else {
+          c = calculateQiMenYear(yearVal);
+        }
+        setChart(c);
+        setError(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : '計算失敗');
+      }
+    },
+    [],
+  );
 
   const handleNow = () => {
     const d = new Date();
@@ -126,8 +154,17 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
       minute: d.getMinutes(),
     };
     const s = toDatetimeLocal(dt);
+    const ds = toDateInput(dt);
     setDtStr(s);
-    compute(s);
+    setDateStr(ds);
+    setYearInput(d.getFullYear());
+    compute(mode, s, ds, d.getFullYear());
+  };
+
+  const handleModeChange = (newMode: Mode) => {
+    setMode(newMode);
+    setChart(null);
+    setError(null);
   };
 
   return (
@@ -137,20 +174,56 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        ☰ 奇門遁甲時盤 {open ? '▲' : '▼'}
+        ☰ 奇門遁甲 {open ? '▲' : '▼'}
       </button>
 
       {open && (
         <div className="panel-body">
+          {/* Mode tabs */}
+          <div className="qm-mode-tabs">
+            {(['時盤', '日盤', '年盤'] as Mode[]).map((m) => (
+              <button
+                key={m}
+                className={`qm-mode-btn ${mode === m ? 'qm-mode-btn--active' : ''}`}
+                onClick={() => handleModeChange(m)}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+
           {/* Input row */}
           <div className="qm-input-row">
-            <input
-              type="datetime-local"
-              className="qm-datetime-input"
-              value={dtStr}
-              onChange={(e) => setDtStr(e.target.value)}
-            />
-            <button className="qm-btn" onClick={() => compute(dtStr)}>
+            {mode === '時盤' && (
+              <input
+                type="datetime-local"
+                className="qm-datetime-input"
+                value={dtStr}
+                onChange={(e) => setDtStr(e.target.value)}
+              />
+            )}
+            {mode === '日盤' && (
+              <input
+                type="date"
+                className="qm-datetime-input"
+                value={dateStr}
+                onChange={(e) => setDateStr(e.target.value)}
+              />
+            )}
+            {mode === '年盤' && (
+              <input
+                type="number"
+                className="qm-year-input"
+                value={yearInput}
+                min={1900}
+                max={2100}
+                onChange={(e) => setYearInput(parseInt(e.target.value))}
+              />
+            )}
+            <button
+              className="qm-btn"
+              onClick={() => compute(mode, dtStr, dateStr, yearInput)}
+            >
               排盤
             </button>
             <button className="qm-btn qm-btn-now" onClick={handleNow}>
@@ -164,6 +237,9 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
             <>
               {/* Meta strip */}
               <div className="qm-meta-strip">
+                <span className={`qm-mode-label qm-mode-label--${mode === '時盤' ? 'shi' : mode === '日盤' ? 'ri' : 'nian'}`}>
+                  {mode}
+                </span>
                 <span className={`qm-dun-badge ${chart.dun === '陽遁' ? 'qm-yang' : 'qm-yin'}`}>
                   {chart.dun}
                 </span>
@@ -175,12 +251,17 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
 
               {/* Ganzhi pillars */}
               <div className="qm-pillars-row">
-                {[
-                  ['年', chart.pillarYear.full],
-                  ['月', chart.pillarMonth.full],
-                  ['日', chart.pillarDay.full],
-                  ['時', chart.pillarHour.full],
-                ].map(([label, val]) => (
+                {(mode === '年盤'
+                  ? [['年', chart.pillarYear.full], ['月', chart.pillarMonth.full], ['日', chart.pillarDay.full]]
+                  : mode === '日盤'
+                  ? [['年', chart.pillarYear.full], ['月', chart.pillarMonth.full], ['日', chart.pillarDay.full]]
+                  : [
+                      ['年', chart.pillarYear.full],
+                      ['月', chart.pillarMonth.full],
+                      ['日', chart.pillarDay.full],
+                      ['時', chart.pillarHour.full],
+                    ]
+                ).map(([label, val]) => (
                   <div key={label} className="qm-pillar-cell">
                     <span className="qm-pillar-label">{label}</span>
                     <span className="qm-pillar-val">{val}</span>
