@@ -230,7 +230,10 @@ export function calculateBazi(input: BaziInput): BaziChart {
 
   const yearPillar = calcYearPillar(input, birthJDE);
   const monthPillar = calcMonthPillar(birthJDE, yearPillar.stem);
-  const dayPillar = calcDayPillar(jdn);
+  // 子時跨日：子時 starts at 23:00; in the standard convention the day pillar
+  // advances at 子時 (23:00), so a birth at hour 23 uses the next calendar day.
+  const dayJdn = input.hour >= 23 ? jdn + 1 : jdn;
+  const dayPillar = calcDayPillar(dayJdn);
   const hourPillar = calcHourPillar(input.hour, dayPillar.stem);
 
   const { isForward, startYears, startMonths, cycles } = calcLuckCycles(
