@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import type React from 'react';
 
 import type { ClientRecord } from '../types/client';
 import { HouseSystem, HOUSE_SYSTEM_INFO } from '../types/astro';
 import { getAllClients, saveClient, deleteClient, generateId } from '../lib/clientDb';
+import { importFromFiles, exportToJson, exportToCsv, downloadFile } from '../lib/clientImport';
 
 interface ClientDatabaseProps {
   onLoadClient?: (client: ClientRecord) => void;
@@ -74,6 +76,13 @@ export function ClientDatabase({ onLoadClient }: ClientDatabaseProps) {
   const [editingId, setEditingId] = useState<string | null>(null); // null = new
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<ClientFormData>(emptyForm());
+  const [importMsg, setImportMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(
+    null,
+  );
+
+  // Hidden file-input refs for import
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = clients.filter(
     (c) =>
@@ -145,8 +154,83 @@ export function ClientDatabase({ onLoadClient }: ClientDatabaseProps) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  // --- Import handlers ---
+
+  async function handleFilesSelected(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const { records, result } = await importFromFiles(files);
+    if (records.length === 0) {
+      setImportMsg({
+        type: 'error',
+        text: `未找到可匯入的資料（共掃描 ${result.fileCount} 個檔案）。`,
+      });
+      return;
+    }
+    records.forEach((r) => saveClient(r));
+    setClients(getAllClients());
+    setImportMsg({
+      type: 'success',
+      text: `成功匯入 ${records.length} 筆客戶資料（來自 ${result.fileCount} 個檔案）。`,
+    });
+  }
+
+  function handleImportFiles() {
+    fileInputRef.current?.click();
+  }
+
+  function handleImportFolder() {
+    folderInputRef.current?.click();
+  }
+
+  // --- Export handlers ---
+
+  function handleExportJson() {
+    const content = exportToJson(clients);
+    downloadFile(content, 'momo_clients.json', 'application/json');
+  }
+
+  function handleExportCsv() {
+    const content = exportToCsv(clients);
+    downloadFile(content, 'momo_clients.csv', 'text/csv;charset=utf-8');
+  }
+
   return (
     <div className="client-db">
+      {/* Hidden file inputs */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json,.csv"
+        multiple
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          handleFilesSelected(e.target.files);
+          e.target.value = '';
+        }}
+      />
+      <input
+        ref={folderInputRef}
+        type="file"
+        accept=".json,.csv"
+        multiple
+        style={{ display: 'none' }}
+        {...({ webkitdirectory: '' } as React.InputHTMLAttributes<HTMLInputElement>)}
+        onChange={(e) => {
+          handleFilesSelected(e.target.files);
+          e.target.value = '';
+        }}
+      />
+
+      {/* Import result banner */}
+      {importMsg && (
+        <div className={`client-import-msg client-import-msg--${importMsg.type}`}>
+          {importMsg.text}
+          <button className="client-import-msg-close" onClick={() => setImportMsg(null)}>
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Top bar */}
       <div className="client-db-topbar">
         <input
@@ -158,6 +242,32 @@ export function ClientDatabase({ onLoadClient }: ClientDatabaseProps) {
         />
         <button className="submit-btn" onClick={handleNewClient}>
           + 新增客戶
+        </button>
+        <button className="import-btn" title="匯入 JSON / CSV 檔案" onClick={handleImportFiles}>
+          匯入檔案
+        </button>
+        <button
+          className="import-btn"
+          title="選擇資料夾，遞迴匯入所有 JSON / CSV（包含子資料夾）"
+          onClick={handleImportFolder}
+        >
+          匯入資料夾
+        </button>
+        <button
+          className="export-btn"
+          title="匯出為 JSON"
+          onClick={handleExportJson}
+          disabled={clients.length === 0}
+        >
+          匯出 JSON
+        </button>
+        <button
+          className="export-btn"
+          title="匯出為 CSV"
+          onClick={handleExportCsv}
+          disabled={clients.length === 0}
+        >
+          匯出 CSV
         </button>
       </div>
 

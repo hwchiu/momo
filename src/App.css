@@ -2856,6 +2856,78 @@
   flex-wrap: wrap;
 }
 
+/* Import / export buttons */
+.import-btn {
+  padding: 7px 14px;
+  background: var(--clr-surface-2);
+  color: var(--clr-text-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.import-btn:hover {
+  background: var(--clr-surface-3);
+}
+.import-btn:focus-visible {
+  outline: 2px solid var(--clr-primary);
+}
+
+.export-btn {
+  padding: 7px 14px;
+  background: var(--clr-surface-1);
+  color: var(--clr-text-3);
+  border: 1px solid var(--clr-border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.export-btn:hover:not(:disabled) {
+  background: var(--clr-surface-2);
+  color: var(--clr-text-2);
+}
+.export-btn:focus-visible {
+  outline: 2px solid var(--clr-primary);
+}
+.export-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Import result banner */
+.client-import-msg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: var(--sp-3);
+}
+.client-import-msg--success {
+  background: var(--clr-success-bg, #d4edda);
+  color: var(--clr-success, #155724);
+  border: 1px solid var(--clr-success, #155724);
+}
+.client-import-msg--error {
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger);
+  border: 1px solid var(--clr-danger);
+}
+.client-import-msg-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: inherit;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .client-search-input {
   flex: 1;
   min-width: 180px;
