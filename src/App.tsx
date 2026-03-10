@@ -25,13 +25,15 @@ import { BaziResult } from './components/BaziResult';
 import { KuaPanel } from './components/KuaPanel';
 import { FlyingStarsPanel } from './components/FlyingStarsPanel';
 import { DateSelectTool } from './components/DateSelectTool';
+import { QiMenPanel } from './components/QiMenPanel';
+import { ZiWeiPanel } from './components/ZiWeiPanel';
+import { NumerologyPanel } from './components/NumerologyPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
 import { SynastryResult } from './components/SynastryResult';
 import { LoadingMessage } from './components/LoadingMessage';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { NumerologyPanel } from './components/NumerologyPanel';
 import { FengshuiPanel } from './components/FengshuiPanel';
 import { ClientDatabase } from './components/ClientDatabase';
 import type { ClientRecord } from './types/client';
@@ -69,7 +71,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 
 function App() {
   const [activeTab, setActiveTab] = useState<
-    'natal' | 'bazi' | 'vedic' | 'synastry' | 'numerology' | 'fengshui' | 'clients'
+    'natal' | 'bazi' | 'ziwei' | 'vedic' | 'synastry' | 'numerology' | 'fengshui' | 'clients'
   >('natal');
 
   // Shared aspect orb config (natal chart + synastry)
@@ -276,6 +278,26 @@ function App() {
         </button>
         <button
           role="tab"
+          aria-selected={activeTab === 'ziwei'}
+          aria-controls="panel-ziwei"
+          id="tab-ziwei"
+          className={`tab-btn ${activeTab === 'ziwei' ? 'active' : ''}`}
+          onClick={() => setActiveTab('ziwei')}
+        >
+          紫微斗數
+        </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'numerology'}
+          aria-controls="panel-numerology"
+          id="tab-numerology"
+          className={`tab-btn ${activeTab === 'numerology' ? 'active' : ''}`}
+          onClick={() => setActiveTab('numerology')}
+        >
+          數字學
+        </button>
+        <button
+          role="tab"
           aria-selected={activeTab === 'vedic'}
           aria-controls="panel-vedic"
           id="tab-vedic"
@@ -293,16 +315,6 @@ function App() {
           onClick={() => setActiveTab('synastry')}
         >
           雙人合盤
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeTab === 'numerology'}
-          aria-controls="panel-numerology"
-          id="tab-numerology"
-          className={`tab-btn ${activeTab === 'numerology' ? 'active' : ''}`}
-          onClick={() => setActiveTab('numerology')}
-        >
-          數字學
         </button>
         <button
           role="tab"
@@ -393,6 +405,20 @@ function App() {
               <section className="quick-chart-section">
                 <h3 className="section-heading">擇日工具</h3>
                 <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
+              </section>
+
+              <section className="quick-chart-section">
+                <h3 className="section-heading">奇門遁甲</h3>
+                <QiMenPanel />
+              </section>
+            </div>
+          )}
+
+          {activeTab === 'ziwei' && (
+            <div role="tabpanel" id="panel-ziwei" aria-labelledby="tab-ziwei">
+              <section className="quick-chart-section">
+                <h3 className="section-heading">紫微斗數命盤</h3>
+                <ZiWeiPanel />
               </section>
             </div>
           )}
