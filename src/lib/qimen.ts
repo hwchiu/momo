@@ -123,7 +123,8 @@ function pentadYuan(yearYuan: 0 | 1 | 2, pentadIndexInYear: number): 0 | 1 | 2 {
  * Anchor: JDN 2451545 (J2000 = 2000-01-01) has day ganzhi index 10 (甲戌).
  */
 function dayGanzhiIndex(jdn: number): number {
-  return ((jdn - 2451545 + 10) % 60 + 60) % 60;
+  // Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); equivalent to offset +49
+  return ((jdn - 2415021 + 10) % 60 + 60) % 60;
 }
 
 /** Year ganzhi cycle index (0–59). Anchor: year 4 AD = 甲子 = index 0. */
@@ -269,14 +270,9 @@ export function calculateQiMen(dt: {
 }): QiMenChart {
   const jdn = dateToJDN(dt.year, dt.month, dt.day);
 
-  // Traditional Chinese day boundary: 子時 starts at 23:00, so hour ≥ 23 belongs to
-  // the NEXT calendar day's ganzhi cycle.
-  const dayJdn = dt.hour >= 23 ? jdn + 1 : jdn;
-
   // --- Solar term and ju ---
-  // Use the noon JDE of the effective day for term/ju calculation, so the pentad
-  // boundary does not flicker with the hour of day.
-  const noonJde = dayJdn - 0.5; // noon of the effective Chinese day
+  // Use the noon JDE of the calendar day for term/ju calculation.
+  const noonJde = jdn - 0.5; // noon of the calendar day
   const { termIdx, daysFromTermStart } = solarTermInfo(noonJde);
   const isYangDun = termIdx < 12;
   const solarTermName = SOLAR_TERM_NAMES[termIdx];
@@ -294,8 +290,12 @@ export function calculateQiMen(dt: {
   const ju = juTable[tableRow][pYuan];
 
   // --- Ganzhi pillars ---
-  const dayIdx = dayGanzhiIndex(dayJdn);
+  // Day pillar stays on the calendar day even at 子時 (23:00).
+  // Only the hour STEM uses the next day's stem at 子時 (per standard convention).
+  const dayIdx = dayGanzhiIndex(jdn);
   const dayStem = dayIdx % 10;
+  // 子時跨日: at hour ≥ 23, hour stem is derived from the next calendar day's stem
+  const stemForHour = dt.hour >= 23 ? dayGanzhiIndex(jdn + 1) % 10 : dayStem;
   const dayBranch = dayIdx % 12;
 
   const yearIdx = yearGanzhiIndex(dt.year);
@@ -311,7 +311,7 @@ export function calculateQiMen(dt: {
   const monthBranch = (2 + solarMonthOffset) % 12; // 寅(2) for first solar month
 
   const hourBranch = hourBranchFromHour(dt.hour);
-  const hourStem = hourStemFromDayStem(dayStem, hourBranch);
+  const hourStem = hourStemFromDayStem(stemForHour, hourBranch);
 
   const pillarYear = makePillar(yearStem, yearBranch);
   const pillarMonth = makePillar(monthStem, monthBranch);

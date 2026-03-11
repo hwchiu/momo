@@ -2,9 +2,10 @@
  * BaZi (Four Pillars of Destiny) calculation tests.
  *
  * Reference anchors:
- *  - JDN 2451545 = 2000-01-01 (J2000 epoch)
- *  - Day index on 2000-01-01: (2451545 + 5) % 60 = 10 → stem=0(甲) branch=10(戌) = 甲戌
+ *  - JDN 2415021 = 1900-01-01 = 甲戌 (index 10); offset +49 → dayIndex = ((jdn+49)%60+60)%60
+ *  - Day index on 2000-01-01 (JDN 2451545): ((2451545+49)%60)=54 → stem=4(戊) branch=6(午) = 戊午
  *  - 立春 2000: ~Feb 4; birth before it belongs to 己卯 year, after to 庚辰 year
+ *  - Verified against lunar-javascript and multiple Chinese almanac sources
  */
 
 import { describe, it, expect } from 'vitest';
@@ -95,17 +96,18 @@ describe('sunLongitude', () => {
 // ---- Day Pillar ----
 
 describe('calculateBazi - day pillar', () => {
-  it('2000-01-01 is 甲戌 day (stem=0 branch=10)', () => {
-    // Reference: (2451545 + 5) % 60 = 10 → 10%10=0(甲), 10%12=10(戌)
+  it('2000-01-01 is 戊午 day (stem=4 branch=6)', () => {
+    // Reference: JDN 2451545; dayIndex=((2451545+49)%60)=54 → 54%10=4(戊), 54%12=6(午)
+    // Verified against lunar-javascript and Chinese almanac sources
     const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(0);    // 甲
-    expect(chart.dayPillar.branch).toBe(10); // 戌
+    expect(chart.dayPillar.stem).toBe(4);   // 戊
+    expect(chart.dayPillar.branch).toBe(6); // 午
   });
 
-  it('2000-01-02 is 乙亥 day (stem=1 branch=11)', () => {
+  it('2000-01-02 is 己未 day (stem=5 branch=7)', () => {
     const chart = calculateBazi({ year: 2000, month: 1, day: 2, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(1);    // 乙
-    expect(chart.dayPillar.branch).toBe(11); // 亥
+    expect(chart.dayPillar.stem).toBe(5);   // 己
+    expect(chart.dayPillar.branch).toBe(7); // 未
   });
 
   it('day pillar stem advances by 1 (mod 10) each day', () => {
@@ -141,20 +143,28 @@ describe('calculateBazi - day pillar', () => {
     }
   });
 
-  it('子時跨日: birth at 23:xx uses next day pillar', () => {
-    // 2000-01-01 甲戌 day (stem=0 branch=10); at 23:00 the day advances to 乙亥
+  it('子時跨日: at 23:00 day pillar stays, but hour stem uses next day', () => {
+    // 2000-01-01 = 戊午 day (stem=4, branch=6)
+    // At 23:00 (子時), the day pillar does NOT advance.
+    // Hour stem uses next day's stem (己未, stem=5): (5%5*2 + 0)%10 = 0 → 甲子
     const before = calculateBazi({ year: 2000, month: 1, day: 1, hour: 22, minute: 59, gender: 'male' });
     const after  = calculateBazi({ year: 2000, month: 1, day: 1, hour: 23, minute: 0,  gender: 'male' });
-    expect(before.dayPillar.stem).toBe(0);   // 甲 (still Jan 1)
-    expect(after.dayPillar.stem).toBe(1);    // 乙 (advances to Jan 2)
-    expect(after.dayPillar.branch).toBe(11); // 亥
+    // Day pillar stays 戊午 for both
+    expect(before.dayPillar.stem).toBe(4);   // 戊
+    expect(before.dayPillar.branch).toBe(6); // 午
+    expect(after.dayPillar.stem).toBe(4);    // 戊 (no advance)
+    expect(after.dayPillar.branch).toBe(6);  // 午 (no advance)
+    // Hour pillar at 23:00 uses next day's stem (己) → 甲子
+    expect(after.hourPillar.stem).toBe(0);   // 甲
+    expect(after.hourPillar.branch).toBe(0); // 子
   });
 
-  it('1988-07-28 22:29 is 庚子 day (not 甲申)', () => {
+  it('1988-07-28 22:29 is 甲申 day (stem=0 branch=8)', () => {
+    // Verified against lunar-javascript and multiple Chinese almanac sources
     // 22:29 is 亥時 (21:00-23:00), does NOT trigger 子時跨日
     const chart = calculateBazi({ year: 1988, month: 7, day: 28, hour: 22, minute: 29, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(6);   // 庚
-    expect(chart.dayPillar.branch).toBe(0); // 子
+    expect(chart.dayPillar.stem).toBe(0);   // 甲
+    expect(chart.dayPillar.branch).toBe(8); // 申
   });
 });
 
@@ -280,15 +290,16 @@ describe('calculateBazi - hour pillar', () => {
   });
 
   it('hour stem follows 五鼠遁日起時: 甲日(stem=0) midnight(子) → 甲子(stem=0)', () => {
-    // 2000-01-01: dayPillar stem=0(甲), hour=0(子 branch=0)
-    // hourStem = (0%5 * 2 + 0) % 10 = 0 → 甲
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 0, minute: 0, gender: 'male' });
-    expect(chart.hourPillar.stem).toBe(0); // 甲
+    // 2000-01-07 = 甲子 day (stem=0, verified: dayIndex=((2451551+49)%60)=0)
+    // hour=0 (子時, branch=0): hourStem = (0%5 * 2 + 0) % 10 = 0 → 甲
+    const chart = calculateBazi({ year: 2000, month: 1, day: 7, hour: 0, minute: 0, gender: 'male' });
+    expect(chart.dayPillar.stem).toBe(0);    // 甲 (verify it's a 甲日)
+    expect(chart.hourPillar.stem).toBe(0);   // 甲
     expect(chart.hourPillar.branch).toBe(0); // 子
   });
 
   it('hour stem changes correctly as hour branch changes', () => {
-    // 2000-01-01: dayPillar.stem=0(甲); hourStem for branch b = (0%5*2 + b)%10 = b%10
+    // 2000-01-01: dayPillar.stem=4(戊); hourStem for branch b = (4%5*2 + b)%10 = (8+b)%10
     const base: BaziInput = { year: 2000, month: 1, day: 1, hour: 0, minute: 0, gender: 'male' };
     const chart0 = calculateBazi(base);
     // midnight 子(branch=0) stem = 0; 丑(branch=1) stem = 1; 寅(branch=2) stem = 2; ...
@@ -432,15 +443,15 @@ describe('countElements', () => {
   });
 
   it('day stem 甲(0) maps to 木 element', () => {
-    // 2000-01-01: dayPillar stem=0 (甲)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
+    // 2000-01-07 = 甲子 day (stem=0): dayIndex=((2451551+49)%60)=0 → stem=0(甲)
+    const chart = calculateBazi({ year: 2000, month: 1, day: 7, hour: 12, minute: 0, gender: 'male' });
     expect(chart.dayPillar.stem).toBe(0);
     expect(STEM_ELEMENTS[chart.dayPillar.stem]).toBe('木');
   });
 
   it('branch 戌(10) maps to 土 element', () => {
-    // 2000-01-01: dayPillar branch=10 (戌)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
+    // 2000-01-05 = 壬戌 day (branch=10): dayIndex=((2451549+49)%60)=58 → branch=58%12=10(戌)
+    const chart = calculateBazi({ year: 2000, month: 1, day: 5, hour: 12, minute: 0, gender: 'male' });
     expect(chart.dayPillar.branch).toBe(10);
     expect(BRANCH_ELEMENTS[chart.dayPillar.branch]).toBe('土');
   });
