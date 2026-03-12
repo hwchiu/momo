@@ -158,9 +158,9 @@ function calcMonthPillar(birthJDE: number, yearStem: number): Pillar {
   return { stem, branch };
 }
 
-/** Compute day pillar from Julian Day Number. Reference: JDN 2451545 = 甲戌 (index 10). */
+/** Compute day pillar from Julian Day Number. Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); offset +49. */
 function calcDayPillar(jdn: number): Pillar {
-  const dayIndex = (((jdn + 5) % 60) + 60) % 60;
+  const dayIndex = (((jdn + 49) % 60) + 60) % 60;
   return { stem: dayIndex % 10, branch: dayIndex % 12 };
 }
 
@@ -230,11 +230,12 @@ export function calculateBazi(input: BaziInput): BaziChart {
 
   const yearPillar = calcYearPillar(input, birthJDE);
   const monthPillar = calcMonthPillar(birthJDE, yearPillar.stem);
-  // 子時跨日：子時 starts at 23:00; in the standard convention the day pillar
-  // advances at 子時 (23:00), so a birth at hour 23 uses the next calendar day.
-  const dayJdn = input.hour >= 23 ? jdn + 1 : jdn;
-  const dayPillar = calcDayPillar(dayJdn);
-  const hourPillar = calcHourPillar(input.hour, dayPillar.stem);
+  // The day pillar always uses the calendar day (no day-advance at 23:00).
+  // 子時跨日: at 子時 (23:00–01:00) the HOUR stem is derived from the *next*
+  // calendar day's stem, while the day pillar itself remains the current day.
+  const dayPillar = calcDayPillar(jdn);
+  const stemForHour = input.hour >= 23 ? calcDayPillar(jdn + 1).stem : dayPillar.stem;
+  const hourPillar = calcHourPillar(input.hour, stemForHour);
 
   const { isForward, startYears, startMonths, cycles } = calcLuckCycles(
     input,
