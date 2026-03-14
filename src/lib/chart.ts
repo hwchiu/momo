@@ -476,7 +476,7 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
     .attr('y', -pad)
     .attr('width', size + 2 * pad)
     .attr('height', size + 2 * pad)
-    .attr('fill', 'transparent')
+    .attr('fill', DARK.bg)
     .attr('rx', 8);
 
   // Draw layers in order (back to front)
