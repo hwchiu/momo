@@ -1118,7 +1118,7 @@
   padding: 6px 10px;
   font-size: 12px;
   margin-bottom: 8px;
-  color: #5a3e00;
+  color: var(--clr-warning);
   border-radius: var(--radius-sm);
 }
 
@@ -1225,13 +1225,13 @@
 }
 
 .bazi-today-banner {
-  background: #f5f0e8;
-  border: 1px solid #c8b87a;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.4);
   padding: 9px 16px;
   margin-bottom: 16px;
   font-size: 15px;
   font-weight: bold;
-  color: #5a3e00;
+  color: var(--clr-warning);
   letter-spacing: 0.05em;
   border-radius: var(--radius-sm);
 }
@@ -1372,15 +1372,15 @@
 }
 
 .day-master-旺 {
-  background: #fff0f0;
+  background: var(--clr-danger-bg);
   border-color: var(--clr-danger);
 }
 .day-master-弱 {
-  background: #eef4ff;
+  background: var(--clr-primary-light);
   border-color: var(--clr-primary);
 }
 .day-master-中和 {
-  background: #f0fff4;
+  background: var(--clr-success-bg);
   border-color: var(--clr-success);
 }
 
@@ -1461,8 +1461,8 @@
   color: var(--clr-success);
 }
 .kua-group-badge[data-group='西四命'] {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--clr-warning-bg);
+  color: var(--clr-warning);
 }
 
 .kua-table th,
@@ -1519,12 +1519,12 @@
 }
 
 .flying-star-warning {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
+  background: var(--clr-warning-bg);
+  border: 1px solid var(--clr-warning-border);
   border-radius: var(--radius-md);
   padding: 9px 14px;
   font-size: 13px;
-  color: #856404;
+  color: var(--clr-warning);
   margin-bottom: 14px;
 }
 
@@ -2257,7 +2257,7 @@
   gap: 6px;
   width: 100%;
   background: var(--clr-primary-light);
-  border: 1px solid #b8cce8;
+  border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
   color: var(--clr-primary);
   cursor: pointer;
@@ -2269,7 +2269,7 @@
 }
 
 .orb-settings-toggle:hover {
-  background: #d8e8f8;
+  background: var(--accent-lapis-glow);
   border-color: var(--clr-primary);
 }
 .orb-settings-toggle:focus-visible {
@@ -2280,7 +2280,7 @@
 .orb-settings-panel {
   margin-top: 4px;
   background: var(--clr-surface-1);
-  border: 1px solid #b8cce8;
+  border: 1px solid var(--clr-border);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   padding: 12px 16px;
   overflow-x: auto;
