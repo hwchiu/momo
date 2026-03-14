@@ -99,14 +99,28 @@ describe('calculateBazi - day pillar', () => {
   it('2000-01-01 is 戊午 day (stem=4 branch=6)', () => {
     // Reference: JDN 2451545; dayIndex=((2451545+49)%60)=54 → 54%10=4(戊), 54%12=6(午)
     // Verified against lunar-javascript and Chinese almanac sources
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(4);   // 戊
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.dayPillar.stem).toBe(4); // 戊
     expect(chart.dayPillar.branch).toBe(6); // 午
   });
 
   it('2000-01-02 is 己未 day (stem=5 branch=7)', () => {
-    const chart = calculateBazi({ year: 2000, month: 1, day: 2, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(5);   // 己
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 2,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.dayPillar.stem).toBe(5); // 己
     expect(chart.dayPillar.branch).toBe(7); // 未
   });
 
@@ -122,7 +136,14 @@ describe('calculateBazi - day pillar', () => {
   it('day pillar repeats after exactly 60 days (full sexagenary cycle)', () => {
     // 2000-01-01 to 2000-03-01: 31 (Jan) + 29 (Feb, leap) = 60 days exactly
     const c0 = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
-    const c60 = calculateBazi({ year: 2000, month: 3, day: 1, hour: 12, minute: 0, gender: 'male' });
+    const c60 = calculateBazi({
+      year: 2000,
+      month: 3,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(c60.dayPillar.stem).toBe(c0.dayPillar.stem);
     expect(c60.dayPillar.branch).toBe(c0.dayPillar.branch);
   });
@@ -147,23 +168,44 @@ describe('calculateBazi - day pillar', () => {
     // 2000-01-01 = 戊午 day (stem=4, branch=6)
     // At 23:00 (子時), the day pillar does NOT advance.
     // Hour stem uses next day's stem (己未, stem=5): (5%5*2 + 0)%10 = 0 → 甲子
-    const before = calculateBazi({ year: 2000, month: 1, day: 1, hour: 22, minute: 59, gender: 'male' });
-    const after  = calculateBazi({ year: 2000, month: 1, day: 1, hour: 23, minute: 0,  gender: 'male' });
+    const before = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 22,
+      minute: 59,
+      gender: 'male',
+    });
+    const after = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 23,
+      minute: 0,
+      gender: 'male',
+    });
     // Day pillar stays 戊午 for both
-    expect(before.dayPillar.stem).toBe(4);   // 戊
+    expect(before.dayPillar.stem).toBe(4); // 戊
     expect(before.dayPillar.branch).toBe(6); // 午
-    expect(after.dayPillar.stem).toBe(4);    // 戊 (no advance)
-    expect(after.dayPillar.branch).toBe(6);  // 午 (no advance)
+    expect(after.dayPillar.stem).toBe(4); // 戊 (no advance)
+    expect(after.dayPillar.branch).toBe(6); // 午 (no advance)
     // Hour pillar at 23:00 uses next day's stem (己) → 甲子
-    expect(after.hourPillar.stem).toBe(0);   // 甲
+    expect(after.hourPillar.stem).toBe(0); // 甲
     expect(after.hourPillar.branch).toBe(0); // 子
   });
 
   it('1988-07-28 22:29 is 甲申 day (stem=0 branch=8)', () => {
     // Verified against lunar-javascript and multiple Chinese almanac sources
     // 22:29 is 亥時 (21:00-23:00), does NOT trigger 子時跨日
-    const chart = calculateBazi({ year: 1988, month: 7, day: 28, hour: 22, minute: 29, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(0);   // 甲
+    const chart = calculateBazi({
+      year: 1988,
+      month: 7,
+      day: 28,
+      hour: 22,
+      minute: 29,
+      gender: 'male',
+    });
+    expect(chart.dayPillar.stem).toBe(0); // 甲
     expect(chart.dayPillar.branch).toBe(8); // 申
   });
 });
@@ -173,29 +215,57 @@ describe('calculateBazi - day pillar', () => {
 describe('calculateBazi - year pillar', () => {
   it('2000-01-01 (before 立春 ~Feb 4) is 己卯 year (stem=5, branch=3)', () => {
     // Chinese year 1999: (1999+6)%10=5(己), (1999+8)%12=3(卯)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.yearPillar.stem).toBe(5);   // 己
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.yearPillar.stem).toBe(5); // 己
     expect(chart.yearPillar.branch).toBe(3); // 卯
   });
 
   it('2000-02-10 (after 立春) is 庚辰 year (stem=6, branch=4)', () => {
     // Chinese year 2000: (2000+6)%10=6(庚), (2000+8)%12=4(辰)
-    const chart = calculateBazi({ year: 2000, month: 2, day: 10, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.yearPillar.stem).toBe(6);   // 庚
+    const chart = calculateBazi({
+      year: 2000,
+      month: 2,
+      day: 10,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.yearPillar.stem).toBe(6); // 庚
     expect(chart.yearPillar.branch).toBe(4); // 辰
   });
 
   it('1984-01-01 (before 立春) is 癸亥 year (stem=9, branch=11)', () => {
     // Chinese year 1983: (1983+6)%10=9(癸), (1983+8)%12=11(亥)
-    const chart = calculateBazi({ year: 1984, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.yearPillar.stem).toBe(9);    // 癸
+    const chart = calculateBazi({
+      year: 1984,
+      month: 1,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.yearPillar.stem).toBe(9); // 癸
     expect(chart.yearPillar.branch).toBe(11); // 亥
   });
 
   it('1984-03-01 (after 立春) is 甲子 year (stem=0, branch=0)', () => {
     // Chinese year 1984: (1984+6)%10=0(甲), (1984+8)%12=0(子)
-    const chart = calculateBazi({ year: 1984, month: 3, day: 1, hour: 12, minute: 0, gender: 'male' });
-    expect(chart.yearPillar.stem).toBe(0);   // 甲
+    const chart = calculateBazi({
+      year: 1984,
+      month: 3,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.yearPillar.stem).toBe(0); // 甲
     expect(chart.yearPillar.branch).toBe(0); // 子
   });
 
@@ -212,11 +282,25 @@ describe('calculateBazi - year pillar', () => {
 
   it('year stem yin/yang matches expected pattern (even=yang, odd=yin)', () => {
     // 庚辰 year 2000: stem=6 (even=yang)
-    const c2000 = calculateBazi({ year: 2000, month: 6, day: 1, hour: 12, minute: 0, gender: 'male' });
+    const c2000 = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(c2000.yearPillar.stem % 2).toBe(0); // yang (even)
 
     // 己卯 year 1999: stem=5 (odd=yin)
-    const c1999 = calculateBazi({ year: 1999, month: 6, day: 1, hour: 12, minute: 0, gender: 'male' });
+    const c1999 = calculateBazi({
+      year: 1999,
+      month: 6,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(c1999.yearPillar.stem % 2).toBe(1); // yin (odd)
   });
 });
@@ -226,23 +310,44 @@ describe('calculateBazi - year pillar', () => {
 describe('calculateBazi - month pillar', () => {
   it('branch is 寅(2) in first month after 立春 (February solar term)', () => {
     // 2000-02-10: Sun is past 立春 (315°) → 寅月 → branch=2
-    const chart = calculateBazi({ year: 2000, month: 2, day: 10, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 2,
+      day: 10,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.monthPillar.branch).toBe(2); // 寅
   });
 
   it('month stem follows 五虎遁年起月 rule for 庚辰 year (yearStem=6)', () => {
     // yearStem=6, 寅月(monthIndex=0): stem = (6%5 * 2 + 2 + 0) % 10 = (2+2+0)%10 = 4 (戊)
-    const chart = calculateBazi({ year: 2000, month: 2, day: 10, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 2,
+      day: 10,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.monthPillar.stem).toBe(4); // 戊
   });
 
   it('month stem follows 五虎遁年起月 rule for 甲己 year (yearStem=0 or 5)', () => {
     // 1984-03-01: 甲子年(yearStem=0), 卯月(monthIndex=1)
     // stem = (0%5 * 2 + 2 + 1) % 10 = (0+2+1)%10 = 3 (丁)
-    const chart = calculateBazi({ year: 1984, month: 3, day: 10, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 1984,
+      month: 3,
+      day: 10,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     // Sun in early March is past 驚蟄(345°) → 卯月 (monthIndex=1, branch=3)
     expect(chart.monthPillar.branch).toBe(3); // 卯
-    expect(chart.monthPillar.stem).toBe(3);   // 丁
+    expect(chart.monthPillar.stem).toBe(3); // 丁
   });
 
   it('month pillar stem and branch are always in valid ranges', () => {
@@ -269,19 +374,30 @@ describe('calculateBazi - hour pillar', () => {
   //   辰(4)=7-8, 巳(5)=9-10, 午(6)=11-12, 未(7)=13-14,
   //   申(8)=15-16, 酉(9)=17-18, 戌(10)=19-20, 亥(11)=21-22
   const hourBranchMap: Array<[number, number]> = [
-    [0, 0],   // 子
-    [1, 1], [2, 1],   // 丑
-    [3, 2], [4, 2],   // 寅
-    [5, 3], [6, 3],   // 卯
-    [7, 4], [8, 4],   // 辰
-    [9, 5], [10, 5],  // 巳
-    [11, 6], [12, 6], // 午
-    [13, 7], [14, 7], // 未
-    [15, 8], [16, 8], // 申
-    [17, 9], [18, 9], // 酉
-    [19, 10], [20, 10], // 戌
-    [21, 11], [22, 11], // 亥
-    [23, 0],  // 子 (late night)
+    [0, 0], // 子
+    [1, 1],
+    [2, 1], // 丑
+    [3, 2],
+    [4, 2], // 寅
+    [5, 3],
+    [6, 3], // 卯
+    [7, 4],
+    [8, 4], // 辰
+    [9, 5],
+    [10, 5], // 巳
+    [11, 6],
+    [12, 6], // 午
+    [13, 7],
+    [14, 7], // 未
+    [15, 8],
+    [16, 8], // 申
+    [17, 9],
+    [18, 9], // 酉
+    [19, 10],
+    [20, 10], // 戌
+    [21, 11],
+    [22, 11], // 亥
+    [23, 0], // 子 (late night)
   ];
 
   it.each(hourBranchMap)('hour %d maps to branch %d', (hour, expectedBranch) => {
@@ -292,9 +408,16 @@ describe('calculateBazi - hour pillar', () => {
   it('hour stem follows 五鼠遁日起時: 甲日(stem=0) midnight(子) → 甲子(stem=0)', () => {
     // 2000-01-07 = 甲子 day (stem=0): dayIndex=((2451551+49)%60)=0 → stem=0(甲)
     // hour=0 (子時, branch=0): hourStem = (0%5 * 2 + 0) % 10 = 0 → 甲
-    const chart = calculateBazi({ year: 2000, month: 1, day: 7, hour: 0, minute: 0, gender: 'male' });
-    expect(chart.dayPillar.stem).toBe(0);    // 甲 (verify it's a 甲日)
-    expect(chart.hourPillar.stem).toBe(0);   // 甲
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 7,
+      hour: 0,
+      minute: 0,
+      gender: 'male',
+    });
+    expect(chart.dayPillar.stem).toBe(0); // 甲 (verify it's a 甲日)
+    expect(chart.hourPillar.stem).toBe(0); // 甲
     expect(chart.hourPillar.branch).toBe(0); // 子
   });
 
@@ -306,13 +429,20 @@ describe('calculateBazi - hour pillar', () => {
     for (let branch = 0; branch <= 5; branch++) {
       const hour = branch === 0 ? 0 : branch * 2 - 1;
       const c = calculateBazi({ ...base, hour });
-      expect(c.hourPillar.stem).toBe((chart0.dayPillar.stem % 5 * 2 + c.hourPillar.branch) % 10);
+      expect(c.hourPillar.stem).toBe(((chart0.dayPillar.stem % 5) * 2 + c.hourPillar.branch) % 10);
     }
   });
 
   it('hour pillar stem and branch are always in valid ranges', () => {
     for (let hour = 0; hour < 24; hour++) {
-      const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour, minute: 0, gender: 'male' });
+      const chart = calculateBazi({
+        year: 2000,
+        month: 6,
+        day: 15,
+        hour,
+        minute: 0,
+        gender: 'male',
+      });
       expect(chart.hourPillar.stem).toBeGreaterThanOrEqual(0);
       expect(chart.hourPillar.stem).toBeLessThanOrEqual(9);
       expect(chart.hourPillar.branch).toBeGreaterThanOrEqual(0);
@@ -325,12 +455,26 @@ describe('calculateBazi - hour pillar', () => {
 
 describe('calculateBazi - luck cycles', () => {
   it('produces exactly 8 luck cycles', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.luckCycles).toHaveLength(8);
   });
 
   it('each cycle starts 10 years after the previous', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     for (let i = 1; i < 8; i++) {
       expect(chart.luckCycles[i].startAge - chart.luckCycles[i - 1].startAge).toBe(10);
     }
@@ -338,35 +482,77 @@ describe('calculateBazi - luck cycles', () => {
 
   it('male + yang year (庚辰) → 順行 (isForward=true)', () => {
     // 庚辰 2000-06 → yearStem=6 (even=yang), male → forward
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.isForward).toBe(true);
   });
 
   it('male + yin year (己卯) → 逆行 (isForward=false)', () => {
     // 己卯 1999-06 → yearStem=5 (odd=yin), male → reverse
-    const chart = calculateBazi({ year: 1999, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 1999,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.isForward).toBe(false);
   });
 
   it('female + yin year (己卯) → 順行 (isForward=true)', () => {
-    const chart = calculateBazi({ year: 1999, month: 6, day: 15, hour: 12, minute: 0, gender: 'female' });
+    const chart = calculateBazi({
+      year: 1999,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'female',
+    });
     expect(chart.isForward).toBe(true);
   });
 
   it('female + yang year (庚辰) → 逆行 (isForward=false)', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'female' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'female',
+    });
     expect(chart.isForward).toBe(false);
   });
 
   it('startYear matches input.year + startAge', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     for (const cycle of chart.luckCycles) {
       expect(cycle.startYear).toBe(2000 + cycle.startAge);
     }
   });
 
   it('luck cycle pillars advance by 1 per cycle (forward)', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.isForward).toBe(true);
     for (let i = 1; i < 8; i++) {
       const prev = chart.luckCycles[i - 1].pillar;
@@ -377,7 +563,14 @@ describe('calculateBazi - luck cycles', () => {
   });
 
   it('luck cycle pillars go backwards by 1 per cycle (reverse)', () => {
-    const chart = calculateBazi({ year: 1999, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 1999,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.isForward).toBe(false);
     for (let i = 1; i < 8; i++) {
       const prev = chart.luckCycles[i - 1].pillar;
@@ -388,12 +581,26 @@ describe('calculateBazi - luck cycles', () => {
   });
 
   it('luckStartYears is non-negative', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.luckStartYears).toBeGreaterThanOrEqual(0);
   });
 
   it('luckStartMonths is in [0, 11]', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.luckStartMonths).toBeGreaterThanOrEqual(0);
     expect(chart.luckStartMonths).toBeLessThanOrEqual(11);
   });
@@ -417,7 +624,14 @@ describe('countElements', () => {
   });
 
   it('returns counts for all five Wu-xing elements', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     const counts = countElements(chart);
     expect(counts).toHaveProperty('木');
     expect(counts).toHaveProperty('火');
@@ -427,7 +641,14 @@ describe('countElements', () => {
   });
 
   it('all counts are non-negative integers', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     const counts = countElements(chart);
     for (const count of Object.values(counts)) {
       expect(count).toBeGreaterThanOrEqual(0);
@@ -437,21 +658,42 @@ describe('countElements', () => {
 
   it('year stem 己(5) maps to 土 element', () => {
     // 2000-01-01: yearPillar stem=5 (己)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 1, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.yearPillar.stem).toBe(5);
     expect(STEM_ELEMENTS[chart.yearPillar.stem]).toBe('土');
   });
 
   it('day stem 甲(0) maps to 木 element', () => {
     // 2000-01-07 = 甲子 day (stem=0): dayIndex=((2451551+49)%60)=0 → stem=0(甲)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 7, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 7,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.dayPillar.stem).toBe(0);
     expect(STEM_ELEMENTS[chart.dayPillar.stem]).toBe('木');
   });
 
   it('branch 戌(10) maps to 土 element', () => {
     // 2000-01-05 = 壬戌 day (branch=10): dayIndex=((2451549+49)%60)=58 → branch=58%12=10(戌)
-    const chart = calculateBazi({ year: 2000, month: 1, day: 5, hour: 12, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 1,
+      day: 5,
+      hour: 12,
+      minute: 0,
+      gender: 'male',
+    });
     expect(chart.dayPillar.branch).toBe(10);
     expect(BRANCH_ELEMENTS[chart.dayPillar.branch]).toBe('土');
   });
@@ -498,7 +740,14 @@ describe('getTodayGanzhi', () => {
 
 describe('calculateBazi - full chart structure', () => {
   it('all four pillars are defined and in valid ranges', () => {
-    const chart = calculateBazi({ year: 1990, month: 3, day: 17, hour: 4, minute: 26, gender: 'female' });
+    const chart = calculateBazi({
+      year: 1990,
+      month: 3,
+      day: 17,
+      hour: 4,
+      minute: 26,
+      gender: 'female',
+    });
     for (const pillar of [chart.yearPillar, chart.monthPillar, chart.dayPillar, chart.hourPillar]) {
       expect(pillar.stem).toBeGreaterThanOrEqual(0);
       expect(pillar.stem).toBeLessThanOrEqual(9);
@@ -509,7 +758,14 @@ describe('calculateBazi - full chart structure', () => {
 
   it('hour stem and day stem have the correct relationship (五鼠遁)', () => {
     // For any date, hourStem = (dayStem%5*2 + hourBranch)%10
-    const chart = calculateBazi({ year: 1985, month: 7, day: 15, hour: 8, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 1985,
+      month: 7,
+      day: 15,
+      hour: 8,
+      minute: 0,
+      gender: 'male',
+    });
     const expectedHourStem = ((chart.dayPillar.stem % 5) * 2 + chart.hourPillar.branch) % 10;
     expect(chart.hourPillar.stem).toBe(expectedHourStem);
   });
@@ -585,7 +841,18 @@ describe('getTenGod', () => {
   });
 
   it('returns one of the 10 valid TenGod values for all 100 combos', () => {
-    const VALID: string[] = ['比肩', '劫財', '食神', '傷官', '偏財', '正財', '七殺', '正官', '偏印', '正印'];
+    const VALID: string[] = [
+      '比肩',
+      '劫財',
+      '食神',
+      '傷官',
+      '偏財',
+      '正財',
+      '七殺',
+      '正官',
+      '偏印',
+      '正印',
+    ];
     for (let d = 0; d <= 9; d++) {
       for (let t = 0; t <= 9; t++) {
         expect(VALID).toContain(getTenGod(d, t));
@@ -676,13 +943,27 @@ describe('findBranchInteractions', () => {
 
 describe('analyzeDayMaster', () => {
   it('returns a valid strength value', () => {
-    const chart = calculateBazi({ year: 1985, month: 7, day: 15, hour: 8, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 1985,
+      month: 7,
+      day: 15,
+      hour: 8,
+      minute: 0,
+      gender: 'male',
+    });
     const analysis = analyzeDayMaster(chart);
     expect(['旺', '中和', '弱']).toContain(analysis.strength);
   });
 
   it('favorableElement and avoidElement are Wu-xing elements', () => {
-    const chart = calculateBazi({ year: 1990, month: 3, day: 20, hour: 12, minute: 0, gender: 'female' });
+    const chart = calculateBazi({
+      year: 1990,
+      month: 3,
+      day: 20,
+      hour: 12,
+      minute: 0,
+      gender: 'female',
+    });
     const analysis = analyzeDayMaster(chart);
     const elements = ['木', '火', '土', '金', '水'];
     expect(elements).toContain(analysis.favorableElement);
@@ -691,13 +972,27 @@ describe('analyzeDayMaster', () => {
   });
 
   it('description is non-empty', () => {
-    const chart = calculateBazi({ year: 2000, month: 6, day: 15, hour: 14, minute: 0, gender: 'male' });
+    const chart = calculateBazi({
+      year: 2000,
+      month: 6,
+      day: 15,
+      hour: 14,
+      minute: 0,
+      gender: 'male',
+    });
     const analysis = analyzeDayMaster(chart);
     expect(analysis.description.length).toBeGreaterThan(0);
   });
 
   it('score is a finite number', () => {
-    const chart = calculateBazi({ year: 1975, month: 11, day: 28, hour: 6, minute: 0, gender: 'female' });
+    const chart = calculateBazi({
+      year: 1975,
+      month: 11,
+      day: 28,
+      hour: 6,
+      minute: 0,
+      gender: 'female',
+    });
     const analysis = analyzeDayMaster(chart);
     expect(Number.isFinite(analysis.score)).toBe(true);
   });
@@ -707,7 +1002,14 @@ describe('analyzeDayMaster', () => {
     // and multiple supporting stems. Use a specific known strong chart.
     for (let i = 0; i < 5; i++) {
       // Test several charts, verify internal consistency: 旺 → favorable = food/injury (dayElem+1)
-      const chart = calculateBazi({ year: 1985 + i * 5, month: 6, day: 15, hour: 12, minute: 0, gender: 'male' });
+      const chart = calculateBazi({
+        year: 1985 + i * 5,
+        month: 6,
+        day: 15,
+        hour: 12,
+        minute: 0,
+        gender: 'male',
+      });
       const analysis = analyzeDayMaster(chart);
       const dayElem = Math.floor(chart.dayPillar.stem / 2);
       const ELEMENTS = ['木', '火', '土', '金', '水'];

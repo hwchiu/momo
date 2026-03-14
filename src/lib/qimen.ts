@@ -41,8 +41,15 @@ const EIGHT_IDX: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 6: 4, 7: 5, 
 
 /** Ground plate (地盤) stem fixed to each palace */
 const EARTH_STEMS: Record<number, string> = {
-  1: '戊', 2: '己', 3: '庚', 4: '辛', 5: '戊',
-  6: '壬', 7: '癸', 8: '丁', 9: '丙',
+  1: '戊',
+  2: '己',
+  3: '庚',
+  4: '辛',
+  5: '戊',
+  6: '壬',
+  7: '癸',
+  8: '丁',
+  9: '丙',
 };
 
 // ---- Xun (旬) definitions ----
@@ -103,7 +110,7 @@ function solarTermInfo(jde: number): { termIdx: number; daysFromTermStart: numbe
  * Traditional anchor: 甲子年 (year 4 AD) = index 0 = 上元.
  */
 function yearYuanOffset(year: number): 0 | 1 | 2 {
-  const idx = ((year - 4) % 60 + 60) % 60;
+  const idx = (((year - 4) % 60) + 60) % 60;
   return (idx % 3) as 0 | 1 | 2;
 }
 
@@ -123,14 +130,13 @@ function pentadYuan(yearYuan: 0 | 1 | 2, pentadIndexInYear: number): 0 | 1 | 2 {
  * Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); equivalent to offset +49.
  */
 function dayGanzhiIndex(jdn: number): number {
-  return ((jdn - 2415021 + 10) % 60 + 60) % 60;
+  return (((jdn - 2415021 + 10) % 60) + 60) % 60;
 }
 
 /** Year ganzhi cycle index (0–59). Anchor: year 4 AD = 甲子 = index 0. */
 function yearGanzhiIndex(year: number): number {
-  return ((year - 4) % 60 + 60) % 60;
+  return (((year - 4) % 60) + 60) % 60;
 }
-
 
 /** Hour branch from clock hour (子=0…亥=11). 子時 spans 23:00–01:00. */
 export function hourBranchFromHour(hour: number): number {
@@ -177,9 +183,18 @@ function buildChart(params: {
   totalOffset: number;
 }): QiMenChart {
   const {
-    datetime, isYangDun, solarTermName, ju, yuan,
-    pillarYear, pillarMonth, pillarDay, pillarHour,
-    xunPalace, xunShou, totalOffset,
+    datetime,
+    isYangDun,
+    solarTermName,
+    ju,
+    yuan,
+    pillarYear,
+    pillarMonth,
+    pillarDay,
+    pillarHour,
+    xunPalace,
+    xunShou,
+    totalOffset,
   } = params;
 
   const dun: QiMenDun = isYangDun ? '陽遁' : '陰遁';
@@ -188,7 +203,7 @@ function buildChart(params: {
   // Star rotation in Lo Shu 9-palace path
   const starOffset = totalOffset % 9;
   const xunPalaceIdx = LO_SHU_IDX[xunPalace];
-  const dutyStarPalaceIdx = ((xunPalaceIdx + direction * starOffset) % 9 + 9) % 9;
+  const dutyStarPalaceIdx = (((xunPalaceIdx + direction * starOffset) % 9) + 9) % 9;
   const dutyStarPalace = LO_SHU_PATH[dutyStarPalaceIdx];
   const dutyStar = QIMEN_STARS[xunPalace];
 
@@ -197,7 +212,7 @@ function buildChart(params: {
   // Door rotation in 8-palace path
   const doorOffset = totalOffset % 8;
   const xunEightIdx = EIGHT_IDX[xunPalace];
-  const dutyDoorPalaceEightIdx = ((xunEightIdx + direction * doorOffset) % 8 + 8) % 8;
+  const dutyDoorPalaceEightIdx = (((xunEightIdx + direction * doorOffset) % 8) + 8) % 8;
   const dutyDoorPalace = EIGHT_PALACE_PATH[dutyDoorPalaceEightIdx];
   const dutyDoor = QIMEN_DOORS[dutyDoorPalace] ?? '休門';
 
@@ -207,7 +222,7 @@ function buildChart(params: {
     const meta = PALACE_META[p];
     const isCenter = p === 5;
 
-    const heavenStemSourceIdx = ((LO_SHU_IDX[p] - direction * rotOffset) % 9 + 9) % 9;
+    const heavenStemSourceIdx = (((LO_SHU_IDX[p] - direction * rotOffset) % 9) + 9) % 9;
     const heavenStemSourcePalace = LO_SHU_PATH[heavenStemSourceIdx];
     const heavenStem = EARTH_STEMS[heavenStemSourcePalace];
     const star = QIMEN_STARS[heavenStemSourcePalace];
@@ -277,12 +292,14 @@ export function calculateQiMen(dt: {
   const solarTermName = SOLAR_TERM_NAMES[termIdx];
 
   const pentadIdx = Math.min(2, Math.floor(daysFromTermStart / 5));
-  const pentadIndexInYear =
-    termIdx * 3 + pentadIdx; // 0–71 cumulative since 冬至
+  const pentadIndexInYear = termIdx * 3 + pentadIdx; // 0–71 cumulative since 冬至
 
   const yyuan = yearYuanOffset(dt.year);
   const pYuan = pentadYuan(yyuan, pentadIndexInYear);
-  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][pYuan] as '上元' | '中元' | '下元';
+  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][pYuan] as
+    | '上元'
+    | '中元'
+    | '下元';
 
   const juTable = isYangDun ? YANG_JU_TABLE : YIN_JU_TABLE;
   const tableRow = termIdx % 12;
@@ -346,11 +363,7 @@ export function calculateQiMen(dt: {
  * Calculate a Qi Men Dun Jia daily chart (日盤) for the given date.
  * Uses day-level rotation (1 step per day) instead of hour-level.
  */
-export function calculateQiMenDay(dt: {
-  year: number;
-  month: number;
-  day: number;
-}): QiMenChart {
+export function calculateQiMenDay(dt: { year: number; month: number; day: number }): QiMenChart {
   const jdn = dateToJDN(dt.year, dt.month, dt.day);
   const noonJde = jdn - 0.5;
   const { termIdx, daysFromTermStart } = solarTermInfo(noonJde);
@@ -361,7 +374,10 @@ export function calculateQiMenDay(dt: {
   const pentadIndexInYear = termIdx * 3 + pentadIdx;
   const yyuan = yearYuanOffset(dt.year);
   const pYuan = pentadYuan(yyuan, pentadIndexInYear);
-  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][pYuan] as '上元' | '中元' | '下元';
+  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][pYuan] as
+    | '上元'
+    | '中元'
+    | '下元';
   const juTable = isYangDun ? YANG_JU_TABLE : YIN_JU_TABLE;
   const ju = juTable[termIdx % 12][pYuan];
 
@@ -416,7 +432,10 @@ export function calculateQiMenYear(year: number): QiMenChart {
 
   // Year yuan (上中下元) determined by year ganzhi cycle
   const yyuan = yearYuanOffset(year);
-  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][yyuan] as '上元' | '中元' | '下元';
+  const yuanLabel: '上元' | '中元' | '下元' = ['上元', '中元', '下元'][yyuan] as
+    | '上元'
+    | '中元'
+    | '下元';
 
   // 年盤 is always 陽遁 (based on 冬至 anchor, which starts 陽遁 cycle)
   const ju = YANG_JU_TABLE[0][yyuan]; // 冬至 (term 0) ju for this yuan

@@ -15,6 +15,7 @@
 The `avoidOverlap` function lives inside `chart.ts` and is not exported. We need to export it (temporarily or permanently) to write a unit test, fix the wrap bug, then verify.
 
 **Files:**
+
 - Modify: `src/lib/chart.ts` — export `avoidOverlap`, fix wrap-around logic
 - Create: `tests/lib/chart.test.ts`
 
@@ -60,7 +61,7 @@ describe('avoidOverlap', () => {
     // The issue: after avoidOverlap, both should be at least minSep apart
     const planets = [makePlanet(355), makePlanet(5)];
     const result = avoidOverlap(planets, 0, 15);
-    const angles = result.map(r => r.adjustedAngle);
+    const angles = result.map((r) => r.adjustedAngle);
     // Shortest angular distance between the two adjusted angles must be >= 15
     const diff = Math.abs(angles[0] - angles[1]);
     const shortDiff = Math.min(diff, 360 - diff);
@@ -98,7 +99,7 @@ for (let pass = 0; pass < 10; pass++) {
     for (let j = i + 1; j < items.length; j++) {
       const raw = items[j].adjustedAngle - items[i].adjustedAngle;
       // Shortest signed angular distance (handles 360°/0° wrap)
-      const diff = ((raw % 360) + 540) % 360 - 180;
+      const diff = (((raw % 360) + 540) % 360) - 180;
       if (Math.abs(diff) < minSeparation) {
         const push = (minSeparation - Math.abs(diff)) / 2;
         items[i].adjustedAngle -= diff > 0 ? push : -push;
@@ -131,12 +132,13 @@ git commit -m "fix(chart): avoidOverlap handles 360°/0° wrap-around boundary"
 Currently `drawAspects` is called before `drawHouses`, so the inner circle's opaque fill covers the centre of every aspect line.
 
 **Files:**
+
 - Modify: `src/lib/chart.ts` — reorder draw calls in `renderNatalChart`
 
 **Step 1: Locate the render call order** in `renderNatalChart` (around line 440):
 
 ```ts
-drawAspects(svg, chart, dim);   // ← currently first
+drawAspects(svg, chart, dim); // ← currently first
 drawHouses(svg, chart, dim);
 drawZodiacRing(svg, dim, chart.ascendant);
 drawPlanets(svg, chart, dim);
@@ -145,8 +147,8 @@ drawPlanets(svg, chart, dim);
 **Step 2: Move `drawAspects` to after `drawHouses`**
 
 ```ts
-drawHouses(svg, chart, dim);    // inner circle drawn here
-drawAspects(svg, chart, dim);   // now renders above inner circle fill
+drawHouses(svg, chart, dim); // inner circle drawn here
+drawAspects(svg, chart, dim); // now renders above inner circle fill
 drawZodiacRing(svg, dim, chart.ascendant);
 drawPlanets(svg, chart, dim);
 ```
@@ -175,6 +177,7 @@ git commit -m "fix(chart): draw aspects above inner circle so lines are not occl
 Labels placed outside the outer circle radius are clipped by the SVG viewport.
 
 **Files:**
+
 - Modify: `src/lib/chart.ts` — update `renderNatalChart` viewBox and `getDimensions`
 
 **Step 1: Add `pad` constant and update viewBox** in `renderNatalChart`:
@@ -227,6 +230,7 @@ git commit -m "fix(chart): expand viewBox with padding so ASC/MC labels are not 
 Two small fixes in one commit to keep things tidy.
 
 **Files:**
+
 - Modify: `src/lib/chart.ts`
 
 **Step 1: Fix `stroke-dasharray` in `drawAspects`**
@@ -256,14 +260,16 @@ Find the `labelPos` calculation (around line 347) and change the radius from inw
 ```ts
 // Old (inward — overlaps house numbers):
 const labelPos = polarToXY(
-  dim.center, dim.center,
+  dim.center,
+  dim.center,
   dim.planetRadius - dim.size * 0.04,
   item.adjustedAngle,
 );
 
 // New (outward — sits between glyph and zodiac ring):
 const labelPos = polarToXY(
-  dim.center, dim.center,
+  dim.center,
+  dim.center,
   dim.planetRadius + dim.size * 0.038,
   item.adjustedAngle,
 );
@@ -291,6 +297,7 @@ git commit -m "fix(chart): correct aspect dasharray convention; move degree labe
 Replace all hardcoded light colours in `chart.ts` with dark-theme constants.
 
 **Files:**
+
 - Modify: `src/lib/chart.ts`
 
 **Step 1: Add dark theme colour constants** near the top of the file, after the existing `ELEMENT_COLORS` and `ELEMENT_BG_COLORS`:
@@ -298,17 +305,17 @@ Replace all hardcoded light colours in `chart.ts` with dark-theme constants.
 ```ts
 /** Dark theme colour palette for the chart */
 const DARK = {
-  bg:          'transparent',
-  innerFill:   'rgba(10, 15, 35, 0.65)',
-  text:        '#C8D0E8',
-  textMuted:   '#7A8AAA',
+  bg: 'transparent',
+  innerFill: 'rgba(10, 15, 35, 0.65)',
+  text: '#C8D0E8',
+  textMuted: '#7A8AAA',
   outerStroke: 'rgba(160, 180, 230, 0.8)',
   innerStroke: 'rgba(140, 165, 220, 0.6)',
-  houseMinor:  'rgba(140, 160, 210, 0.35)',
-  houseMajor:  'rgba(200, 215, 255, 0.85)',
-  zodiacDiv:   'rgba(160, 175, 220, 0.5)',
-  retrograde:  '#FF6B4A',
-  haloFill:    'rgba(8, 12, 28, 0.72)',
+  houseMinor: 'rgba(140, 160, 210, 0.35)',
+  houseMajor: 'rgba(200, 215, 255, 0.85)',
+  zodiacDiv: 'rgba(160, 175, 220, 0.5)',
+  retrograde: '#FF6B4A',
+  haloFill: 'rgba(8, 12, 28, 0.72)',
 } as const;
 
 /** Dark element background fills (zodiac ring segments) */
@@ -364,15 +371,21 @@ Do the same for degree label rects (smaller, narrower).
 
 ```ts
 // Outer border circle
-svg.append('circle')
-  .attr('cx', dim.center).attr('cy', dim.center).attr('r', dim.outerRadius)
+svg
+  .append('circle')
+  .attr('cx', dim.center)
+  .attr('cy', dim.center)
+  .attr('r', dim.outerRadius)
   .attr('fill', 'none')
   .attr('stroke', DARK.outerStroke)
   .attr('stroke-width', 2);
 
 // Inner zodiac circle
-svg.append('circle')
-  .attr('cx', dim.center).attr('cy', dim.center).attr('r', dim.zodiacInnerRadius)
+svg
+  .append('circle')
+  .attr('cx', dim.center)
+  .attr('cy', dim.center)
+  .attr('r', dim.zodiacInnerRadius)
   .attr('fill', 'none')
   .attr('stroke', DARK.innerStroke)
   .attr('stroke-width', 1.5);
@@ -424,6 +437,7 @@ Fix any lint warnings before proceeding.
 **Step 3: Final visual QA checklist**
 
 Open `npm run dev` and verify:
+
 - [ ] ASC label fully visible on left
 - [ ] MC label fully visible (not cut off)
 - [ ] All aspect lines visible end-to-end including centre section

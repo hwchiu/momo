@@ -650,7 +650,7 @@ export function getAnnualFlyingStars(year: number): FlyingStarGrid {
  *   月支月 index 0 = 寅月 (立春, Sun lon ≈315°), stepping every 30°.
  */
 export function getMonthlyFlyingStars(year: number, month: number): FlyingStarGrid {
-  const annualRaw = ((1 - (year - 1864)) % 9 + 9) % 9;
+  const annualRaw = (((1 - (year - 1864)) % 9) + 9) % 9;
   const annualCenter = annualRaw === 0 ? 9 : annualRaw;
 
   // 寅月 starting center: annual groups (1,4,7)→8, (2,5,8)→5, (3,6,9)→2
@@ -663,7 +663,7 @@ export function getMonthlyFlyingStars(year: number, month: number): FlyingStarGr
   const monthIdx = Math.floor(((sunLon - 315 + 360) % 360) / 30);
 
   // Decrement by monthIdx from 寅月 center
-  const centerRaw = ((yinMonthCenter - 1 - monthIdx + 900) % 9);
+  const centerRaw = (yinMonthCenter - 1 - monthIdx + 900) % 9;
   const centerStar = centerRaw === 0 ? 9 : centerRaw;
 
   const palaces = PALACE_ORDER.map(({ direction, dirShort }, displayIdx) => {

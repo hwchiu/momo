@@ -10,10 +10,12 @@ Add a mobile bottom navigation bar for screens ≤640px. Desktop sidebar unchang
 ## Changes
 
 ### App.tsx
+
 - Add `<nav className="mobile-bottom-nav">` before closing `</div>` of `.almuten-app`
 - Renders the same `NAV_ITEMS` as the sidebar
 
 ### App.css
+
 - `.almuten-app`: `height: 100vh` → `height: 100dvh`; mobile: `flex-direction: column`
 - `.stellar-sidebar`: mobile `display: none`
 - `.stellar-content`: mobile add `padding-bottom: 72px`

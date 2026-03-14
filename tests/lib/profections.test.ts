@@ -19,9 +19,13 @@ import { HouseSystem, Planet, ZodiacSign } from '../../src/types/astro';
 import type { BirthData } from '../../src/types/astro';
 
 const testBirthData: BirthData = {
-  year: 1985, month: 6, day: 21,
-  hour: 12, minute: 0,
-  latitude: 48.85, longitude: 2.35,
+  year: 1985,
+  month: 6,
+  day: 21,
+  hour: 12,
+  minute: 0,
+  latitude: 48.85,
+  longitude: 2.35,
   locationName: 'Paris',
 };
 

@@ -240,13 +240,13 @@ function App() {
   }, []);
 
   const NAV_ITEMS = [
-    { id: 'natal',      icon: '✦', label: '星盤分析' },
-    { id: 'bazi',       icon: '☯', label: '風水八字' },
-    { id: 'vedic',      icon: '卍', label: '印度占星' },
-    { id: 'synastry',   icon: '⚭', label: '雙人合盤' },
+    { id: 'natal', icon: '✦', label: '星盤分析' },
+    { id: 'bazi', icon: '☯', label: '風水八字' },
+    { id: 'vedic', icon: '卍', label: '印度占星' },
+    { id: 'synastry', icon: '⚭', label: '雙人合盤' },
     { id: 'numerology', icon: '∞', label: '數字學' },
-    { id: 'fengshui',   icon: '⬡', label: '格局風水' },
-    { id: 'clients',    icon: '◎', label: '客戶管理' },
+    { id: 'fengshui', icon: '⬡', label: '格局風水' },
+    { id: 'clients', icon: '◎', label: '客戶管理' },
   ] as const;
 
   return (
@@ -258,7 +258,7 @@ function App() {
           <span className="sidebar-logo-text">星盤</span>
         </div>
         <nav className="sidebar-nav" role="tablist" aria-label="功能導覽">
-          {NAV_ITEMS.map(item => (
+          {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
               role="tab"
@@ -289,7 +289,6 @@ function App() {
         {/* Scrollable content area */}
         <ErrorBoundary>
           <main className="stellar-content">
-
             {activeTab === 'natal' && (
               <div role="tabpanel" id="panel-natal" className="natal-workspace">
                 {/* Left column: form + chart */}
@@ -310,9 +309,7 @@ function App() {
 
                   {chart && !isLoading && (
                     <section className="glass-panel chart-visual-panel">
-                      <h3 className="panel-heading">
-                        星盤 &mdash; {chart.birthData.locationName}
-                      </h3>
+                      <h3 className="panel-heading">星盤 &mdash; {chart.birthData.locationName}</h3>
                       <div className="chart-visual">
                         <NatalChart chart={chart} size={480} />
                       </div>
@@ -429,14 +426,13 @@ function App() {
                 </section>
               </div>
             )}
-
           </main>
         </ErrorBoundary>
       </div>
 
       {/* ── Mobile bottom navigation ── */}
       <nav className="mobile-bottom-nav" role="tablist" aria-label="功能導覽">
-        {NAV_ITEMS.map(item => (
+        {NAV_ITEMS.map((item) => (
           <button
             key={item.id}
             role="tab"

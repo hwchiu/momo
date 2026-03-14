@@ -13,6 +13,7 @@
 ### Task 1: Update CSS Design Tokens
 
 **Files:**
+
 - Modify: `src/App.css` (lines 1–65, the `:root` block)
 
 **Step 1: Replace the `:root` design token block**
@@ -67,7 +68,7 @@ Find the current `:root { }` block (lines 7–65) and replace entirely with:
   --clr-surface: var(--cosmos-mid);
   --clr-surface-1: var(--cosmos-surface);
   --clr-surface-2: rgba(255, 255, 255, 0.06);
-  --clr-surface-3: rgba(255, 255, 255, 0.10);
+  --clr-surface-3: rgba(255, 255, 255, 0.1);
   --clr-border-strong: rgba(79, 195, 247, 0.45);
   --clr-border: rgba(79, 195, 247, 0.2);
   --clr-border-light: rgba(255, 255, 255, 0.1);
@@ -107,40 +108,88 @@ Find the current `:root { }` block (lines 7–65) and replace entirely with:
 ```css
 /* ── Keyframes ── */
 @keyframes pulse-star {
-  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  50% { opacity: 0.25; transform: scale(0.65) rotate(180deg); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(0.65) rotate(180deg);
+  }
 }
 
 @keyframes celestial-appear {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes panel-slide-in {
-  from { opacity: 0; transform: translateX(16px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes star-drift {
-  0% { background-position: 0 0, 30px 30px, 15px 45px; }
-  100% { background-position: 200px 100px, 230px 130px, 215px 145px; }
+  0% {
+    background-position:
+      0 0,
+      30px 30px,
+      15px 45px;
+  }
+  100% {
+    background-position:
+      200px 100px,
+      230px 130px,
+      215px 145px;
+  }
 }
 
 @keyframes star-twinkle {
-  0%, 100% { opacity: 0.9; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 @keyframes sidebar-glow {
-  0%, 100% { box-shadow: inset -1px 0 0 rgba(79, 195, 247, 0.15); }
-  50% { box-shadow: inset -1px 0 0 rgba(79, 195, 247, 0.35); }
+  0%,
+  100% {
+    box-shadow: inset -1px 0 0 rgba(79, 195, 247, 0.15);
+  }
+  50% {
+    box-shadow: inset -1px 0 0 rgba(79, 195, 247, 0.35);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .loading-star { animation: none !important; }
-  .chart-section, .bazi-result-section { animation: none !important; }
-  .submit-btn { transition: background 0.15s !important; }
-  .sidebar { animation: none !important; }
+  .loading-star {
+    animation: none !important;
+  }
+  .chart-section,
+  .bazi-result-section {
+    animation: none !important;
+  }
+  .submit-btn {
+    transition: background 0.15s !important;
+  }
+  .sidebar {
+    animation: none !important;
+  }
 }
 ```
 
@@ -161,6 +210,7 @@ git commit -m "style: new dark cosmic design tokens (lapis blue + silver)"
 ### Task 2: Global Base & Body Background
 
 **Files:**
+
 - Modify: `src/index.css`
 - Modify: `src/App.css` (the `.almuten-app` base block, ~lines 119-128)
 
@@ -170,13 +220,16 @@ Replace the entire file content with:
 
 ```css
 /* Global base — dark cosmic theme */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   background: #030810;
 }
@@ -189,9 +242,9 @@ body {
 
   /* Star-field background: 3 layers of radial dot patterns at different sizes */
   background-image:
-    radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(79,195,247,0.30) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.20) 1.5px, transparent 1.5px);
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79, 195, 247, 0.3) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
   background-size:
     120px 120px,
     80px 80px,
@@ -222,10 +275,20 @@ a:hover {
 }
 
 /* Thin scrollbars for dark theme */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
-::-webkit-scrollbar-thumb { background: rgba(79,195,247,0.3); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(79,195,247,0.5); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 195, 247, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 195, 247, 0.5);
+}
 ```
 
 **Step 2: Update `.almuten-app` in `src/App.css`**
@@ -263,6 +326,7 @@ git commit -m "style: full-viewport dark body with star-field background"
 ### Task 3: App.tsx — Sidebar Layout Structure
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Replace the JSX `return` block in App.tsx**
@@ -270,201 +334,197 @@ git commit -m "style: full-viewport dark body with star-field background"
 The new layout uses `.stellar-sidebar` + `.stellar-main` flex layout. Replace the `return (...)` block (lines 242–471) with:
 
 ```tsx
-  const NAV_ITEMS = [
-    { id: 'natal',     icon: '✦', label: '星盤分析' },
-    { id: 'bazi',      icon: '☯', label: '風水八字' },
-    { id: 'vedic',     icon: '卍', label: '印度占星' },
-    { id: 'synastry',  icon: '⚭', label: '雙人合盤' },
-    { id: 'numerology',icon: '∞', label: '數字學' },
-    { id: 'fengshui',  icon: '⬡', label: '格局風水' },
-    { id: 'clients',   icon: '◎', label: '客戶管理' },
-  ] as const;
+const NAV_ITEMS = [
+  { id: 'natal', icon: '✦', label: '星盤分析' },
+  { id: 'bazi', icon: '☯', label: '風水八字' },
+  { id: 'vedic', icon: '卍', label: '印度占星' },
+  { id: 'synastry', icon: '⚭', label: '雙人合盤' },
+  { id: 'numerology', icon: '∞', label: '數字學' },
+  { id: 'fengshui', icon: '⬡', label: '格局風水' },
+  { id: 'clients', icon: '◎', label: '客戶管理' },
+] as const;
 
-  return (
-    <div className="almuten-app">
-      {/* ── Sidebar ── */}
-      <aside className="stellar-sidebar">
-        <div className="sidebar-logo">
-          <span className="sidebar-logo-icon">✦</span>
-          <span className="sidebar-logo-text">星盤</span>
-        </div>
-        <nav className="sidebar-nav" aria-label="功能導覽">
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              role="tab"
-              aria-selected={activeTab === item.id}
-              className={`sidebar-nav-btn ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id as typeof activeTab)}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              <span className="nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="sidebar-footer">
-          <span className="sidebar-footer-text">momo.hwchiu</span>
-        </div>
-      </aside>
-
-      {/* ── Main content ── */}
-      <div className="stellar-main">
-        {/* Content header */}
-        <header className="stellar-header">
-          <div className="stellar-header-star">✦</div>
-          <h1 className="stellar-title">星盤繪製器</h1>
-          <p className="stellar-subtitle">線上古典占星・命理工具</p>
-        </header>
-
-        {/* Scrollable content area */}
-        <ErrorBoundary>
-          <main className="stellar-content">
-
-            {activeTab === 'natal' && (
-              <div role="tabpanel" id="panel-natal" className="natal-workspace">
-                {/* Left column: form + chart */}
-                <div className="natal-left">
-                  <section className="glass-panel">
-                    <h3 className="panel-heading">快速製圖</h3>
-                    <BirthDataForm
-                      onSubmit={handleSubmit}
-                      isLoading={isLoading}
-                      orbConfig={orbConfig}
-                      onOrbChange={setOrbConfig}
-                      prefillData={prefillData}
-                    />
-                  </section>
-
-                  {error && <div className="error-banner">{error}</div>}
-                  {isLoading && <LoadingMessage text="推算星象中，請稍候⋯" />}
-
-                  {chart && !isLoading && (
-                    <section className="glass-panel chart-visual-panel">
-                      <h3 className="panel-heading">
-                        星盤 &mdash; {chart.birthData.locationName}
-                      </h3>
-                      <div className="chart-visual">
-                        <NatalChart chart={chart} size={480} />
-                      </div>
-                    </section>
-                  )}
-                </div>
-
-                {/* Right column: data panels */}
-                {chart && !isLoading && (
-                  <div className="natal-right">
-                    <ChartDetails chart={chart} />
-                    <TransitPanel natalChart={chart} />
-                    <ArabicPartsPanel chart={chart} />
-                    <ProfectionsPanel chart={chart} />
-                    <SolarReturnPanel chart={chart} />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'bazi' && (
-              <div role="tabpanel" id="panel-bazi" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">八字排盤</h3>
-                  <BaziForm onSubmit={handleBaziSubmit} isLoading={baziLoading} />
-                </section>
-
-                {baziError && <div className="error-banner">{baziError}</div>}
-                {baziLoading && <LoadingMessage text="推算八字命盤中，請稍候⋯" />}
-
-                {baziChart && !baziLoading && (
-                  <>
-                    <section className="glass-panel chart-section">
-                      <BaziResult chart={baziChart} />
-                    </section>
-                    <section className="glass-panel">
-                      <h3 className="panel-heading">本命卦 · 八宅方位</h3>
-                      <KuaPanel chart={baziChart} />
-                    </section>
-                  </>
-                )}
-
-                <section className="glass-panel">
-                  <h3 className="panel-heading">流年紫白飛星</h3>
-                  <FlyingStarsPanel />
-                </section>
-
-                <section className="glass-panel">
-                  <h3 className="panel-heading">擇日工具</h3>
-                  <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
-                </section>
-              </div>
-            )}
-
-            {activeTab === 'vedic' && (
-              <div role="tabpanel" id="panel-vedic" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">印度占星命盤</h3>
-                  <VedicForm onSubmit={handleVedicSubmit} isLoading={vedicLoading} />
-                </section>
-
-                {vedicError && <div className="error-banner">{vedicError}</div>}
-                {vedicLoading && <LoadingMessage text="推算吠陀命盤中，請稍候⋯" />}
-
-                {vedicChart && !vedicLoading && (
-                  <section className="glass-panel chart-section">
-                    <VedicResult chart={vedicChart} />
-                  </section>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'synastry' && (
-              <div role="tabpanel" id="panel-synastry" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">雙人合盤分析</h3>
-                  <SynastryForm onSubmit={handleSynastrySubmit} isLoading={synastryLoading} />
-                </section>
-
-                {synastryError && <div className="error-banner">{synastryError}</div>}
-                {synastryLoading && <LoadingMessage text="推算雙星交匯中，請稍候⋯" />}
-
-                {synastryResult && !synastryLoading && (
-                  <section className="glass-panel chart-section">
-                    <SynastryResult result={synastryResult} />
-                  </section>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'numerology' && (
-              <div role="tabpanel" id="panel-numerology" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">數字學分析</h3>
-                  <NumerologyPanel initialBirthData={chart ? chart.birthData : undefined} />
-                </section>
-              </div>
-            )}
-
-            {activeTab === 'fengshui' && (
-              <div role="tabpanel" id="panel-fengshui" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">格局風水・飛星分析</h3>
-                  <FengshuiPanel />
-                </section>
-              </div>
-            )}
-
-            {activeTab === 'clients' && (
-              <div role="tabpanel" id="panel-clients" className="full-panel">
-                <section className="glass-panel">
-                  <h3 className="panel-heading">客戶管理</h3>
-                  <ClientDatabase onLoadClient={handleLoadClient} />
-                </section>
-              </div>
-            )}
-
-          </main>
-        </ErrorBoundary>
+return (
+  <div className="almuten-app">
+    {/* ── Sidebar ── */}
+    <aside className="stellar-sidebar">
+      <div className="sidebar-logo">
+        <span className="sidebar-logo-icon">✦</span>
+        <span className="sidebar-logo-text">星盤</span>
       </div>
+      <nav className="sidebar-nav" aria-label="功能導覽">
+        {NAV_ITEMS.map((item) => (
+          <button
+            key={item.id}
+            role="tab"
+            aria-selected={activeTab === item.id}
+            className={`sidebar-nav-btn ${activeTab === item.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(item.id as typeof activeTab)}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-label">{item.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="sidebar-footer">
+        <span className="sidebar-footer-text">momo.hwchiu</span>
+      </div>
+    </aside>
+
+    {/* ── Main content ── */}
+    <div className="stellar-main">
+      {/* Content header */}
+      <header className="stellar-header">
+        <div className="stellar-header-star">✦</div>
+        <h1 className="stellar-title">星盤繪製器</h1>
+        <p className="stellar-subtitle">線上古典占星・命理工具</p>
+      </header>
+
+      {/* Scrollable content area */}
+      <ErrorBoundary>
+        <main className="stellar-content">
+          {activeTab === 'natal' && (
+            <div role="tabpanel" id="panel-natal" className="natal-workspace">
+              {/* Left column: form + chart */}
+              <div className="natal-left">
+                <section className="glass-panel">
+                  <h3 className="panel-heading">快速製圖</h3>
+                  <BirthDataForm
+                    onSubmit={handleSubmit}
+                    isLoading={isLoading}
+                    orbConfig={orbConfig}
+                    onOrbChange={setOrbConfig}
+                    prefillData={prefillData}
+                  />
+                </section>
+
+                {error && <div className="error-banner">{error}</div>}
+                {isLoading && <LoadingMessage text="推算星象中，請稍候⋯" />}
+
+                {chart && !isLoading && (
+                  <section className="glass-panel chart-visual-panel">
+                    <h3 className="panel-heading">星盤 &mdash; {chart.birthData.locationName}</h3>
+                    <div className="chart-visual">
+                      <NatalChart chart={chart} size={480} />
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              {/* Right column: data panels */}
+              {chart && !isLoading && (
+                <div className="natal-right">
+                  <ChartDetails chart={chart} />
+                  <TransitPanel natalChart={chart} />
+                  <ArabicPartsPanel chart={chart} />
+                  <ProfectionsPanel chart={chart} />
+                  <SolarReturnPanel chart={chart} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'bazi' && (
+            <div role="tabpanel" id="panel-bazi" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">八字排盤</h3>
+                <BaziForm onSubmit={handleBaziSubmit} isLoading={baziLoading} />
+              </section>
+
+              {baziError && <div className="error-banner">{baziError}</div>}
+              {baziLoading && <LoadingMessage text="推算八字命盤中，請稍候⋯" />}
+
+              {baziChart && !baziLoading && (
+                <>
+                  <section className="glass-panel chart-section">
+                    <BaziResult chart={baziChart} />
+                  </section>
+                  <section className="glass-panel">
+                    <h3 className="panel-heading">本命卦 · 八宅方位</h3>
+                    <KuaPanel chart={baziChart} />
+                  </section>
+                </>
+              )}
+
+              <section className="glass-panel">
+                <h3 className="panel-heading">流年紫白飛星</h3>
+                <FlyingStarsPanel />
+              </section>
+
+              <section className="glass-panel">
+                <h3 className="panel-heading">擇日工具</h3>
+                <DateSelectTool defaultYearBranch={baziChart?.yearPillar.branch} />
+              </section>
+            </div>
+          )}
+
+          {activeTab === 'vedic' && (
+            <div role="tabpanel" id="panel-vedic" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">印度占星命盤</h3>
+                <VedicForm onSubmit={handleVedicSubmit} isLoading={vedicLoading} />
+              </section>
+
+              {vedicError && <div className="error-banner">{vedicError}</div>}
+              {vedicLoading && <LoadingMessage text="推算吠陀命盤中，請稍候⋯" />}
+
+              {vedicChart && !vedicLoading && (
+                <section className="glass-panel chart-section">
+                  <VedicResult chart={vedicChart} />
+                </section>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'synastry' && (
+            <div role="tabpanel" id="panel-synastry" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">雙人合盤分析</h3>
+                <SynastryForm onSubmit={handleSynastrySubmit} isLoading={synastryLoading} />
+              </section>
+
+              {synastryError && <div className="error-banner">{synastryError}</div>}
+              {synastryLoading && <LoadingMessage text="推算雙星交匯中，請稍候⋯" />}
+
+              {synastryResult && !synastryLoading && (
+                <section className="glass-panel chart-section">
+                  <SynastryResult result={synastryResult} />
+                </section>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'numerology' && (
+            <div role="tabpanel" id="panel-numerology" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">數字學分析</h3>
+                <NumerologyPanel initialBirthData={chart ? chart.birthData : undefined} />
+              </section>
+            </div>
+          )}
+
+          {activeTab === 'fengshui' && (
+            <div role="tabpanel" id="panel-fengshui" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">格局風水・飛星分析</h3>
+                <FengshuiPanel />
+              </section>
+            </div>
+          )}
+
+          {activeTab === 'clients' && (
+            <div role="tabpanel" id="panel-clients" className="full-panel">
+              <section className="glass-panel">
+                <h3 className="panel-heading">客戶管理</h3>
+                <ClientDatabase onLoadClient={handleLoadClient} />
+              </section>
+            </div>
+          )}
+        </main>
+      </ErrorBoundary>
     </div>
-  );
+  </div>
+);
 ```
 
 **Step 2: Verify TypeScript compiles**
@@ -484,6 +544,7 @@ git commit -m "refactor: sidebar layout structure in App.tsx"
 ### Task 4: CSS — Sidebar & Main Layout
 
 **Files:**
+
 - Modify: `src/App.css` — replace `.top-nav`, `.site-header`, `.tab-nav`, `.site-main`, `.site-footer` blocks; add new sidebar + stellar layout blocks
 
 **Step 1: After the `.almuten-app` block, add the full layout CSS**
@@ -517,10 +578,14 @@ Find the old `.top-nav` block and replace everything from `.top-nav` down to and
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px),
-    radial-gradient(circle, rgba(79,195,247,0.2) 1px, transparent 1px);
-  background-size: 50px 50px, 30px 30px;
-  background-position: 5px 5px, 20px 20px;
+    radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79, 195, 247, 0.2) 1px, transparent 1px);
+  background-size:
+    50px 50px,
+    30px 30px;
+  background-position:
+    5px 5px,
+    20px 20px;
   opacity: 0.4;
   pointer-events: none;
 }
@@ -643,7 +708,7 @@ Find the old `.top-nav` block and replace everything from `.top-nav` down to and
   align-items: center;
   gap: 12px;
   padding: 16px 24px;
-  background: rgba(6, 13, 26, 0.70);
+  background: rgba(6, 13, 26, 0.7);
   border-bottom: 1px solid rgba(79, 195, 247, 0.12);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -656,7 +721,7 @@ Find the old `.top-nav` block and replace everything from `.top-nav` down to and
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(79,195,247,0.05) 0%, transparent 60%);
+  background: linear-gradient(90deg, rgba(79, 195, 247, 0.05) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -772,8 +837,15 @@ Find the old `.top-nav` block and replace everything from `.top-nav` down to and
 }
 
 /* Keep old layout classes as no-ops (prevent FOUC) */
-.top-nav, .tab-nav, .site-header, .site-footer,
-.quick-chart-section, .chart-section { all: unset; display: contents; }
+.top-nav,
+.tab-nav,
+.site-header,
+.site-footer,
+.quick-chart-section,
+.chart-section {
+  all: unset;
+  display: contents;
+}
 ```
 
 **Step 2: Verify layout in browser**
@@ -793,6 +865,7 @@ git commit -m "style: stellar sidebar + glass panel layout CSS"
 ### Task 5: CSS — Forms & Input Controls
 
 **Files:**
+
 - Modify: `src/App.css` — update form control styles to dark theme
 
 **Step 1: Find and update form control styles**
@@ -820,7 +893,10 @@ Search for `.form-input`, `.form-select`, `.submit-btn` and update to dark theme
   color: var(--accent-silver);
   font-family: inherit;
   font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
   appearance: none;
   -webkit-appearance: none;
 }
@@ -903,7 +979,7 @@ Search for `.form-input`, `.form-select`, `.submit-btn` and update to dark theme
   font-size: 13px;
 }
 
-.radio-label input[type="radio"] {
+.radio-label input[type='radio'] {
   accent-color: var(--accent-lapis);
 }
 ```
@@ -920,6 +996,7 @@ git commit -m "style: dark theme form controls and buttons"
 ### Task 6: CSS — Data Tables
 
 **Files:**
+
 - Modify: `src/App.css` — update table styles for dark theme
 
 **Step 1: Find `.data-table` and related styles, update to:**
@@ -971,10 +1048,19 @@ git commit -m "style: dark theme form controls and buttons"
 }
 
 /* Dignity colors — bright enough for dark bg */
-.dignity-廟 { color: #34d399; font-weight: 700; }
-.dignity-旺 { color: #6ee7b7; }
-.dignity-落 { color: #f87171; }
-.dignity-陷 { color: #fca5a5; }
+.dignity-廟 {
+  color: #34d399;
+  font-weight: 700;
+}
+.dignity-旺 {
+  color: #6ee7b7;
+}
+.dignity-落 {
+  color: #f87171;
+}
+.dignity-陷 {
+  color: #fca5a5;
+}
 
 .retrograde-symbol {
   color: var(--accent-lapis);
@@ -1002,6 +1088,7 @@ git commit -m "style: dark theme data tables"
 ### Task 7: CSS — Error Banner, Loading, Miscellaneous
 
 **Files:**
+
 - Modify: `src/App.css`
 
 **Step 1: Update error banner, loading, and misc styles:**
@@ -1076,18 +1163,30 @@ git commit -m "style: dark theme data tables"
 
 /* ══ Responsive: narrow screens ══ */
 @media (max-width: 900px) {
-  :root { --sidebar-w: 56px; }
-  .nav-label { display: none; }
-  .sidebar-logo-text { display: none; }
-  .sidebar-footer-text { display: none; }
+  :root {
+    --sidebar-w: 56px;
+  }
+  .nav-label {
+    display: none;
+  }
+  .sidebar-logo-text {
+    display: none;
+  }
+  .sidebar-footer-text {
+    display: none;
+  }
   .natal-workspace {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 600px) {
-  .stellar-content { padding: 12px; }
-  .glass-panel { padding: 14px; }
+  .stellar-content {
+    padding: 12px;
+  }
+  .glass-panel {
+    padding: 14px;
+  }
 }
 ```
 
@@ -1107,6 +1206,7 @@ git commit -m "style: error, loading, responsive dark theme styles"
 ```bash
 npm run typecheck && npm run build
 ```
+
 Expected: Zero errors, build succeeds.
 
 **Step 2: Visual QA checklist in browser (`npm run dev`)**
@@ -1126,6 +1226,7 @@ Expected: Zero errors, build succeeds.
 ```bash
 npm run test
 ```
+
 Expected: All existing tests pass (UI-only changes, no logic touched)
 
 **Step 4: Final commit**

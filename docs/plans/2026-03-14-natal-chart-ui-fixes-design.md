@@ -37,6 +37,7 @@ The natal chart SVG has five confirmed bugs causing visual defects on normal scr
 **Root cause:** `stroke-dasharray` is `'none'` only for `type === 60` (sextile) or `type === 120` (trine). Conjunction (0°) gets dashed — opposite of astrological convention.
 
 **Fix:** New dasharray logic:
+
 - Solid + thick: conjunction (0°), opposition (180°)
 - Solid: trine (120°), sextile (60°)
 - Dashed: square (90°), quincunx (150°), semi-square (45°), sesquiquadrate (135°)
@@ -52,23 +53,26 @@ The natal chart SVG has five confirmed bugs causing visual defects on normal scr
 ## Dark Theme Integration
 
 ### Background
+
 - SVG background: transparent (was `#FAFAFA`) — container's glass-panel shows through
 - Inner circle fill: `rgba(10, 15, 35, 0.6)` semi-transparent deep navy (was opaque `#FAFAFA`)
 
 ### Colour Constants (defined at top of `chart.ts`)
+
 ```ts
 const DARK = {
-  text:        '#C8D0E8',   // primary label text
-  textMuted:   '#7A8AAA',   // degree labels, house numbers
-  stroke:      'rgba(160, 180, 230, 0.6)',  // ring borders
-  houseMinor:  'rgba(140, 160, 210, 0.35)', // non-cardinal house lines
-  houseMajor:  'rgba(200, 215, 255, 0.85)', // cardinal (ASC/DSC/MC/IC) lines
-  innerFill:   'rgba(10, 15, 35, 0.6)',
-  retro:       '#FF6B4A',   // retrograde marker
+  text: '#C8D0E8', // primary label text
+  textMuted: '#7A8AAA', // degree labels, house numbers
+  stroke: 'rgba(160, 180, 230, 0.6)', // ring borders
+  houseMinor: 'rgba(140, 160, 210, 0.35)', // non-cardinal house lines
+  houseMajor: 'rgba(200, 215, 255, 0.85)', // cardinal (ASC/DSC/MC/IC) lines
+  innerFill: 'rgba(10, 15, 35, 0.6)',
+  retro: '#FF6B4A', // retrograde marker
 };
 ```
 
 ### Zodiac Ring
+
 - Element background colours: dark versions
   - 火 (Fire): `#2D1010`
   - 土 (Earth): `#1E1A10`
@@ -77,16 +81,19 @@ const DARK = {
 - Element foreground (glyph): keep vivid colours but slightly brightened
 
 ### Planet Glyphs
+
 - Normal: `#C8D0E8`
 - Retrograde: `#FF6B4A`
 - Add `rect` halo (4px padding, `fill: rgba(8,12,28,0.7)`, `rx:3`) behind each glyph and its degree label to ensure readability regardless of background
 
 ### Aspect Lines
+
 - Maintain existing per-aspect colours; no change to hue
 - Opacity formula unchanged (`Math.max(0.5, 1 - orb/10)`)
 - Stroke width: tight orb (<3°) → 2px; otherwise → 1.5px (unchanged)
 
 ### Border Circles
+
 - Outer circle stroke: `rgba(160, 180, 230, 0.8)`
 - Inner zodiac circle stroke: `rgba(140, 165, 220, 0.6)`
 
@@ -94,10 +101,10 @@ const DARK = {
 
 ## Files Changed
 
-| File | Change |
-|------|--------|
-| `src/lib/chart.ts` | All bug fixes + dark colour constants |
-| `src/App.css` | No change needed (SVG now transparent) |
+| File               | Change                                 |
+| ------------------ | -------------------------------------- |
+| `src/lib/chart.ts` | All bug fixes + dark colour constants  |
+| `src/App.css`      | No change needed (SVG now transparent) |
 
 ---
 

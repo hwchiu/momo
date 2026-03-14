@@ -65,7 +65,7 @@ describe('calcTianFuBranch', () => {
   });
 
   it('紫微 and 天府 at the same position only at 子 and 午', () => {
-    const symmetric = [0, 6].map((z) => calcTianFuBranch(z) === z ? z : -1).filter((x) => x >= 0);
+    const symmetric = [0, 6].map((z) => (calcTianFuBranch(z) === z ? z : -1)).filter((x) => x >= 0);
     expect(symmetric.length).toBe(2); // 子 and 午
   });
 });
@@ -157,23 +157,33 @@ describe('calculateZiWei — star placement', () => {
   });
 
   it('紫微 appears exactly once across all palaces', () => {
-    const count = chart.palaces.filter((p) =>
-      p.mainStars.some((s) => s.name === '紫微'),
-    ).length;
+    const count = chart.palaces.filter((p) => p.mainStars.some((s) => s.name === '紫微')).length;
     expect(count).toBe(1);
   });
 
   it('天府 appears exactly once', () => {
-    const count = chart.palaces.filter((p) =>
-      p.mainStars.some((s) => s.name === '天府'),
-    ).length;
+    const count = chart.palaces.filter((p) => p.mainStars.some((s) => s.name === '天府')).length;
     expect(count).toBe(1);
   });
 
   it('all 14 main stars appear across the chart', () => {
     const allStars = chart.palaces.flatMap((p) => p.mainStars.map((s) => s.name));
-    const expected = ['紫微', '天機', '太陽', '武曲', '天同', '廉貞',
-      '天府', '太陰', '貪狼', '巨門', '天相', '天梁', '七殺', '破軍'];
+    const expected = [
+      '紫微',
+      '天機',
+      '太陽',
+      '武曲',
+      '天同',
+      '廉貞',
+      '天府',
+      '太陰',
+      '貪狼',
+      '巨門',
+      '天相',
+      '天梁',
+      '七殺',
+      '破軍',
+    ];
     for (const star of expected) {
       expect(allStars).toContain(star);
     }
@@ -220,4 +230,3 @@ describe('calculateZiWei — robust across multiple inputs', () => {
     });
   }
 });
-

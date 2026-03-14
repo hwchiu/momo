@@ -16,15 +16,25 @@ import { DASHA_YEARS, DASHA_ORDER, NAKSHATRAS } from '../../src/types/vedic';
 import type { VedicInput } from '../../src/types/vedic';
 
 const J2000_VEDIC: VedicInput = {
-  year: 2000, month: 1, day: 1, hour: 12, minute: 0,
-  latitude: 51.5074, longitude: -0.1278,
+  year: 2000,
+  month: 1,
+  day: 1,
+  hour: 12,
+  minute: 0,
+  latitude: 51.5074,
+  longitude: -0.1278,
   locationName: 'London',
   ayanamsha: 'lahiri',
 };
 
 const TAIPEI_VEDIC: VedicInput = {
-  year: 1985, month: 7, day: 15, hour: 14, minute: 30,
-  latitude: 25.033, longitude: 121.5654,
+  year: 1985,
+  month: 7,
+  day: 15,
+  hour: 14,
+  minute: 30,
+  latitude: 25.033,
+  longitude: 121.5654,
   locationName: '台北',
   ayanamsha: 'lahiri',
 };
@@ -40,7 +50,17 @@ describe('calculateVedicChart - planet structure', () => {
   it('includes all 9 required planets', () => {
     const chart = calculateVedicChart(J2000_VEDIC);
     const names = chart.planets.map((p) => p.name);
-    for (const name of ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu']) {
+    for (const name of [
+      'Sun',
+      'Moon',
+      'Mars',
+      'Mercury',
+      'Jupiter',
+      'Venus',
+      'Saturn',
+      'Rahu',
+      'Ketu',
+    ]) {
       expect(names).toContain(name);
     }
   });
@@ -188,7 +208,7 @@ describe('calculateVedicChart - Ayanamsha', () => {
   it('sidereal longitude equals (tropical - ayanamsha) mod 360', () => {
     const chart = calculateVedicChart(J2000_VEDIC);
     for (const p of chart.planets) {
-      const expected = ((p.tropicalLon - chart.ayanamshaValue) % 360 + 360) % 360;
+      const expected = (((p.tropicalLon - chart.ayanamshaValue) % 360) + 360) % 360;
       expect(p.siderealLon).toBeCloseTo(expected, 3);
     }
   });
@@ -276,8 +296,15 @@ describe('calculateVedicChart - dignity rules', () => {
   it('Sun in Aries sidereal (rashi 0) should be exalted', () => {
     // Find a date when sidereal Sun is in Aries: tropical ~24°-54° ≈ mid-April to mid-May
     const ariesChart = calculateVedicChart({
-      year: 2000, month: 4, day: 20, hour: 12, minute: 0,
-      latitude: 51.5, longitude: 0, locationName: 'London', ayanamsha: 'lahiri',
+      year: 2000,
+      month: 4,
+      day: 20,
+      hour: 12,
+      minute: 0,
+      latitude: 51.5,
+      longitude: 0,
+      locationName: 'London',
+      ayanamsha: 'lahiri',
     });
     const sun = ariesChart.planets.find((p) => p.name === 'Sun')!;
     if (sun.rashi === 0) {
@@ -289,8 +316,15 @@ describe('calculateVedicChart - dignity rules', () => {
   it('Sun in Libra sidereal (rashi 6) should be debilitated', () => {
     // Sidereal Sun in Libra: tropical ~204°-234° ≈ late Oct to late Nov
     const libraChart = calculateVedicChart({
-      year: 2000, month: 11, day: 1, hour: 12, minute: 0,
-      latitude: 51.5, longitude: 0, locationName: 'London', ayanamsha: 'lahiri',
+      year: 2000,
+      month: 11,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      latitude: 51.5,
+      longitude: 0,
+      locationName: 'London',
+      ayanamsha: 'lahiri',
     });
     const sun = libraChart.planets.find((p) => p.name === 'Sun')!;
     if (sun.rashi === 6) {

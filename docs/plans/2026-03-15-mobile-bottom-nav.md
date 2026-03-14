@@ -13,11 +13,13 @@
 ### Task 1: Add mobile bottom nav element to App.tsx
 
 **Files:**
+
 - Modify: `src/App.tsx` (lines 433–436, just before closing `</div>`)
 
 **Step 1: Read the file to confirm exact closing lines**
 
 Read `src/App.tsx` lines 430–441 to confirm the structure ends with:
+
 ```tsx
         </ErrorBoundary>
       </div>
@@ -73,11 +75,13 @@ git commit -m "feat(mobile): add bottom nav element to App.tsx"
 ### Task 2: CSS — fix viewport height and hide sidebar on mobile
 
 **Files:**
+
 - Modify: `src/App.css`
 
 **Step 1: Fix `height: 100vh` → `height: 100dvh` in `.almuten-app`**
 
 Find:
+
 ```css
 .almuten-app {
   display: flex;
@@ -86,6 +90,7 @@ Find:
 ```
 
 Replace `height: 100vh` with `height: 100dvh`:
+
 ```css
 .almuten-app {
   display: flex;
@@ -98,10 +103,15 @@ Replace `height: 100vh` with `height: 100dvh`:
 **Step 2: Add mobile layout overrides**
 
 Find the existing `@media (max-width: 600px)` block near the bottom of the file (around line 3434):
+
 ```css
 @media (max-width: 600px) {
-  .stellar-content { padding: 12px; }
-  .glass-panel { padding: 14px; }
+  .stellar-content {
+    padding: 12px;
+  }
+  .glass-panel {
+    padding: 14px;
+  }
 }
 ```
 
@@ -159,6 +169,7 @@ git commit -m "fix(mobile): 100dvh viewport fix and sidebar hide on mobile"
 ### Task 3: CSS — style the mobile bottom nav bar
 
 **Files:**
+
 - Modify: `src/App.css`
 
 **Step 1: Add `.mobile-bottom-nav` hidden on desktop**
@@ -202,13 +213,13 @@ After the closing brace of the `@media (max-width: 640px)` block added in Task 2
     border: none;
     cursor: pointer;
     padding: 6px 2px;
-    color: var(--accent-silver-muted, #7A8AAA);
+    color: var(--accent-silver-muted, #7a8aaa);
     transition: color 0.15s;
     min-width: 0;
   }
 
   .mobile-nav-btn.active {
-    color: var(--accent-blue, #4FC3F7);
+    color: var(--accent-blue, #4fc3f7);
   }
 
   .mobile-nav-btn:active {
@@ -279,6 +290,7 @@ Start dev server: `npm run dev`
 Open browser DevTools → Toggle device toolbar (mobile emulation):
 
 **iPhone SE (375×667):**
+
 - [ ] Sidebar not visible
 - [ ] Bottom nav visible with 7 icons + labels
 - [ ] Active tab highlighted in blue
@@ -287,6 +299,7 @@ Open browser DevTools → Toggle device toolbar (mobile emulation):
 - [ ] Header ("星盤繪製器") visible at top
 
 **Desktop (1280×800):**
+
 - [ ] Sidebar visible, bottom nav not visible
 - [ ] Layout unchanged from before
 

@@ -24,8 +24,14 @@ import { HouseSystem, Planet, ZodiacSign } from '../../src/types/astro';
 import type { BirthData } from '../../src/types/astro';
 
 const NATAL_DATA: BirthData = {
-  year: 1985, month: 7, day: 15, hour: 14, minute: 30,
-  latitude: 25.033, longitude: 121.5654, locationName: '台北',
+  year: 1985,
+  month: 7,
+  day: 15,
+  hour: 14,
+  minute: 30,
+  latitude: 25.033,
+  longitude: 121.5654,
+  locationName: '台北',
 };
 const natalChart = calculateNatalChart(NATAL_DATA, HouseSystem.WholeSign);
 
@@ -312,8 +318,13 @@ describe('getProfection', () => {
 
   it('lordOfYear is one of the 7 classical planets', () => {
     const classicalPlanets = [
-      Planet.Sun, Planet.Moon, Planet.Mercury, Planet.Venus,
-      Planet.Mars, Planet.Jupiter, Planet.Saturn,
+      Planet.Sun,
+      Planet.Moon,
+      Planet.Mercury,
+      Planet.Venus,
+      Planet.Mars,
+      Planet.Jupiter,
+      Planet.Saturn,
     ];
     for (let age = 0; age < 12; age++) {
       const r = getProfection(natalChart, dateAtAge(age));
@@ -341,15 +352,29 @@ describe('getProfection', () => {
 
   it('different natal charts give different profection lords for same date', () => {
     const other: BirthData = {
-      year: 1990, month: 3, day: 20, hour: 6, minute: 0,
-      latitude: 51.5, longitude: 0, locationName: 'London',
+      year: 1990,
+      month: 3,
+      day: 20,
+      hour: 6,
+      minute: 0,
+      latitude: 51.5,
+      longitude: 0,
+      locationName: 'London',
     };
     const otherChart = calculateNatalChart(other, HouseSystem.WholeSign);
     const r1 = getProfection(natalChart, TODAY);
     const r2 = getProfection(otherChart, TODAY);
     // Different charts have different house cusps → typically different lords
     // We just check both are valid
-    const valid = [Planet.Sun, Planet.Moon, Planet.Mercury, Planet.Venus, Planet.Mars, Planet.Jupiter, Planet.Saturn];
+    const valid = [
+      Planet.Sun,
+      Planet.Moon,
+      Planet.Mercury,
+      Planet.Venus,
+      Planet.Mars,
+      Planet.Jupiter,
+      Planet.Saturn,
+    ];
     expect(valid).toContain(r1.lordOfYear);
     expect(valid).toContain(r2.lordOfYear);
   });
@@ -358,17 +383,17 @@ describe('getProfection', () => {
 // ---- formatLon utility ----
 
 describe('formatLon', () => {
-  it('formats 0° as Aries 0°00\'', () => {
+  it("formats 0° as Aries 0°00'", () => {
     const s = formatLon(0);
     expect(s).toContain('♈');
-    expect(s).toContain("0°");
+    expect(s).toContain('0°');
     expect(s).toContain("00'");
   });
 
-  it('formats 90° as Cancer 0°00\'', () => {
+  it("formats 90° as Cancer 0°00'", () => {
     const s = formatLon(90);
     expect(s).toContain('♋');
-    expect(s).toContain("0°");
+    expect(s).toContain('0°');
   });
 
   it('formats 45° as Taurus 15°', () => {

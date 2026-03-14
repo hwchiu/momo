@@ -228,17 +228,35 @@ describe('sortClients', () => {
 
 describe('formatBirthDate', () => {
   it('formats correctly', () => {
-    const c = makeClient({ birthYear: 1990, birthMonth: 3, birthDay: 5, birthHour: 8, birthMinute: 5 });
+    const c = makeClient({
+      birthYear: 1990,
+      birthMonth: 3,
+      birthDay: 5,
+      birthHour: 8,
+      birthMinute: 5,
+    });
     expect(formatBirthDate(c)).toBe('1990/03/05 08:05');
   });
 
   it('pads single-digit month and day', () => {
-    const c = makeClient({ birthYear: 2000, birthMonth: 1, birthDay: 1, birthHour: 0, birthMinute: 0 });
+    const c = makeClient({
+      birthYear: 2000,
+      birthMonth: 1,
+      birthDay: 1,
+      birthHour: 0,
+      birthMinute: 0,
+    });
     expect(formatBirthDate(c)).toBe('2000/01/01 00:00');
   });
 
   it('handles two-digit values', () => {
-    const c = makeClient({ birthYear: 1985, birthMonth: 12, birthDay: 31, birthHour: 23, birthMinute: 59 });
+    const c = makeClient({
+      birthYear: 1985,
+      birthMonth: 12,
+      birthDay: 31,
+      birthHour: 23,
+      birthMinute: 59,
+    });
     expect(formatBirthDate(c)).toBe('1985/12/31 23:59');
   });
 });
@@ -279,10 +297,7 @@ describe('loadClients / saveClients', () => {
   });
 
   it('saveClients persists multiple clients', () => {
-    const clients = [
-      makeClient({ id: 'a', name: '甲' }),
-      makeClient({ id: 'b', name: '乙' }),
-    ];
+    const clients = [makeClient({ id: 'a', name: '甲' }), makeClient({ id: 'b', name: '乙' })];
     saveClients(clients);
     expect(loadClients()).toHaveLength(2);
   });

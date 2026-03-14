@@ -15,6 +15,7 @@ Best for: small businesses, simple SaaS, portfolios.
 ```
 
 Rules:
+
 - Logo always links to homepage
 - CTA button is rightmost, visually distinct (filled button, contrasting color)
 - Items ordered by priority (most visited first)
@@ -44,6 +45,7 @@ When "Product" is hovered/clicked:
 ```
 
 Mega menu rules:
+
 - 2-4 columns max
 - Group items logically (by feature area, use case, or audience)
 - Include a "See all" link at the bottom
@@ -152,6 +154,7 @@ Changelog
 ```
 
 Rules:
+
 - Current page highlighted
 - Sections collapsible (expanded by default for active section)
 - Search at top of sidebar
@@ -190,6 +193,7 @@ Home > Docs > API Reference > Authentication
 ```
 
 Rules:
+
 - Separator: `>` or `/` (be consistent)
 - Every segment is a link except the current page
 - Current page is plain text (not linked)
@@ -224,7 +228,12 @@ Or use JSON-LD (recommended):
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
-    { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://example.com/features" },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Features",
+      "item": "https://example.com/features"
+    },
     { "@type": "ListItem", "position": 3, "name": "Analytics" }
   ]
 }
@@ -239,6 +248,7 @@ Or use JSON-LD (recommended):
 Standard for mobile. All nav items collapse into a menu icon.
 
 Rules:
+
 - Hamburger icon (three lines) top-right or top-left
 - Full-screen or slide-out panel
 - CTA button visible without opening the menu (sticky header)
@@ -261,6 +271,7 @@ Best for: web apps, PWAs, mobile-first products.
 ```
 
 Rules:
+
 - 3-5 items max
 - Icons + labels (not just icons)
 - Active state clearly indicated
@@ -283,13 +294,13 @@ Rules:
 
 ### Common Fixes
 
-| Problem | Fix |
-|---------|-----|
-| Too many nav items | Group into dropdowns or mega menus |
-| Users can't find pages | Add search, improve labeling |
-| High bounce from nav | Simplify choices, use clearer labels |
-| SEO pages not linked | Add to footer or resource sections |
-| Mobile nav is broken | Test on real devices, use hamburger pattern |
+| Problem                | Fix                                         |
+| ---------------------- | ------------------------------------------- |
+| Too many nav items     | Group into dropdowns or mega menus          |
+| Users can't find pages | Add search, improve labeling                |
+| High bounce from nav   | Simplify choices, use clearer labels        |
+| SEO pages not linked   | Add to footer or resource sections          |
+| Mobile nav is broken   | Test on real devices, use hamburger pattern |
 
 ---
 
