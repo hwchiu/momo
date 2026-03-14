@@ -349,7 +349,7 @@ function drawPlanets(
     const labelPos = polarToXY(
       dim.center,
       dim.center,
-      dim.planetRadius - dim.size * 0.04,
+      dim.planetRadius + dim.size * 0.038,
       item.adjustedAngle,
     );
     g.append('text')
@@ -414,9 +414,9 @@ function drawAspects(
       .attr('x2', pos2.x)
       .attr('y2', pos2.y)
       .attr('stroke', info.color)
-      .attr('stroke-width', aspect.orb < 3 ? 2 : 1.5)
+      .attr('stroke-width', aspect.type === 0 ? 2.5 : aspect.orb < 3 ? 2 : 1.5)
       .attr('stroke-opacity', opacity)
-      .attr('stroke-dasharray', aspect.type === 60 || aspect.type === 120 ? 'none' : '5,3');
+      .attr('stroke-dasharray', [0, 60, 120].includes(aspect.type) ? 'none' : '5,3');
   }
 }
 
