@@ -394,20 +394,28 @@ function drawPlanets(
       .attr('fill', DARK.textMuted)
       .text(`${item.planet.degree}°${sign.glyph}`);
 
-    // Retrograde marker
+    // Retrograde marker — placed between glyph and degree label to avoid overlap
     if (item.planet.retrograde) {
       const retPos = polarToXY(
         dim.center,
         dim.center,
-        dim.planetRadius + dim.size * 0.025,
+        dim.planetRadius + dim.size * 0.012,
         item.adjustedAngle,
       );
+      const retFontSize = dim.size * 0.016;
+      g.append('rect')
+        .attr('x', retPos.x - retFontSize * 0.7)
+        .attr('y', retPos.y - retFontSize * 0.65)
+        .attr('width', retFontSize * 1.4)
+        .attr('height', retFontSize * 1.3)
+        .attr('rx', 2)
+        .attr('fill', DARK.haloFill);
       g.append('text')
         .attr('x', retPos.x)
         .attr('y', retPos.y)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
-        .attr('font-size', dim.size * 0.016)
+        .attr('font-size', retFontSize)
         .attr('fill', DARK.retrograde)
         .text('℞');
     }
