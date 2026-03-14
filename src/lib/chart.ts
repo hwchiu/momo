@@ -272,7 +272,7 @@ function drawHouses(
 /**
  * Adjust planet positions to avoid overlapping glyphs.
  */
-function avoidOverlap(
+export function avoidOverlap(
   planets: PlanetPosition[],
   ascendant: number,
   minSeparation: number,
@@ -286,14 +286,16 @@ function avoidOverlap(
   items.sort((a, b) => a.adjustedAngle - b.adjustedAngle);
 
   // Push apart overlapping planets
-  for (let pass = 0; pass < 5; pass++) {
+  for (let pass = 0; pass < 10; pass++) {
     for (let i = 0; i < items.length; i++) {
       for (let j = i + 1; j < items.length; j++) {
-        const diff = items[j].adjustedAngle - items[i].adjustedAngle;
+        const raw = items[j].adjustedAngle - items[i].adjustedAngle;
+        // Shortest signed angular distance (handles 360°/0° wrap)
+        const diff = ((raw % 360) + 540) % 360 - 180;
         if (Math.abs(diff) < minSeparation) {
           const push = (minSeparation - Math.abs(diff)) / 2;
-          items[i].adjustedAngle -= push;
-          items[j].adjustedAngle += push;
+          items[i].adjustedAngle -= diff > 0 ? push : -push;
+          items[j].adjustedAngle += diff > 0 ? push : -push;
         }
       }
     }
