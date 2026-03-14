@@ -439,8 +439,8 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
   svg.append('rect').attr('width', size).attr('height', size).attr('fill', '#FAFAFA').attr('rx', 8);
 
   // Draw layers in order (back to front)
-  drawAspects(svg, chart, dim);
   drawHouses(svg, chart, dim);
+  drawAspects(svg, chart, dim);
   drawZodiacRing(svg, dim, chart.ascendant);
   drawPlanets(svg, chart, dim);
 
