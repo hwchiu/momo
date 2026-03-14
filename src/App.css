@@ -642,8 +642,10 @@
 }
 
 /* Sub-header row (smaller font) */
-.table-sub-header {
-  font-size: 11px;
+.table-sub-header th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--accent-silver-dim);
+  font-size: 10px;
 }
 
 /* Degree display inside cell */
@@ -702,43 +704,57 @@
   margin: 0 auto;
 }
 
-/* ---- Data tables ---- */
+/* ══ Data tables — dark theme ══ */
 .table-scroll {
   overflow-x: auto;
-  margin-bottom: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(79, 195, 247, 0.12);
 }
 
 .data-table {
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
   font-size: 13px;
+  color: var(--accent-silver-2);
 }
 
-/* [M-7] Increased from 3px 7px */
-.data-table th,
-.data-table td {
-  border: 1px solid var(--clr-border);
-  padding: 5px 10px;
-  vertical-align: middle;
-}
-
-.table-header th {
-  background: var(--clr-surface-3);
-  font-weight: bold;
-  color: var(--clr-text-1);
-  text-align: center;
+.data-table th {
+  background: rgba(79, 195, 247, 0.12);
+  color: var(--accent-lapis);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(79, 195, 247, 0.2);
   white-space: nowrap;
 }
 
-.row-even {
-  background: var(--clr-surface);
+.data-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
 }
-.row-odd {
-  background: var(--clr-surface-1);
+
+.data-table .row-even {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.data-table .row-odd {
+  background: transparent;
 }
 
 .data-table tr:hover td {
-  background: var(--clr-primary-light);
+  background: rgba(79, 195, 247, 0.06);
+}
+
+.table-header th {
+  background: rgba(79, 195, 247, 0.12);
+  font-weight: bold;
+  color: var(--accent-lapis);
+  text-align: center;
+  white-space: nowrap;
 }
 
 /* ---- Planet / sign glyphs ---- */
@@ -766,18 +782,12 @@
   text-align: center;
   font-weight: bold;
 }
-.dignity-廟 {
-  color: var(--clr-success);
-}
-.dignity-旺 {
-  color: var(--clr-primary);
-}
-.dignity-落 {
-  color: var(--clr-warning);
-}
-.dignity-陷 {
-  color: var(--clr-danger);
-}
+
+/* Dignity colors — bright enough for dark bg */
+.dignity-廟 { color: #34d399; font-weight: 700; }
+.dignity-旺 { color: #6ee7b7; }
+.dignity-落 { color: #f87171; }
+.dignity-陷 { color: #fca5a5; }
 
 .affiliated-cell {
   font-size: 12px;
@@ -785,14 +795,16 @@
 }
 
 .retrograde-symbol {
-  color: #900;
-  font-weight: bold;
+  color: var(--accent-lapis);
+  font-size: 11px;
+  margin-left: 3px;
 }
 
 /* ---- Dignity scores ---- */
 .score-cell {
   text-align: center;
   font-weight: bold;
+  color: var(--accent-silver);
 }
 .score-positive {
   color: var(--clr-success);
