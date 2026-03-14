@@ -83,6 +83,10 @@
   /* ── Sidebar ── */
   --sidebar-w: 200px;
   --sidebar-w-collapsed: 64px;
+
+  --clr-text-primary: var(--accent-silver);
+  --clr-text-secondary: var(--accent-silver-2);
+  --clr-accent: var(--accent-lapis);
 }
 
 /* ── Keyframes ── */
@@ -120,7 +124,12 @@
   .loading-star { animation: none !important; }
   .chart-section, .bazi-result-section { animation: none !important; }
   .submit-btn { transition: background 0.15s !important; }
-  .sidebar { animation: none !important; }
+  .stellar-sidebar { animation: none !important; }
+  .glass-panel { animation: none !important; }
+  .natal-right { animation: none !important; }
+  .sidebar-logo-icon, .stellar-header-star { animation: none !important; }
+  .error-banner { animation: none !important; }
+  body { animation: none !important; }
 }
 
 /* ---- App shell: full viewport sidebar layout ---- */
@@ -428,7 +437,6 @@
 
 /* Old class compatibility — these are now replaced by glass-panel + panel-heading */
 .quick-chart-section { all: unset; display: contents; }
-.chart-section { all: unset; display: contents; }
 .site-main { all: unset; display: contents; }
 
 .section-title {
@@ -1176,7 +1184,7 @@
 
 /* ---- Profection card ---- */
 .profection-card {
-  background: #f9f6ee;
+  background: var(--cosmos-glass);
   border: 1px solid #c8b47a;
   padding: 14px 18px;
   margin-bottom: 16px;
@@ -1681,12 +1689,12 @@
   font-weight: bold;
 }
 .officer-good {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--clr-success);
 }
 .officer-bad {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--clr-danger);
 }
 .officer-neutral {
   background: var(--clr-surface-2);
@@ -1872,12 +1880,12 @@
 }
 
 .vedic-dasha-now {
-  background: #f5f5dc;
+  background: rgba(79, 195, 247, 0.1);
   border: 1px solid #c8b47a;
   padding: 6px 14px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: var(--clr-text-3);
+  color: var(--accent-silver);
   border-radius: var(--radius-sm);
 }
 
@@ -2524,11 +2532,6 @@
   border-top: 1px solid var(--clr-border-subtle);
   padding-top: var(--sp-2);
 }
-.profection-current-row {
-  background: var(--clr-primary-light) !important;
-  font-weight: bold;
-}
-
 /* Solar Return */
 .sr-controls {
   display: flex;

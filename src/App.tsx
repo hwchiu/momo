@@ -257,7 +257,7 @@ function App() {
           <span className="sidebar-logo-icon">✦</span>
           <span className="sidebar-logo-text">星盤</span>
         </div>
-        <nav className="sidebar-nav" aria-label="功能導覽">
+        <nav className="sidebar-nav" role="tablist" aria-label="功能導覽">
           {NAV_ITEMS.map(item => (
             <button
               key={item.id}
@@ -265,6 +265,7 @@ function App() {
               aria-selected={activeTab === item.id}
               className={`sidebar-nav-btn ${activeTab === item.id ? 'active' : ''}`}
               onClick={() => setActiveTab(item.id as typeof activeTab)}
+              title={item.label}
             >
               <span className="nav-icon">{item.icon}</span>
               <span className="nav-label">{item.label}</span>
