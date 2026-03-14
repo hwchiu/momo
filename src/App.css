@@ -135,7 +135,7 @@
 /* ---- App shell: full viewport sidebar layout ---- */
 .almuten-app {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: transparent;
   color: var(--accent-silver-2);
@@ -3426,6 +3426,31 @@
   .nav-label { display: none; }
   .sidebar-logo-text { display: none; }
   .sidebar-footer-text { display: none; }
+  .natal-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══ Mobile: bottom nav layout (≤640px) ══ */
+@media (max-width: 640px) {
+  .almuten-app {
+    flex-direction: column;
+  }
+
+  .stellar-sidebar {
+    display: none;
+  }
+
+  .stellar-main {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .stellar-content {
+    padding-bottom: 72px;
+  }
+
   .natal-workspace {
     grid-template-columns: 1fr;
   }
