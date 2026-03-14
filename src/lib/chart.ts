@@ -427,16 +427,24 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
   const dim = getDimensions(size);
 
   // Clear existing content
+  const pad = Math.round(size * 0.07);
   const svg = d3
     .select(svgElement)
     .attr('width', size)
     .attr('height', size)
-    .attr('viewBox', `0 0 ${size} ${size}`);
+    .attr('viewBox', `${-pad} ${-pad} ${size + 2 * pad} ${size + 2 * pad}`);
 
   svg.selectAll('*').remove();
 
   // Background
-  svg.append('rect').attr('width', size).attr('height', size).attr('fill', '#FAFAFA').attr('rx', 8);
+  svg
+    .append('rect')
+    .attr('x', -pad)
+    .attr('y', -pad)
+    .attr('width', size + 2 * pad)
+    .attr('height', size + 2 * pad)
+    .attr('fill', '#FAFAFA')
+    .attr('rx', 8);
 
   // Draw layers in order (back to front)
   drawHouses(svg, chart, dim);
