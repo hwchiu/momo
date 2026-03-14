@@ -433,6 +433,22 @@ function App() {
           </main>
         </ErrorBoundary>
       </div>
+
+      {/* ── Mobile bottom navigation ── */}
+      <nav className="mobile-bottom-nav" role="tablist" aria-label="功能導覽">
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.id}
+            role="tab"
+            aria-selected={activeTab === item.id}
+            className={`mobile-nav-btn ${activeTab === item.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(item.id as typeof activeTab)}
+          >
+            <span className="mobile-nav-icon">{item.icon}</span>
+            <span className="mobile-nav-label">{item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
