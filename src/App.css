@@ -123,13 +123,13 @@
   .sidebar { animation: none !important; }
 }
 
-/* ---- Base ---- */
+/* ---- App shell: full viewport sidebar layout ---- */
 .almuten-app {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 var(--sp-3);
-  background: var(--clr-surface);
-  color: var(--clr-text-2);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  color: var(--accent-silver-2);
   font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.6;
