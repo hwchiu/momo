@@ -21,12 +21,27 @@ const ELEMENT_COLORS: Record<string, string> = {
   水: '#3498DB',
 };
 
-/** Light colors for zodiac sign backgrounds */
-const ELEMENT_BG_COLORS: Record<string, string> = {
-  火: '#FDEDEC',
-  土: '#F5F0EB',
-  風: '#FFF9E6',
-  水: '#EBF5FB',
+/** Dark theme colour palette for the chart */
+const DARK = {
+  bg: 'transparent',
+  innerFill: 'rgba(10, 15, 35, 0.65)',
+  text: '#C8D0E8',
+  textMuted: '#7A8AAA',
+  outerStroke: 'rgba(160, 180, 230, 0.8)',
+  innerStroke: 'rgba(140, 165, 220, 0.6)',
+  houseMinor: 'rgba(140, 160, 210, 0.35)',
+  houseMajor: 'rgba(200, 215, 255, 0.85)',
+  zodiacDiv: 'rgba(160, 175, 220, 0.5)',
+  retrograde: '#FF6B4A',
+  haloFill: 'rgba(8, 12, 28, 0.72)',
+} as const;
+
+/** Dark element background fills (zodiac ring segments) */
+const ELEMENT_BG_COLORS_DARK: Record<string, string> = {
+  火: 'rgba(80, 20, 20, 0.55)',
+  土: 'rgba(50, 42, 20, 0.55)',
+  風: 'rgba(45, 50, 20, 0.55)',
+  水: 'rgba(15, 35, 70, 0.55)',
 };
 
 interface ChartDimensions {
@@ -147,7 +162,7 @@ function drawZodiacRing(
 
     g.append('path')
       .attr('d', path)
-      .attr('fill', ELEMENT_BG_COLORS[info.element])
+      .attr('fill', ELEMENT_BG_COLORS_DARK[info.element])
       .attr('stroke', ELEMENT_COLORS[info.element])
       .attr('stroke-width', 1);
 
@@ -178,7 +193,7 @@ function drawZodiacRing(
       .attr('y1', inner.y)
       .attr('x2', outer.x)
       .attr('y2', outer.y)
-      .attr('stroke', '#888')
+      .attr('stroke', DARK.zodiacDiv)
       .attr('stroke-width', 1);
   }
 }
@@ -210,7 +225,7 @@ function drawHouses(
       .attr('y1', inner.y)
       .attr('x2', outer.x)
       .attr('y2', outer.y)
-      .attr('stroke', isCardinal ? '#222' : '#777')
+      .attr('stroke', isCardinal ? DARK.houseMajor : DARK.houseMinor)
       .attr('stroke-width', isCardinal ? 2 : 1)
       .attr('stroke-dasharray', isCardinal ? 'none' : '5,3');
 
@@ -229,7 +244,7 @@ function drawHouses(
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
       .attr('font-size', dim.size * 0.022)
-      .attr('fill', '#666')
+      .attr('fill', DARK.textMuted)
       .text(String(i + 1));
   }
 
@@ -256,7 +271,7 @@ function drawHouses(
     .attr('dominant-baseline', 'central')
     .attr('font-size', dim.size * 0.028)
     .attr('font-weight', 'bold')
-    .attr('fill', '#2980B9')
+    .attr('fill', '#60AAEE')
     .text('MC');
 
   // Inner circle
@@ -264,8 +279,8 @@ function drawHouses(
     .attr('cx', dim.center)
     .attr('cy', dim.center)
     .attr('r', dim.houseInnerRadius)
-    .attr('fill', '#FAFAFA')
-    .attr('stroke', '#555')
+    .attr('fill', DARK.innerFill)
+    .attr('stroke', DARK.innerStroke)
     .attr('stroke-width', 1.5);
 }
 
@@ -291,7 +306,7 @@ export function avoidOverlap(
       for (let j = i + 1; j < items.length; j++) {
         const raw = items[j].adjustedAngle - items[i].adjustedAngle;
         // Shortest signed angular distance (handles 360°/0° wrap)
-        const diff = ((raw % 360) + 540) % 360 - 180;
+        const diff = (((raw % 360) + 540) % 360) - 180;
         if (Math.abs(diff) < minSeparation) {
           const push = (minSeparation - Math.abs(diff)) / 2;
           items[i].adjustedAngle -= diff > 0 ? push : -push;
@@ -329,18 +344,27 @@ function drawPlanets(
         .attr('y1', tickInner.y)
         .attr('x2', pos.x)
         .attr('y2', pos.y)
-        .attr('stroke', '#aaa')
+        .attr('stroke', 'rgba(160,170,210,0.5)')
         .attr('stroke-width', 1);
     }
 
     // Planet glyph
+    // Dark halo behind glyph for readability
+    const glyphSize = dim.size * 0.035;
+    g.append('rect')
+      .attr('x', pos.x - glyphSize * 0.65)
+      .attr('y', pos.y - glyphSize * 0.65)
+      .attr('width', glyphSize * 1.3)
+      .attr('height', glyphSize * 1.3)
+      .attr('rx', 3)
+      .attr('fill', DARK.haloFill);
     g.append('text')
       .attr('x', pos.x)
       .attr('y', pos.y)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
-      .attr('font-size', dim.size * 0.035)
-      .attr('fill', item.planet.retrograde ? '#E74C3C' : '#333')
+      .attr('font-size', glyphSize)
+      .attr('fill', item.planet.retrograde ? DARK.retrograde : DARK.text)
       .attr('class', `planet-glyph planet-${item.planet.planet.toLowerCase()}`)
       .text(info.glyph);
 
@@ -352,13 +376,22 @@ function drawPlanets(
       dim.planetRadius + dim.size * 0.038,
       item.adjustedAngle,
     );
+    // Dark halo behind degree label
+    const labelFontSize = dim.size * 0.018;
+    g.append('rect')
+      .attr('x', labelPos.x - labelFontSize * 2.2)
+      .attr('y', labelPos.y - labelFontSize * 0.7)
+      .attr('width', labelFontSize * 4.4)
+      .attr('height', labelFontSize * 1.4)
+      .attr('rx', 2)
+      .attr('fill', DARK.haloFill);
     g.append('text')
       .attr('x', labelPos.x)
       .attr('y', labelPos.y)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
-      .attr('font-size', dim.size * 0.018)
-      .attr('fill', '#666')
+      .attr('font-size', labelFontSize)
+      .attr('fill', DARK.textMuted)
       .text(`${item.planet.degree}°${sign.glyph}`);
 
     // Retrograde marker
@@ -375,7 +408,7 @@ function drawPlanets(
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
         .attr('font-size', dim.size * 0.016)
-        .attr('fill', '#E74C3C')
+        .attr('fill', DARK.retrograde)
         .text('℞');
     }
   }
@@ -443,7 +476,7 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
     .attr('y', -pad)
     .attr('width', size + 2 * pad)
     .attr('height', size + 2 * pad)
-    .attr('fill', '#FAFAFA')
+    .attr('fill', 'transparent')
     .attr('rx', 8);
 
   // Draw layers in order (back to front)
@@ -459,7 +492,7 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
     .attr('cy', dim.center)
     .attr('r', dim.outerRadius)
     .attr('fill', 'none')
-    .attr('stroke', '#333')
+    .attr('stroke', DARK.outerStroke)
     .attr('stroke-width', 2);
 
   // Inner zodiac circle
@@ -469,6 +502,6 @@ export function renderNatalChart(svgElement: SVGSVGElement, chart: NatalChart, s
     .attr('cy', dim.center)
     .attr('r', dim.zodiacInnerRadius)
     .attr('fill', 'none')
-    .attr('stroke', '#333')
+    .attr('stroke', DARK.innerStroke)
     .attr('stroke-width', 1.5);
 }
