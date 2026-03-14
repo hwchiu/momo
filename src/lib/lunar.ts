@@ -28,7 +28,7 @@ const DEG = Math.PI / 180;
 /** Moon's apparent geocentric ecliptic longitude in degrees [0, 360). */
 function moonLongitude(jde: number): number {
   const pos = MoonPos.position(jde) as { lon: number };
-  return ((pos.lon / DEG) % 360 + 360) % 360;
+  return (((pos.lon / DEG) % 360) + 360) % 360;
 }
 
 // ---- New moon finder ----
@@ -42,7 +42,7 @@ export function newMoonNear(jde: number): number {
   for (let i = 0; i < 25; i++) {
     const mLon = moonLongitude(t);
     const sLon = sunLongitude(t);
-    let diff = ((mLon - sLon) + 360) % 360;
+    let diff = (mLon - sLon + 360) % 360;
     if (diff > 180) diff -= 360; // signed difference toward 0
     // Moon moves ~13.176°/day, Sun ~0.9856°/day; net ~12.19°/day
     const step = -diff / 12.19;
@@ -119,7 +119,7 @@ function monthContainsZhongQi(monthNewMoon: number, nextNewMoon: number): boolea
 export interface LunarDate {
   lunarYear: number;
   lunarMonth: number; // 1–12 (1 = 正月, the month after Spring Festival)
-  lunarDay: number;   // 1–30
+  lunarDay: number; // 1–30
   isLeapMonth: boolean;
   /** For 紫微 purposes: branch index of the lunar month (寅=0, 卯=1, ..., 丑=11) */
   monthBranchIdx: number;

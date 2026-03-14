@@ -26,7 +26,9 @@ function PalaceCell({ palace, isLife }: { palace: ZiWeiPalace; isLife: boolean }
       {palace.auxStars.length > 0 && (
         <div className="zw-aux-stars">
           {palace.auxStars.map((s) => (
-            <span key={s} className="zw-star zw-aux-star">{s}</span>
+            <span key={s} className="zw-star zw-aux-star">
+              {s}
+            </span>
           ))}
         </div>
       )}
@@ -43,9 +45,7 @@ function PalaceCell({ palace, isLife }: { palace: ZiWeiPalace; isLife: boolean }
 
 function PalaceGrid({ chart }: { chart: ZiWeiChart }) {
   // Map branch → palace
-  const byBranch = new Map<number, ZiWeiPalace>(
-    chart.palaces.map((p) => [p.branch, p])
-  );
+  const byBranch = new Map<number, ZiWeiPalace>(chart.palaces.map((p) => [p.branch, p]));
 
   // Build 4×4 grid
   const grid: (ZiWeiPalace | 'center' | null)[][] = Array.from({ length: 4 }, () =>
@@ -80,13 +80,14 @@ function PalaceGrid({ chart }: { chart: ZiWeiChart }) {
                   <div className="zw-center-row">
                     <span className="zw-center-label">農曆</span>
                     <span className="zw-center-val">
-                      {chart.lunarMonth}月{chart.lunarDay}日
-                      {chart.isLeapMonth ? '（閏）' : ''}
+                      {chart.lunarMonth}月{chart.lunarDay}日{chart.isLeapMonth ? '（閏）' : ''}
                     </span>
                   </div>
                   <div className="zw-center-row">
                     <span className="zw-center-label">紫微</span>
-                    <span className="zw-center-val">{chart.palaces.find((p) => p.branch === chart.ziWeiBranch)?.branchName}宮</span>
+                    <span className="zw-center-val">
+                      {chart.palaces.find((p) => p.branch === chart.ziWeiBranch)?.branchName}宮
+                    </span>
                   </div>
                   <div className="zw-center-row">
                     <span className="zw-center-label">命宮</span>
@@ -94,7 +95,10 @@ function PalaceGrid({ chart }: { chart: ZiWeiChart }) {
                   </div>
                   <div className="zw-center-row">
                     <span className="zw-center-label">年柱</span>
-                    <span className="zw-center-val">{chart.yearStem}{chart.yearBranch}</span>
+                    <span className="zw-center-val">
+                      {chart.yearStem}
+                      {chart.yearBranch}
+                    </span>
                   </div>
                   <div className="zw-center-row">
                     <span className="zw-center-label">時支</span>
@@ -106,13 +110,7 @@ function PalaceGrid({ chart }: { chart: ZiWeiChart }) {
             return null; // other center cells consumed by grid-area span
           }
           const p = cell as ZiWeiPalace;
-          return (
-            <PalaceCell
-              key={p.branch}
-              palace={p}
-              isLife={p.idx === 0}
-            />
-          );
+          return <PalaceCell key={p.branch} palace={p} isLife={p.idx === 0} />;
         }),
       )}
     </div>
@@ -167,11 +165,7 @@ export function ZiWeiPanel() {
 
   return (
     <section className="classical-panel">
-      <button
-        className="panel-toggle-btn"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
+      <button className="panel-toggle-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         ☰ 紫微斗數命盤 {open ? '▲' : '▼'}
       </button>
 
@@ -230,7 +224,12 @@ export function ZiWeiPanel() {
               </div>
               <div className="zw-form-field">
                 <label className="form-label">性別</label>
-                <select className="form-input" name="gender" value={form.gender} onChange={handleChange}>
+                <select
+                  className="form-input"
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                >
                   <option value="male">男</option>
                   <option value="female">女</option>
                 </select>
@@ -241,14 +240,21 @@ export function ZiWeiPanel() {
             </button>
           </div>
 
-          {error && <p className="panel-note" style={{ color: 'var(--clr-danger)' }}>{error}</p>}
+          {error && (
+            <p className="panel-note" style={{ color: 'var(--clr-danger)' }}>
+              {error}
+            </p>
+          )}
 
           {chart && !loading && (
             <>
               {/* Summary strip */}
               <div className="zw-summary-strip">
                 <span className="zw-summary-item">
-                  農曆 <strong>{chart.lunarMonth}月{chart.lunarDay}日</strong>
+                  農曆{' '}
+                  <strong>
+                    {chart.lunarMonth}月{chart.lunarDay}日
+                  </strong>
                   {chart.isLeapMonth && ' (閏月)'}
                 </span>
                 <span className="zw-summary-item">
@@ -258,7 +264,10 @@ export function ZiWeiPanel() {
                   命宮 <strong>{chart.palaces[0].branchName}宮</strong>
                 </span>
                 <span className="zw-summary-item">
-                  紫微在 <strong>{chart.palaces.find((p) => p.branch === chart.ziWeiBranch)?.branchName}宮</strong>
+                  紫微在{' '}
+                  <strong>
+                    {chart.palaces.find((p) => p.branch === chart.ziWeiBranch)?.branchName}宮
+                  </strong>
                 </span>
               </div>
 
@@ -271,7 +280,12 @@ export function ZiWeiPanel() {
                 <span className="zw-star zw-main-star zw-star-xiong">凶星</span>
                 <span className="zw-star zw-main-star zw-star-neutral">中性</span>
                 <span className="zw-star zw-aux-star">輔星</span>
-                <span className="zw-palace zw-life-palace" style={{ display: 'inline-block', padding: '1px 6px', fontSize: 11 }}>命宮框</span>
+                <span
+                  className="zw-palace zw-life-palace"
+                  style={{ display: 'inline-block', padding: '1px 6px', fontSize: 11 }}
+                >
+                  命宮框
+                </span>
               </div>
             </>
           )}

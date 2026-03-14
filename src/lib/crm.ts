@@ -30,9 +30,7 @@ export function createClient(input: CRMClientInput): CRMClient {
 }
 
 export function updateClient(clients: CRMClient[], id: string, input: CRMClientInput): CRMClient[] {
-  return clients.map((c) =>
-    c.id === id ? { ...c, ...input, updatedAt: Date.now() } : c,
-  );
+  return clients.map((c) => (c.id === id ? { ...c, ...input, updatedAt: Date.now() } : c));
 }
 
 export function deleteClient(clients: CRMClient[], id: string): CRMClient[] {

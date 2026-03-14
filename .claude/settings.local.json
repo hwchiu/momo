@@ -17,7 +17,13 @@
       "Bash(npx vitest run --reporter=verbose tests/lib/compare_almuten.test.ts 2>&1 | tail -60)",
       "Bash(npx vitest run --reporter=verbose tests/lib/compare_almuten.test.ts 2>&1 | tail -40)",
       "Bash(npx vitest run --reporter=verbose 2>&1 | tail -50)",
-      "Bash(npx vitest run --reporter=verbose 2>&1 | tail -25)"
+      "Bash(npx vitest run --reporter=verbose 2>&1 | tail -25)",
+      "Bash(npm run typecheck 2>&1)",
+      "Bash(npm run typecheck && npm run build && npm run test 2>&1)",
+      "Bash(npm run test 2>&1 | tail -20)",
+      "Bash(grep -n \"site-footer\\\\|site-title\\\\|site-main\\\\|tab-nav\\\\|top-nav\\\\|tab-btn\\\\b\" /Users/hwchiu/hwchiu/momo/src/components/*.tsx 2>/dev/null | head -20)",
+      "Bash(grep -n \"bazi-result-section\" /Users/hwchiu/hwchiu/momo/src/components/*.tsx /Users/hwchiu/hwchiu/momo/src/App.tsx 2>/dev/null)",
+      "Bash(npm run lint 2>&1 | tail -20)"
     ]
   }
 }
