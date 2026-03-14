@@ -18,7 +18,7 @@
 
 import { sunLongitude, dateToJDN } from './bazi';
 
-// @ts-expect-error
+// @ts-expect-error no type declarations for astronomia/moonposition
 import * as MoonPos from 'astronomia/moonposition';
 
 const DEG = Math.PI / 180;
@@ -165,11 +165,11 @@ export function gregorianToLunar(year: number, month: number, day: number): Luna
   //   M=11→(11+1)%12=0(子) ✓, M=12→(12+1)%12=1(丑) ✓, M=1→(1+1)%12=2(寅) ✓
 
   // Walk from dzNewMoon through lunar months to find thisNewMoon's month number
-  let curNewMoon = dzNewMoon;
-  let curMonthNum = 11; // 子月 = 十一月 = month 11
-  let curIsLeap = false;
+  const curNewMoon = dzNewMoon;
+  const curMonthNum = 11; // 子月 = 十一月 = month 11
+  const curIsLeap = false;
   let prevMonthNum = 10; // one before 子月 for tracking
-  let lunarYear = year; // approximate; refine below
+  const lunarYear = year; // approximate; refine below
 
   // Check if dzNewMoon is actually BEFORE 冬至 (it should be; adjust if needed)
   // and which year's 十一月 it is
