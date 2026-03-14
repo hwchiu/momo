@@ -1,176 +1,152 @@
-import type { NumerologyMeaning, NumerologyResult } from '../types/numerology';
+// Numerology calculation engine
+// All numbers use Pythagorean numerology system.
+// Master numbers 11, 22, 33 are preserved (not reduced further).
 
-export const MASTER_NUMBERS = new Set([11, 22, 33]);
+import type { NumerologyResult, PinnaclePeriod } from '../types/numerology';
+import { PINNACLE_LABELS } from '../types/numerology';
 
-export function reduceToSingleDigit(n: number): number {
-  let num = Math.abs(n);
-  while (num > 9 && !MASTER_NUMBERS.has(num)) {
-    num = String(num)
-      .split('')
-      .reduce((acc, d) => acc + parseInt(d, 10), 0);
-  }
-  return num;
-}
-
-export function calculateLifePath(year: number, month: number, day: number): number {
-  const digits = `${year}${month}${day}`.split('').map(Number);
-  const sum = digits.reduce((a, b) => a + b, 0);
-  return reduceToSingleDigit(sum);
-}
-
-export function letterToNumber(char: string): number {
-  const c = char.toUpperCase();
-  if (c < 'A' || c > 'Z') return 0;
-  const val = c.charCodeAt(0) - 64; // A=1..Z=26
-  return reduceToSingleDigit(val);
-}
-
-export function calculateExpressionNumber(fullName: string): number {
-  const sum = fullName
+/** Sum all digits of a positive integer. */
+function digitSum(n: number): number {
+  return String(Math.abs(Math.round(n)))
     .split('')
-    .map(letterToNumber)
-    .reduce((a, b) => a + b, 0);
-  return reduceToSingleDigit(sum);
+    .reduce((a, d) => a + parseInt(d, 10), 0);
 }
 
-const VOWELS = new Set(['A', 'E', 'I', 'O', 'U']);
-
-export function calculateSoulUrgeNumber(fullName: string): number {
-  const sum = fullName
-    .toUpperCase()
-    .split('')
-    .filter((c) => VOWELS.has(c))
-    .map(letterToNumber)
-    .reduce((a, b) => a + b, 0);
-  return reduceToSingleDigit(sum);
+/**
+ * Reduce n to a single digit (1–9), preserving master numbers 11, 22, 33.
+ * keepMaster=false reduces everything to 1–9 (used for challenges).
+ */
+export function reduceNumber(n: number, keepMaster = true): number {
+  if (keepMaster && (n === 11 || n === 22 || n === 33)) return n;
+  if (n >= 1 && n <= 9) return n;
+  if (n === 0) return 0; // challenge number can be 0
+  return reduceNumber(digitSum(n), keepMaster);
 }
 
-export function calculatePersonalityNumber(fullName: string): number {
-  const sum = fullName
-    .toUpperCase()
-    .split('')
-    .filter((c) => c >= 'A' && c <= 'Z' && !VOWELS.has(c))
-    .map(letterToNumber)
-    .reduce((a, b) => a + b, 0);
-  return reduceToSingleDigit(sum);
+/** Compute Life Path Number from birth date. */
+export function calcLifePath(year: number, month: number, day: number): number {
+  // Reduce each component first, then sum and reduce (preserves master numbers).
+  const m = reduceNumber(month);
+  const d = reduceNumber(day);
+  const y = reduceNumber(digitSum(year));
+  return reduceNumber(m + d + y);
 }
 
-export function calculatePersonalYear(
+/** Birthday Number = birth day reduced to single digit (master-aware). */
+export function calcBirthdayNumber(day: number): number {
+  return reduceNumber(day);
+}
+
+/** Personal Year Number for a given reference year. */
+export function calcPersonalYear(birthMonth: number, birthDay: number, refYear: number): number {
+  const m = reduceNumber(birthMonth);
+  const d = reduceNumber(birthDay);
+  const y = reduceNumber(digitSum(refYear));
+  return reduceNumber(m + d + y);
+}
+
+/** Personal Month Number. */
+export function calcPersonalMonth(personalYear: number, refMonth: number): number {
+  return reduceNumber(personalYear + refMonth);
+}
+
+/** Personal Day Number. */
+export function calcPersonalDay(personalMonth: number, refDay: number): number {
+  return reduceNumber(personalMonth + refDay);
+}
+
+/**
+ * Challenge Numbers — use simple single digits (no master numbers).
+ * C1 = |month − day|
+ * C2 = |year − day|
+ * C3 = |C1 − C2|
+ * C4 = |month − year|
+ */
+export function calcChallenges(
+  year: number,
+  month: number,
+  day: number,
+): [number, number, number, number] {
+  const m = reduceNumber(month, false);
+  const d = reduceNumber(day, false);
+  const y = reduceNumber(digitSum(year), false);
+  const c1 = Math.abs(m - d);
+  const c2 = Math.abs(y - d);
+  const c3 = Math.abs(c1 - c2);
+  const c4 = Math.abs(m - y);
+  return [c1, c2, c3, c4];
+}
+
+/**
+ * Pinnacle Cycles.
+ * P1 = month + day  (reduced)
+ * P2 = day + year   (reduced)
+ * P3 = P1 + P2      (reduced)
+ * P4 = month + year (reduced)
+ *
+ * Duration: P1 ends at age (36 − lifePath); each subsequent pinnacle = 9 years.
+ * P4 is ongoing (endAge = null).
+ */
+export function calcPinnacles(
+  year: number,
+  month: number,
+  day: number,
+  lifePath: number,
+): PinnaclePeriod[] {
+  const m = reduceNumber(month);
+  const d = reduceNumber(day);
+  const y = reduceNumber(digitSum(year));
+
+  const p1 = reduceNumber(m + d);
+  const p2 = reduceNumber(d + y);
+  const p3 = reduceNumber(p1 + p2);
+  const p4 = reduceNumber(m + y);
+
+  // For master-number life paths treat as their reduced value for duration calc
+  const lpBase = lifePath > 9 ? reduceNumber(lifePath, false) : lifePath;
+  const end1 = 36 - lpBase;
+
+  return [
+    { number: p1, startAge: 0, endAge: end1, label: PINNACLE_LABELS[0] },
+    { number: p2, startAge: end1 + 1, endAge: end1 + 9, label: PINNACLE_LABELS[1] },
+    { number: p3, startAge: end1 + 10, endAge: end1 + 18, label: PINNACLE_LABELS[2] },
+    { number: p4, startAge: end1 + 19, endAge: null, label: PINNACLE_LABELS[3] },
+  ];
+}
+
+/** Full numerology calculation. refDate defaults to today if not provided. */
+export function calculateNumerology(
+  birthYear: number,
   birthMonth: number,
   birthDay: number,
-  currentYear: number,
-): number {
-  const yearDigits = String(currentYear)
-    .split('')
-    .map(Number)
-    .reduce((a, b) => a + b, 0);
-  const sum = birthMonth + birthDay + yearDigits;
-  return reduceToSingleDigit(sum);
-}
-
-export function calculateNumerology(
-  birthData: { year: number; month: number; day: number },
-  fullName?: string,
-  currentYear?: number,
+  refDate?: { year: number; month: number; day: number },
 ): NumerologyResult {
-  const cy = currentYear ?? new Date().getFullYear();
-  const cm = new Date().getMonth() + 1;
-  const lifePath = calculateLifePath(birthData.year, birthData.month, birthData.day);
-  const personalYear = calculatePersonalYear(birthData.month, birthData.day, cy);
-  const personalMonth = reduceToSingleDigit(personalYear + cm);
+  const today = new Date();
+  const refYear = refDate?.year ?? today.getFullYear();
+  const refMonth = refDate?.month ?? today.getMonth() + 1;
+  const refDay = refDate?.day ?? today.getDate();
 
-  const expressionNumber = fullName ? calculateExpressionNumber(fullName) : 0;
-  const soulUrgeNumber = fullName ? calculateSoulUrgeNumber(fullName) : 0;
-  const personalityNumber = fullName ? calculatePersonalityNumber(fullName) : 0;
-  const birthDayNumber = reduceToSingleDigit(birthData.day);
+  const lifePath = calcLifePath(birthYear, birthMonth, birthDay);
+  const birthdayNumber = calcBirthdayNumber(birthDay);
+  const personalYear = calcPersonalYear(birthMonth, birthDay, refYear);
+  const personalMonth = calcPersonalMonth(personalYear, refMonth);
+  const personalDay = calcPersonalDay(personalMonth, refDay);
+  const challenges = calcChallenges(birthYear, birthMonth, birthDay);
+  const pinnacles = calcPinnacles(birthYear, birthMonth, birthDay, lifePath);
 
   return {
-    lifePathNumber: lifePath,
-    expressionNumber,
-    soulUrgeNumber,
-    personalityNumber,
-    birthDayNumber,
+    birthYear,
+    birthMonth,
+    birthDay,
+    lifePath,
+    birthdayNumber,
     personalYear,
     personalMonth,
+    personalDay,
+    refYear,
+    refMonth,
+    refDay,
+    challenges,
+    pinnacles,
   };
 }
-
-export const NUMEROLOGY_MEANINGS: Record<number, NumerologyMeaning> = {
-  1: {
-    number: 1,
-    title: '獨立先行者',
-    keywords: ['領導力', '獨立', '創新', '原創性', '勇氣'],
-    description:
-      '數字1代表開創與領導。具有強烈的獨立精神和自信心，喜歡走在時代前端。有創新能力，但需注意避免過於自我中心。',
-  },
-  2: {
-    number: 2,
-    title: '和諧協調者',
-    keywords: ['合作', '外交', '敏感', '平衡', '直覺'],
-    description:
-      '數字2代表合作與平衡。天生的外交官，善於在衝突中尋求和解。情感豐富、直覺敏銳，但有時過於依賴他人肯定。',
-  },
-  3: {
-    number: 3,
-    title: '創意表達者',
-    keywords: ['創意', '溝通', '樂觀', '藝術', '社交'],
-    description:
-      '數字3充滿創意與表達欲。擅長藝術、寫作或演說，樂觀開朗、社交活躍。挑戰在於保持專注，避免精力分散。',
-  },
-  4: {
-    number: 4,
-    title: '實務建造者',
-    keywords: ['穩定', '勤奮', '紀律', '實際', '可靠'],
-    description:
-      '數字4象徵踏實與建設。重視秩序和紀律，是可靠的建造者。擅長系統性工作，但需學習靈活應對變化。',
-  },
-  5: {
-    number: 5,
-    title: '自由探索者',
-    keywords: ['自由', '冒險', '適應力', '多才多藝', '變化'],
-    description:
-      '數字5代表自由與變化。渴望冒險和新體驗，適應力強、多才多藝。需注意避免過於衝動或難以持久。',
-  },
-  6: {
-    number: 6,
-    title: '責任守護者',
-    keywords: ['責任', '愛護', '家庭', '服務', '和諧'],
-    description:
-      '數字6象徵愛與責任。天生的照顧者，重視家庭和社群。有強烈的服務精神，但需避免干涉他人或過度犧牲。',
-  },
-  7: {
-    number: 7,
-    title: '智慧探求者',
-    keywords: ['智慧', '分析', '靈性', '神秘', '內省'],
-    description:
-      '數字7代表智慧與靈性。喜歡深入研究，具有哲學思辨能力。傾向內省，需在孤獨與連結之間取得平衡。',
-  },
-  8: {
-    number: 8,
-    title: '力量成就者',
-    keywords: ['力量', '成就', '物質', '權威', '豐盛'],
-    description:
-      '數字8象徵物質力量與成就。具有商業頭腦和領導魄力，追求成功與豐盛。需注意平衡物質與靈性追求。',
-  },
-  9: {
-    number: 9,
-    title: '人道主義者',
-    keywords: ['慈悲', '人道', '智慧', '完成', '奉獻'],
-    description:
-      '數字9代表完成與人道主義。具有廣大的同情心和大愛精神，洞察力深邃。挑戰在於學會放下和接受結束。',
-  },
-  11: {
-    number: 11,
-    title: '靈性啟示者',
-    keywords: ['直覺', '靈感', '啟示', '理想主義', '靈性'],
-    description:
-      '主數11是靈性數字，代表超自然直覺與啟示。具有強烈的感知能力和理想主義，是天生的精神導師。需要接地氣，避免焦慮。',
-  },
-  22: {
-    number: 22,
-    title: '宏大建造者',
-    keywords: ['遠見', '實踐', '宏大', '領導', '建設'],
-    description:
-      '主數22結合了遠見與實踐能力，是所有數字中潛力最大的。能將宏大的夢想化為現實，是世代性的建造者。',
-  },
-};

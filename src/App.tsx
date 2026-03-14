@@ -25,13 +25,13 @@ import { BaziResult } from './components/BaziResult';
 import { KuaPanel } from './components/KuaPanel';
 import { FlyingStarsPanel } from './components/FlyingStarsPanel';
 import { DateSelectTool } from './components/DateSelectTool';
+import { NumerologyPanel } from './components/NumerologyPanel';
 import { VedicForm } from './components/VedicForm';
 import { VedicResult } from './components/VedicResult';
 import { SynastryForm } from './components/SynastryForm';
 import { SynastryResult } from './components/SynastryResult';
 import { LoadingMessage } from './components/LoadingMessage';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { NumerologyPanel } from './components/NumerologyPanel';
 import { FengshuiPanel } from './components/FengshuiPanel';
 import { ClientDatabase } from './components/ClientDatabase';
 import type { ClientRecord } from './types/client';
@@ -69,7 +69,7 @@ function getDefaultBirthData(): { birthData: BirthData; houseSystem: HouseSystem
 
 function App() {
   const [activeTab, setActiveTab] = useState<
-    'natal' | 'bazi' | 'vedic' | 'synastry' | 'numerology' | 'fengshui' | 'clients'
+    'natal' | 'bazi' | 'ziwei' | 'vedic' | 'synastry' | 'numerology' | 'fengshui' | 'clients'
   >('natal');
 
   // Shared aspect orb config (natal chart + synastry)

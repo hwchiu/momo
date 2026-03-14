@@ -158,9 +158,9 @@ function calcMonthPillar(birthJDE: number, yearStem: number): Pillar {
   return { stem, branch };
 }
 
-/** Compute day pillar from Julian Day Number. Reference: JDN 2451545 = 甲戌 (index 10). */
+/** Compute day pillar from Julian Day Number. Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); offset +49. */
 function calcDayPillar(jdn: number): Pillar {
-  const dayIndex = (((jdn + 5) % 60) + 60) % 60;
+  const dayIndex = (((jdn + 49) % 60) + 60) % 60;
   return { stem: dayIndex % 10, branch: dayIndex % 12 };
 }
 
@@ -230,8 +230,12 @@ export function calculateBazi(input: BaziInput): BaziChart {
 
   const yearPillar = calcYearPillar(input, birthJDE);
   const monthPillar = calcMonthPillar(birthJDE, yearPillar.stem);
+  // The day pillar always uses the calendar day (no day-advance at 23:00).
+  // 子時跨日: at 子時 (23:00–01:00) the HOUR stem is derived from the *next*
+  // calendar day's stem, while the day pillar itself remains the current day.
   const dayPillar = calcDayPillar(jdn);
-  const hourPillar = calcHourPillar(input.hour, dayPillar.stem);
+  const stemForHour = input.hour >= 23 ? calcDayPillar(jdn + 1).stem : dayPillar.stem;
+  const hourPillar = calcHourPillar(input.hour, stemForHour);
 
   const { isForward, startYears, startMonths, cycles } = calcLuckCycles(
     input,
@@ -633,6 +637,48 @@ export function getAnnualFlyingStars(year: number): FlyingStarGrid {
   });
 
   return { year, centerStar, palaces };
+}
+
+/**
+ * Calculate the monthly flying star grid for a given year/month.
+ *
+ * The monthly center star is derived from the annual center star:
+ *   - Annual center groups → 寅月 (立春) start: (1,4,7)→8, (2,5,8)→5, (3,6,9)→2
+ *   - Each subsequent solar month decreases by 1 (same 逆飛 direction as annual)
+ *
+ * The solar month index is determined from the Sun longitude at mid-month:
+ *   月支月 index 0 = 寅月 (立春, Sun lon ≈315°), stepping every 30°.
+ */
+export function getMonthlyFlyingStars(year: number, month: number): FlyingStarGrid {
+  const annualRaw = ((1 - (year - 1864)) % 9 + 9) % 9;
+  const annualCenter = annualRaw === 0 ? 9 : annualRaw;
+
+  // 寅月 starting center: annual groups (1,4,7)→8, (2,5,8)→5, (3,6,9)→2
+  const yinMonthCenter = [8, 5, 2][(annualCenter - 1) % 3];
+
+  // Determine solar month index (0=寅月 at 立春/315°)
+  const midJdn = dateToJDN(year, month, 15);
+  const midJde = midJdn - 0.5; // noon
+  const sunLon = sunLongitude(midJde);
+  const monthIdx = Math.floor(((sunLon - 315 + 360) % 360) / 30);
+
+  // Decrement by monthIdx from 寅月 center
+  const centerRaw = ((yinMonthCenter - 1 - monthIdx + 900) % 9);
+  const centerStar = centerRaw === 0 ? 9 : centerRaw;
+
+  const palaces = PALACE_ORDER.map(({ direction, dirShort }, displayIdx) => {
+    const offset = DISPLAY_TO_OFFSET[displayIdx];
+    const starRaw = ((centerStar - 1 + offset) % 9) + 1;
+    return {
+      direction,
+      dirShort,
+      star: starRaw,
+      starName: STAR_NAMES[starRaw],
+      quality: STAR_QUALITY[starRaw],
+    };
+  });
+
+  return { year, month, centerStar, palaces };
 }
 
 // ---- Date Selection Tool (擇日) ----
