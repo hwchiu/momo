@@ -20,7 +20,7 @@ describe('avoidOverlap', () => {
   it('spreads planets clustered near 0°/360° boundary', () => {
     const planets = [makePlanet(355), makePlanet(5)];
     const result = avoidOverlap(planets, 0, 15);
-    const angles = result.map(r => r.adjustedAngle);
+    const angles = result.map((r) => r.adjustedAngle);
     const diff = Math.abs(angles[0] - angles[1]);
     const shortDiff = Math.min(diff, 360 - diff);
     expect(shortDiff).toBeGreaterThanOrEqual(14.9);
