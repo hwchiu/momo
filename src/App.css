@@ -678,8 +678,9 @@
 }
 
 .chart-visual {
-  text-align: center;
-  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ---- SVG chart ---- */
@@ -886,41 +887,41 @@
 
 /* ---- State messages ---- */
 .loading-msg {
-  padding: var(--sp-5);
-  text-align: center;
-  color: var(--clr-text-muted);
-  font-size: 14px;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
+  padding: 16px;
+  color: var(--accent-lapis);
+  font-size: 13px;
+  letter-spacing: 0.04em;
 }
 
 .loading-star {
-  display: inline-block;
-  color: var(--clr-star);
-  font-size: 1.1em;
-  animation: pulse-star 1.4s ease-in-out infinite;
-  line-height: 1;
+  font-size: 18px;
+  color: var(--accent-lapis);
+  text-shadow: 0 0 12px var(--accent-lapis-glow);
+  animation: pulse-star 1.2s ease-in-out infinite;
 }
+
 .loading-star--delayed {
-  animation-delay: 0.5s;
+  animation-delay: 0.4s;
 }
 
 .error-banner {
-  background: var(--clr-danger-bg);
-  color: var(--clr-danger);
-  border: 1px solid #f0a0a0;
-  padding: var(--sp-2) var(--sp-3);
-  margin: var(--sp-2) 0;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: var(--radius-md);
+  color: #fca5a5;
+  padding: 12px 16px;
   font-size: 13px;
-  border-radius: var(--radius-sm);
+  animation: celestial-appear 0.3s ease-out;
 }
 
 .no-data {
-  color: var(--clr-text-muted);
+  color: var(--accent-silver-muted);
   font-size: 13px;
-  margin: 4px 0;
+  padding: 16px;
+  text-align: center;
 }
 
 /* ---- Footer ---- */
@@ -947,8 +948,6 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border-strong);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -956,27 +955,47 @@
   min-width: 240px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--cosmos-mid);
+  border: 1px solid rgba(79, 195, 247, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .geo-results li {
-  padding: 9px 12px;
+  padding: 8px 12px;
   cursor: pointer;
   font-size: 13px;
   border-bottom: 1px solid var(--clr-border-subtle);
   min-height: 44px;
   display: flex;
   align-items: center;
+  color: var(--accent-silver-2);
 }
 
-.geo-results li:hover {
-  background: var(--clr-primary-light);
-}
+.geo-results li:hover,
 .geo-results li:focus-visible {
+  background: rgba(79, 195, 247, 0.12);
+  color: var(--accent-silver);
   outline: none;
-  background: var(--clr-primary-light);
-  box-shadow: inset var(--focus-ring);
+}
+
+/* Autocomplete aliases (for future use) */
+.autocomplete-list {
+  background: var(--cosmos-mid);
+  border: 1px solid rgba(79, 195, 247, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.autocomplete-item {
+  color: var(--accent-silver-2);
+  padding: 8px 12px;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background: rgba(79, 195, 247, 0.12);
+  color: var(--accent-silver);
 }
 
 /* ---- Transit / Progressions panel ---- */
@@ -3396,4 +3415,20 @@
     flex: none;
     width: 100%;
   }
+}
+
+/* ══ Responsive: narrow screens ══ */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 56px; }
+  .nav-label { display: none; }
+  .sidebar-logo-text { display: none; }
+  .sidebar-footer-text { display: none; }
+  .natal-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .stellar-content { padding: 12px; }
+  .glass-panel { padding: 14px; }
 }
