@@ -23,8 +23,20 @@ const GRID_LAYOUT = [
   [6, 7, 8],
 ];
 
-const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月',
-  '七月', '八月', '九月', '十月', '十一月', '十二月'];
+const MONTH_NAMES = [
+  '一月',
+  '二月',
+  '三月',
+  '四月',
+  '五月',
+  '六月',
+  '七月',
+  '八月',
+  '九月',
+  '十月',
+  '十一月',
+  '十二月',
+];
 
 function StarGrid({ palaces, compact }: { palaces: FlyingStarPalace[]; compact?: boolean }) {
   return (
@@ -101,7 +113,9 @@ export function FlyingStarsPanel() {
             onChange={(e) => setMonth(Number(e.target.value))}
           >
             {MONTH_NAMES.map((name, i) => (
-              <option key={i + 1} value={i + 1}>{name}</option>
+              <option key={i + 1} value={i + 1}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
@@ -112,7 +126,10 @@ export function FlyingStarsPanel() {
         <div className="fs-grid-section">
           <div className="fs-grid-label">
             {year} 年飛星
-            <span className="fs-center-badge" style={{ color: QUALITY_COLOR[STAR_QUALITY[annualGrid.centerStar]] }}>
+            <span
+              className="fs-center-badge"
+              style={{ color: QUALITY_COLOR[STAR_QUALITY[annualGrid.centerStar]] }}
+            >
               中宮 {annualGrid.centerStar} 白
             </span>
           </div>
@@ -127,7 +144,10 @@ export function FlyingStarsPanel() {
         <div className="fs-grid-section">
           <div className="fs-grid-label">
             {MONTH_NAMES[month - 1]}月飛星
-            <span className="fs-center-badge" style={{ color: QUALITY_COLOR[STAR_QUALITY[monthlyGrid.centerStar]] }}>
+            <span
+              className="fs-center-badge"
+              style={{ color: QUALITY_COLOR[STAR_QUALITY[monthlyGrid.centerStar]] }}
+            >
               中宮 {monthlyGrid.centerStar} 白
             </span>
           </div>

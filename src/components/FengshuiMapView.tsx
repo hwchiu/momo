@@ -69,38 +69,78 @@ function arcPath(
 
 /** 8 trigrams in clockwise compass order, each spanning 45°. */
 const TRIGRAMS = [
-  { name: '乾', startDeg: 292.5, fill: 'rgba(218,165,32,0.22)', stroke: '#b8900a', label: '金·西北' },
+  {
+    name: '乾',
+    startDeg: 292.5,
+    fill: 'rgba(218,165,32,0.22)',
+    stroke: '#b8900a',
+    label: '金·西北',
+  },
   { name: '坎', startDeg: 337.5, fill: 'rgba(52,120,190,0.22)', stroke: '#1a6fa8', label: '水·北' },
-  { name: '艮', startDeg: 22.5, fill: 'rgba(190,160,80,0.20)', stroke: '#8b6914', label: '山·東北' },
+  {
+    name: '艮',
+    startDeg: 22.5,
+    fill: 'rgba(190,160,80,0.20)',
+    stroke: '#8b6914',
+    label: '山·東北',
+  },
   { name: '震', startDeg: 67.5, fill: 'rgba(40,167,80,0.22)', stroke: '#1e7a42', label: '木·東' },
-  { name: '巽', startDeg: 112.5, fill: 'rgba(20,160,150,0.20)', stroke: '#127a72', label: '風·東南' },
+  {
+    name: '巽',
+    startDeg: 112.5,
+    fill: 'rgba(20,160,150,0.20)',
+    stroke: '#127a72',
+    label: '風·東南',
+  },
   { name: '離', startDeg: 157.5, fill: 'rgba(192,57,43,0.22)', stroke: '#8b2012', label: '火·南' },
-  { name: '坤', startDeg: 202.5, fill: 'rgba(130,110,70,0.20)', stroke: '#7d6b4f', label: '土·西南' },
+  {
+    name: '坤',
+    startDeg: 202.5,
+    fill: 'rgba(130,110,70,0.20)',
+    stroke: '#7d6b4f',
+    label: '土·西南',
+  },
   { name: '兌', startDeg: 247.5, fill: 'rgba(160,160,160,0.22)', stroke: '#777', label: '金·西' },
 ] as const;
 
 /** 24 mountains in clockwise order, first (壬) starting at 337.5° (NNW). */
 const MOUNTAINS = [
-  '壬', '子', '癸', // N sector (坎)  337.5–22.5°
-  '丑', '艮', '寅', // NE sector (艮) 22.5–67.5°
-  '甲', '卯', '乙', // E sector (震)  67.5–112.5°
-  '辰', '巽', '巳', // SE sector (巽) 112.5–157.5°
-  '丙', '午', '丁', // S sector (離)  157.5–202.5°
-  '未', '坤', '申', // SW sector (坤) 202.5–247.5°
-  '庚', '酉', '辛', // W sector (兌)  247.5–292.5°
-  '戌', '乾', '亥', // NW sector (乾) 292.5–337.5°
+  '壬',
+  '子',
+  '癸', // N sector (坎)  337.5–22.5°
+  '丑',
+  '艮',
+  '寅', // NE sector (艮) 22.5–67.5°
+  '甲',
+  '卯',
+  '乙', // E sector (震)  67.5–112.5°
+  '辰',
+  '巽',
+  '巳', // SE sector (巽) 112.5–157.5°
+  '丙',
+  '午',
+  '丁', // S sector (離)  157.5–202.5°
+  '未',
+  '坤',
+  '申', // SW sector (坤) 202.5–247.5°
+  '庚',
+  '酉',
+  '辛', // W sector (兌)  247.5–292.5°
+  '戌',
+  '乾',
+  '亥', // NW sector (乾) 292.5–337.5°
 ];
 
 /** LoShu position → compass angle for the 8 directional flying-star sectors. */
 const LOSHU_COMPASS: Record<number, number> = {
-  1: 0,    // N
-  2: 225,  // SW
-  3: 90,   // E
-  4: 135,  // SE
-  6: 315,  // NW
-  7: 270,  // W
-  8: 45,   // NE
-  9: 180,  // S
+  1: 0, // N
+  2: 225, // SW
+  3: 90, // E
+  4: 135, // SE
+  6: 315, // NW
+  7: 270, // W
+  8: 45, // NE
+  9: 180, // S
 };
 
 // ── LuopanSvg component ───────────────────────────────────────────────────────
@@ -170,7 +210,13 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
             y1={y1}
             x2={x2}
             y2={y2}
-            stroke={isCardinal ? 'rgba(180,140,60,0.9)' : isMajor ? 'rgba(160,120,50,0.6)' : 'rgba(160,120,50,0.3)'}
+            stroke={
+              isCardinal
+                ? 'rgba(180,140,60,0.9)'
+                : isMajor
+                  ? 'rgba(160,120,50,0.6)'
+                  : 'rgba(160,120,50,0.3)'
+            }
             strokeWidth={isCardinal ? 1.5 : 1}
           />
         );
@@ -324,11 +370,33 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
       />
 
       {/* Center crosshair */}
-      <line x1={cx} y1={cy - CENTER_R + 4} x2={cx} y2={cy + CENTER_R - 4} stroke="rgba(180,140,60,0.3)" strokeWidth="0.6" />
-      <line x1={cx - CENTER_R + 4} y1={cy} x2={cx + CENTER_R - 4} y2={cy} stroke="rgba(180,140,60,0.3)" strokeWidth="0.6" />
+      <line
+        x1={cx}
+        y1={cy - CENTER_R + 4}
+        x2={cx}
+        y2={cy + CENTER_R - 4}
+        stroke="rgba(180,140,60,0.3)"
+        strokeWidth="0.6"
+      />
+      <line
+        x1={cx - CENTER_R + 4}
+        y1={cy}
+        x2={cx + CENTER_R - 4}
+        y2={cy}
+        stroke="rgba(180,140,60,0.3)"
+        strokeWidth="0.6"
+      />
 
       {/* Center: annual + monthly star numbers */}
-      <text x={cx} y={cy - 12} textAnchor="middle" dominantBaseline="central" fontSize="8" fontFamily="serif" fill="#888">
+      <text
+        x={cx}
+        y={cy - 12}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="8"
+        fontFamily="serif"
+        fill="#888"
+      >
         中宮
       </text>
       {centerPalace && (
@@ -368,10 +436,50 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
       />
 
       {/* ── Cardinal direction labels (outside tick ring) ── */}
-      <text x={cx} y={7} textAnchor="middle" fontSize="11" fontWeight="bold" fontFamily="serif" fill="#C0392B">北</text>
-      <text x={cx} y={295} textAnchor="middle" fontSize="11" fontWeight="bold" fontFamily="serif" fill="#555">南</text>
-      <text x={293} y={cy + 4} textAnchor="end" fontSize="11" fontWeight="bold" fontFamily="serif" fill="#555">東</text>
-      <text x={7} y={cy + 4} textAnchor="start" fontSize="11" fontWeight="bold" fontFamily="serif" fill="#555">西</text>
+      <text
+        x={cx}
+        y={7}
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="bold"
+        fontFamily="serif"
+        fill="#C0392B"
+      >
+        北
+      </text>
+      <text
+        x={cx}
+        y={295}
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="bold"
+        fontFamily="serif"
+        fill="#555"
+      >
+        南
+      </text>
+      <text
+        x={293}
+        y={cy + 4}
+        textAnchor="end"
+        fontSize="11"
+        fontWeight="bold"
+        fontFamily="serif"
+        fill="#555"
+      >
+        東
+      </text>
+      <text
+        x={7}
+        y={cy + 4}
+        textAnchor="start"
+        fontSize="11"
+        fontWeight="bold"
+        fontFamily="serif"
+        fill="#555"
+      >
+        西
+      </text>
     </svg>
   );
 }
@@ -404,7 +512,8 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(map);
 
@@ -468,7 +577,7 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
     const handler = (e: DeviceOrientationEvent) => {
       if (e.alpha !== null) {
         // Rotate luopan so that current device heading faces the screen top
-        setRotation(Math.round(((360 - e.alpha) % 360 + 360) % 360));
+        setRotation(Math.round((((360 - e.alpha) % 360) + 360) % 360));
       }
     };
 
@@ -484,7 +593,7 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
   }, [compassActive]);
 
   const adjustRotation = useCallback((delta: number) => {
-    setRotation((r) => ((r + delta) % 360 + 360) % 360);
+    setRotation((r) => (((r + delta) % 360) + 360) % 360);
   }, []);
 
   return (

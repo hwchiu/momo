@@ -13,10 +13,20 @@
  */
 
 import type {
-  ZiWeiChart, ZiWeiPalace, ZiWeiJu, ZiWeiMainStar, ZiWeiAuxStar, StarBrightness,
+  ZiWeiChart,
+  ZiWeiPalace,
+  ZiWeiJu,
+  ZiWeiMainStar,
+  ZiWeiAuxStar,
+  StarBrightness,
 } from '../types/ziwei';
 import {
-  BRANCHES, STEMS, NAYIN_ELEMENT, ELEMENT_TO_JU, JU_NAMES, ZIWEI_PALACE_NAMES,
+  BRANCHES,
+  STEMS,
+  NAYIN_ELEMENT,
+  ELEMENT_TO_JU,
+  JU_NAMES,
+  ZIWEI_PALACE_NAMES,
 } from '../types/ziwei';
 import { gregorianToLunar } from './lunar';
 import { dateToJDN } from './bazi';
@@ -24,11 +34,11 @@ import { dateToJDN } from './bazi';
 // ---- Ganzhi helpers ----
 
 function yearGanzhiIdx(year: number): number {
-  return ((year - 4) % 60 + 60) % 60;
+  return (((year - 4) % 60) + 60) % 60;
 }
 
 function dayGanzhiIdx(jdn: number): number {
-  return ((jdn - 2451545 + 10) % 60 + 60) % 60;
+  return (((jdn - 2451545 + 10) % 60) + 60) % 60;
 }
 
 // ---- 命宮 (Life Palace) ----
@@ -68,7 +78,7 @@ function palaceStem(yearStemIdx: number, branchIdx: number): string {
   // 寅宮 start stem based on year stem
   const yinStartStem = [2, 4, 6, 8, 0, 2, 4, 6, 8, 0][yearStemIdx]; // 丙戊庚壬甲 repeating
   // 寅 = branch 2. Palace steps from 寅:
-  const stepsFromYin = ((branchIdx - 2) + 12) % 12;
+  const stepsFromYin = (branchIdx - 2 + 12) % 12;
   return STEMS[(yinStartStem + stepsFromYin) % 10];
 }
 
@@ -92,7 +102,7 @@ function calcJu(mingGongBranch: number, yearStemIdx: number): ZiWeiJu {
   const branchPairIdx = Math.floor(mingGongBranch / 2);
   // In the 60-cycle, stem s and branch b appear together when (s % 2 == b % 2).
   // 60-cycle index ≈ (stemIdx * 6 + branchPairIdx) approximation:
-  const ganzhiIdx = ((stemIdx % 10) + (branchPairIdx * 10)) % 60;
+  const ganzhiIdx = ((stemIdx % 10) + branchPairIdx * 10) % 60;
   const element = NAYIN_ELEMENT[ganzhiIdx];
   return ELEMENT_TO_JU[element] ?? 5;
 }
@@ -117,8 +127,8 @@ export function calcZiWeiBranch(ju: ZiWeiJu, lunarDay: number): number {
   const r = q * n - d;
   const base = (q - 1) % 12; // 子(0) → 丑(1) → ... (0-indexed from 子)
   if (r === 0) return base;
-  if (r % 2 === 1) return (base + r) % 12;        // odd: move toward 亥
-  return ((base - r) % 12 + 12) % 12;             // even: move toward 子
+  if (r % 2 === 1) return (base + r) % 12; // odd: move toward 亥
+  return (((base - r) % 12) + 12) % 12; // even: move toward 子
 }
 
 /**
@@ -144,12 +154,23 @@ export function calcTianFuBranch(ziWeiBranch: number): number {
  *   天府(0), 太陰(+1), 貪狼(+2), 巨門(+3), 天相(+4), 天梁(+5), 七殺(+6), 破軍(+10)
  */
 const ZIWEI_OFFSETS: [ZiWeiMainStar, number][] = [
-  ['紫微', 0], ['天機', -1], ['太陽', -2], ['武曲', -3], ['天同', -4], ['廉貞', -7],
+  ['紫微', 0],
+  ['天機', -1],
+  ['太陽', -2],
+  ['武曲', -3],
+  ['天同', -4],
+  ['廉貞', -7],
 ];
 
 const TIANFU_OFFSETS: [ZiWeiMainStar, number][] = [
-  ['天府', 0], ['太陰', 1], ['貪狼', 2], ['巨門', 3], ['天相', 4],
-  ['天梁', 5], ['七殺', 6], ['破軍', 10],
+  ['天府', 0],
+  ['太陰', 1],
+  ['貪狼', 2],
+  ['巨門', 3],
+  ['天相', 4],
+  ['天梁', 5],
+  ['七殺', 6],
+  ['破軍', 10],
 ];
 
 function placeMainStars(
@@ -159,7 +180,7 @@ function placeMainStars(
   const map = new Map<number, { name: ZiWeiMainStar; brightness: StarBrightness }[]>();
 
   const add = (branch: number, name: ZiWeiMainStar) => {
-    const b = ((branch) % 12 + 12) % 12;
+    const b = ((branch % 12) + 12) % 12;
     if (!map.has(b)) map.set(b, []);
     map.get(b)!.push({ name, brightness: '' });
   };
@@ -187,7 +208,7 @@ function placeAuxStars(
 ): Map<number, ZiWeiAuxStar[]> {
   const map = new Map<number, ZiWeiAuxStar[]>();
   const add = (b: number, star: ZiWeiAuxStar) => {
-    const idx = ((b) % 12 + 12) % 12;
+    const idx = ((b % 12) + 12) % 12;
     if (!map.has(idx)) map.set(idx, []);
     map.get(idx)!.push(star);
   };
@@ -294,10 +315,18 @@ export function calculateZiWei(input: {
 
   // 天馬 placement (year branch)
   const tianMaByBranch: Record<number, number> = {
-    2: 8, 6: 8, 10: 8,   // 寅午戌 → 申(8)
-    8: 2, 0: 2, 4: 2,   // 申子辰 → 寅(2)
-    5: 11, 9: 11, 1: 11, // 巳酉丑 → 亥(11)
-    11: 5, 3: 5, 7: 5,  // 亥卯未 → 巳(5)
+    2: 8,
+    6: 8,
+    10: 8, // 寅午戌 → 申(8)
+    8: 2,
+    0: 2,
+    4: 2, // 申子辰 → 寅(2)
+    5: 11,
+    9: 11,
+    1: 11, // 巳酉丑 → 亥(11)
+    11: 5,
+    3: 5,
+    7: 5, // 亥卯未 → 巳(5)
   };
   const tianMaBranch = tianMaByBranch[yearBranchIdx] ?? 8;
   if (!auxStarMap.has(tianMaBranch)) auxStarMap.set(tianMaBranch, []);

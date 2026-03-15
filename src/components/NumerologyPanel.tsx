@@ -86,8 +86,7 @@ function PinnaclesTable({ pinnacles, birthYear }: PinnaclesTableProps) {
         {pinnacles.map((p, i) => {
           const startYear = birthYear + p.startAge;
           const endYear = p.endAge !== null ? birthYear + p.endAge : null;
-          const yearRange =
-            endYear !== null ? `${startYear}–${endYear}年` : `${startYear}年起`;
+          const yearRange = endYear !== null ? `${startYear}–${endYear}年` : `${startYear}年起`;
           const meaning = NUMBER_MEANINGS[p.number];
           return (
             <div key={i} className="num-pinnacle-row">
@@ -144,11 +143,7 @@ export function NumerologyPanel({ initialBirthData }: NumerologyPanelProps) {
 
   return (
     <section className="panel-section">
-      <button
-        className="panel-toggle-btn"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
+      <button className="panel-toggle-btn" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
         數字學 {open ? '▲' : '▼'}
       </button>
 

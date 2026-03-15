@@ -51,9 +51,7 @@ function PalaceCell({ palace }: { palace: QiMenPalace; chart: QiMenChart }) {
       <div className={`qm-star ${qualityClass(starQ)}`}>{palace.star}</div>
 
       {/* Door */}
-      {palace.door && (
-        <div className={`qm-door ${qualityClass(doorQ)}`}>{palace.door}</div>
-      )}
+      {palace.door && <div className={`qm-door ${qualityClass(doorQ)}`}>{palace.door}</div>}
 
       {/* Deity */}
       {palace.deity && <div className="qm-deity">{palace.deity}</div>}
@@ -169,11 +167,7 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
 
   return (
     <section className="classical-panel">
-      <button
-        className="panel-toggle-btn"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
+      <button className="panel-toggle-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         ☰ 奇門遁甲 {open ? '▲' : '▼'}
       </button>
 
@@ -220,10 +214,7 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
                 onChange={(e) => setYearInput(parseInt(e.target.value))}
               />
             )}
-            <button
-              className="qm-btn"
-              onClick={() => compute(mode, dtStr, dateStr, yearInput)}
-            >
+            <button className="qm-btn" onClick={() => compute(mode, dtStr, dateStr, yearInput)}>
               排盤
             </button>
             <button className="qm-btn qm-btn-now" onClick={handleNow}>
@@ -231,13 +222,19 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
             </button>
           </div>
 
-          {error && <p className="panel-note" style={{ color: 'var(--clr-danger)' }}>{error}</p>}
+          {error && (
+            <p className="panel-note" style={{ color: 'var(--clr-danger)' }}>
+              {error}
+            </p>
+          )}
 
           {chart && (
             <>
               {/* Meta strip */}
               <div className="qm-meta-strip">
-                <span className={`qm-mode-label qm-mode-label--${mode === '時盤' ? 'shi' : mode === '日盤' ? 'ri' : 'nian'}`}>
+                <span
+                  className={`qm-mode-label qm-mode-label--${mode === '時盤' ? 'shi' : mode === '日盤' ? 'ri' : 'nian'}`}
+                >
                   {mode}
                 </span>
                 <span className={`qm-dun-badge ${chart.dun === '陽遁' ? 'qm-yang' : 'qm-yin'}`}>
@@ -252,15 +249,23 @@ export function QiMenPanel({ defaultDatetime }: QiMenPanelProps) {
               {/* Ganzhi pillars */}
               <div className="qm-pillars-row">
                 {(mode === '年盤'
-                  ? [['年', chart.pillarYear.full], ['月', chart.pillarMonth.full], ['日', chart.pillarDay.full]]
-                  : mode === '日盤'
-                  ? [['年', chart.pillarYear.full], ['月', chart.pillarMonth.full], ['日', chart.pillarDay.full]]
-                  : [
+                  ? [
                       ['年', chart.pillarYear.full],
                       ['月', chart.pillarMonth.full],
                       ['日', chart.pillarDay.full],
-                      ['時', chart.pillarHour.full],
                     ]
+                  : mode === '日盤'
+                    ? [
+                        ['年', chart.pillarYear.full],
+                        ['月', chart.pillarMonth.full],
+                        ['日', chart.pillarDay.full],
+                      ]
+                    : [
+                        ['年', chart.pillarYear.full],
+                        ['月', chart.pillarMonth.full],
+                        ['日', chart.pillarDay.full],
+                        ['時', chart.pillarHour.full],
+                      ]
                 ).map(([label, val]) => (
                   <div key={label} className="qm-pillar-cell">
                     <span className="qm-pillar-label">{label}</span>

@@ -212,13 +212,13 @@ function drawHouses(
 
   // House sector background shading (angular > succedent > cadent)
   const HOUSE_SHADE: Record<number, string> = {
-    0: 'rgba(70,70,70,0.07)',  // 1st — angular
-    3: 'rgba(70,70,70,0.07)',  // 4th
-    6: 'rgba(70,70,70,0.07)',  // 7th
-    9: 'rgba(70,70,70,0.07)',  // 10th
-    1: 'rgba(70,70,70,0.03)',  // 2nd — succedent
-    4: 'rgba(70,70,70,0.03)',  // 5th
-    7: 'rgba(70,70,70,0.03)',  // 8th
+    0: 'rgba(70,70,70,0.07)', // 1st — angular
+    3: 'rgba(70,70,70,0.07)', // 4th
+    6: 'rgba(70,70,70,0.07)', // 7th
+    9: 'rgba(70,70,70,0.07)', // 10th
+    1: 'rgba(70,70,70,0.03)', // 2nd — succedent
+    4: 'rgba(70,70,70,0.03)', // 5th
+    7: 'rgba(70,70,70,0.03)', // 8th
     10: 'rgba(70,70,70,0.03)', // 11th
   };
 

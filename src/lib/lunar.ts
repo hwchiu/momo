@@ -18,7 +18,7 @@
 
 import { sunLongitude, dateToJDN } from './bazi';
 
-// @ts-expect-error
+// @ts-expect-error – astronomia/moonposition has no TypeScript type definitions
 import * as MoonPos from 'astronomia/moonposition';
 
 const DEG = Math.PI / 180;
@@ -28,7 +28,7 @@ const DEG = Math.PI / 180;
 /** Moon's apparent geocentric ecliptic longitude in degrees [0, 360). */
 function moonLongitude(jde: number): number {
   const pos = MoonPos.position(jde) as { lon: number };
-  return ((pos.lon / DEG) % 360 + 360) % 360;
+  return (((pos.lon / DEG) % 360) + 360) % 360;
 }
 
 // ---- New moon finder ----
@@ -42,7 +42,7 @@ export function newMoonNear(jde: number): number {
   for (let i = 0; i < 25; i++) {
     const mLon = moonLongitude(t);
     const sLon = sunLongitude(t);
-    let diff = ((mLon - sLon) + 360) % 360;
+    let diff = (mLon - sLon + 360) % 360;
     if (diff > 180) diff -= 360; // signed difference toward 0
     // Moon moves ~13.176°/day, Sun ~0.9856°/day; net ~12.19°/day
     const step = -diff / 12.19;
@@ -119,7 +119,7 @@ function monthContainsZhongQi(monthNewMoon: number, nextNewMoon: number): boolea
 export interface LunarDate {
   lunarYear: number;
   lunarMonth: number; // 1–12 (1 = 正月, the month after Spring Festival)
-  lunarDay: number;   // 1–30
+  lunarDay: number; // 1–30
   isLeapMonth: boolean;
   /** For 紫微 purposes: branch index of the lunar month (寅=0, 卯=1, ..., 丑=11) */
   monthBranchIdx: number;
@@ -165,11 +165,11 @@ export function gregorianToLunar(year: number, month: number, day: number): Luna
   //   M=11→(11+1)%12=0(子) ✓, M=12→(12+1)%12=1(丑) ✓, M=1→(1+1)%12=2(寅) ✓
 
   // Walk from dzNewMoon through lunar months to find thisNewMoon's month number
-  let curNewMoon = dzNewMoon;
-  let curMonthNum = 11; // 子月 = 十一月 = month 11
-  let curIsLeap = false;
+  const curNewMoon = dzNewMoon;
+  const curMonthNum = 11; // 子月 = 十一月 = month 11
+  const curIsLeap = false;
   let prevMonthNum = 10; // one before 子月 for tracking
-  let lunarYear = year; // approximate; refine below
+  const lunarYear = year; // approximate; refine below
 
   // Check if dzNewMoon is actually BEFORE 冬至 (it should be; adjust if needed)
   // and which year's 十一月 it is
@@ -225,7 +225,11 @@ export function gregorianToLunar(year: number, month: number, day: number): Luna
     nm = nextNm;
   }
 
-  void curNewMoon; void curMonthNum; void curIsLeap; void prevMonthNum; void lunarYear;
+  void curNewMoon;
+  void curMonthNum;
+  void curIsLeap;
+  void prevMonthNum;
+  void lunarYear;
 
   // monthBranchIdx for 紫微: 寅=0, 卯=1, ..., 丑=11
   // 農曆月 M: 1→寅(0), 2→卯(1), ..., 10→亥(9), 11→子(10), 12→丑(11)

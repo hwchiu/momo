@@ -22,7 +22,7 @@ import {
   getAnnualFlyingStars,
   getMonthDays,
 } from '../../src/lib/bazi';
-import { STEMS, BRANCHES, STEM_ELEMENTS, BRANCH_ELEMENTS, BRANCH_HIDDEN_STEMS } from '../../src/types/bazi';
+import { STEMS, BRANCHES, STEM_ELEMENTS, BRANCH_ELEMENTS } from '../../src/types/bazi';
 import type { BaziInput, BaziChart } from '../../src/types/bazi';
 
 // ---- dateToJDN ----
@@ -650,7 +650,7 @@ describe('findBranchInteractions', () => {
   it('returns empty array when no interactions', () => {
     // 子寅辰午: no 六合,六沖,三合,三刑,六破,六害 among these four
     const chart = makeChart([0, 2, 4, 6]);
-    const interactions = findBranchInteractions(chart);
+    findBranchInteractions(chart);
     // Child: 0=子 vs 2=寅 vs 4=辰 vs 6=午
     // 子午=六沖! So use a combo without this
     const chart2 = makeChart([0, 2, 4, 8]); // 子寅辰申
