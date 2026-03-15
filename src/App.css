@@ -3507,6 +3507,171 @@
   }
 }
 
+/* ===== 地圖風水分析 (FengshuiMapView) ===== */
+
+.fengshui-map-section {
+  margin-top: var(--sp-6);
+}
+
+.fengshui-map-search {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+  position: relative;
+}
+
+.fengshui-map-query {
+  flex: 1;
+}
+
+.fengshui-map-results {
+  list-style: none;
+  margin: 0 0 var(--sp-3) 0;
+  padding: 0;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.fengshui-map-result-item {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 0.85rem;
+  color: var(--clr-text-2);
+  cursor: pointer;
+  border-bottom: 1px solid var(--clr-border-subtle);
+  line-height: 1.4;
+}
+
+.fengshui-map-result-item:last-child {
+  border-bottom: none;
+}
+
+.fengshui-map-result-item:hover {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+}
+
+.fengshui-map-container {
+  position: relative;
+  height: 480px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--clr-border);
+  background: #e8e0d0;
+}
+
+.fengshui-leaflet-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Luopan overlay: absolutely centred, non-interactive so the map stays pannable */
+.luopan-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 500; /* above Leaflet tiles (z-index 400) but below controls */
+}
+
+.luopan-wrap {
+  width: 300px;
+  height: 300px;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+/* Rotation controls panel — bottom-right corner of the map */
+.luopan-controls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.93);
+  border-radius: var(--radius-md);
+  padding: 5px 8px;
+  border: 1px solid var(--clr-border-light);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
+  pointer-events: auto; /* restore interaction for controls only */
+}
+
+.luopan-btn {
+  background: none;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  line-height: 1.6;
+  color: var(--clr-text-2);
+  transition: background 0.12s;
+}
+
+.luopan-btn:hover {
+  background: var(--clr-primary-light);
+  border-color: var(--clr-primary);
+}
+
+.luopan-slider {
+  width: 90px;
+  accent-color: var(--clr-primary);
+}
+
+.luopan-degree {
+  min-width: 38px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--clr-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.luopan-compass-btn--active {
+  background: var(--clr-primary-light);
+  border-color: var(--clr-primary);
+  color: var(--clr-primary-dark);
+}
+
+.fengshui-map-tip {
+  margin-top: var(--sp-2);
+  font-size: 0.82rem;
+  color: var(--clr-text-muted);
+  line-height: 1.5;
+}
+
+/* Ensure Leaflet pane z-indexes stay below our overlay */
+.fengshui-map-container .leaflet-pane {
+  z-index: 400;
+}
+.fengshui-map-container .leaflet-top,
+.fengshui-map-container .leaflet-bottom {
+  z-index: 450;
+}
+
+@media (max-width: 480px) {
+  .fengshui-map-container {
+    height: 380px;
+  }
+  .luopan-wrap {
+    width: 240px;
+    height: 240px;
+  }
+  .luopan-wrap svg {
+    width: 240px;
+    height: 240px;
+  }
+  .luopan-slider {
+    width: 60px;
+  }
+}
+
 /* ══ Responsive: narrow screens ══ */
 @media (max-width: 900px) {
   :root {

@@ -160,6 +160,8 @@ function calcMonthPillar(birthJDE: number, yearStem: number): Pillar {
 
 /** Compute day pillar from Julian Day Number. Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); offset +49. */
 function calcDayPillar(jdn: number): Pillar {
+  // Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10) → offset +49
+  // Verified against lunar-javascript and multiple Chinese almanac sources
   const dayIndex = (((jdn + 49) % 60) + 60) % 60;
   return { stem: dayIndex % 10, branch: dayIndex % 12 };
 }

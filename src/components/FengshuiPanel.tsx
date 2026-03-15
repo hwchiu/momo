@@ -8,6 +8,7 @@ import {
   GRID_LAYOUT,
   MOUNTAIN_TO_LOSHU,
 } from '../lib/fengshui';
+import { FengshuiMapView } from './FengshuiMapView';
 
 const ALL_MOUNTAINS = Object.keys(MOUNTAIN_TO_LOSHU) as TwentyFourMountain[];
 
@@ -505,6 +506,9 @@ export function FengshuiPanel() {
             )}
           </svg>
         </div>
+
+        {/* ---- Map + Luopan ---- */}
+        <FengshuiMapView chart={chart} />
 
         {/* ---- Star Legend ---- */}
         <div className="fengshui-legend">
