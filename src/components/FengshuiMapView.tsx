@@ -174,25 +174,14 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
       xmlns="http://www.w3.org/2000/svg"
       aria-label="風水羅盤"
     >
-      <defs>
-        <radialGradient id="luopan-bg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,252,240,0.96)" />
-          <stop offset="100%" stopColor="rgba(238,228,198,0.94)" />
-        </radialGradient>
-        <filter id="luopan-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="rgba(0,0,0,0.35)" />
-        </filter>
-      </defs>
-
-      {/* ── Background ── */}
+      {/* Outer boundary ring — no fill, just a border stroke */}
       <circle
         cx={cx}
         cy={cy}
         r={TICK_OUTER}
-        fill="url(#luopan-bg)"
-        stroke="rgba(180,140,60,0.8)"
-        strokeWidth="2"
-        filter="url(#luopan-shadow)"
+        fill="none"
+        stroke="rgba(180,140,60,0.7)"
+        strokeWidth="1.5"
       />
 
       {/* ── Degree tick ring ── */}
@@ -364,8 +353,8 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
         cx={cx}
         cy={cy}
         r={CENTER_R}
-        fill="rgba(255,252,240,0.95)"
-        stroke="rgba(180,140,60,0.8)"
+        fill="rgba(0,0,0,0.35)"
+        stroke="rgba(180,140,60,0.7)"
         strokeWidth="1.2"
       />
 
@@ -395,7 +384,7 @@ function LuopanSvg({ chart }: LuopanSvgProps) {
         dominantBaseline="central"
         fontSize="8"
         fontFamily="serif"
-        fill="#888"
+        fill="rgba(255,255,255,0.7)"
       >
         中宮
       </text>
@@ -495,11 +484,10 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [compassActive, setCompassActive] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const leafletRef = useRef<L.Map | null>(null);
-  const compassCleanupRef = useRef<(() => void) | null>(null);
 
   // ── Initialise Leaflet map ──
   useEffect(() => {
@@ -525,13 +513,6 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
     };
   }, []);
 
-  // ── Cleanup compass listener on unmount ──
-  useEffect(() => {
-    return () => {
-      compassCleanupRef.current?.();
-    };
-  }, []);
-
   // ── Address search ──
   const handleSearch = useCallback(
     async (e: React.FormEvent) => {
@@ -539,9 +520,13 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
       if (!query.trim()) return;
       setIsSearching(true);
       setResults([]);
+      setSearchError('');
       try {
         const res = await geocode(query);
-        setResults(res);
+        if (res.length === 0) setSearchError('找不到該地址，請嘗試更詳細的描述');
+        else setResults(res);
+      } catch {
+        setSearchError('搜尋失敗，請檢查網路連線');
       } finally {
         setIsSearching(false);
       }
@@ -554,43 +539,6 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
     setQuery(result.displayName.split(',')[0].trim());
     setResults([]);
   }, []);
-
-  // ── Device compass (auto-North) ──
-  const toggleCompass = useCallback(async () => {
-    // Deactivate if already running
-    if (compassActive) {
-      compassCleanupRef.current?.();
-      compassCleanupRef.current = null;
-      setCompassActive(false);
-      return;
-    }
-
-    // iOS 13+ requires explicit permission
-    const DevOri = DeviceOrientationEvent as unknown as {
-      requestPermission?: () => Promise<string>;
-    };
-    if (typeof DevOri.requestPermission === 'function') {
-      const perm = await DevOri.requestPermission();
-      if (perm !== 'granted') return;
-    }
-
-    const handler = (e: DeviceOrientationEvent) => {
-      if (e.alpha !== null) {
-        // Rotate luopan so that current device heading faces the screen top
-        setRotation(Math.round((((360 - e.alpha) % 360) + 360) % 360));
-      }
-    };
-
-    // Prefer absolute orientation (Android / Chrome); fall back to standard
-    const eventName =
-      'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
-    window.addEventListener(eventName, handler as EventListener);
-
-    compassCleanupRef.current = () => {
-      window.removeEventListener(eventName, handler as EventListener);
-    };
-    setCompassActive(true);
-  }, [compassActive]);
 
   const adjustRotation = useCallback((delta: number) => {
     setRotation((r) => (((r + delta) % 360) + 360) % 360);
@@ -615,6 +563,9 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
         </button>
       </form>
 
+      {/* Search error */}
+      {searchError && <p className="fengshui-map-error">{searchError}</p>}
+
       {/* Search results dropdown */}
       {results.length > 0 && (
         <ul className="fengshui-map-results" role="listbox">
@@ -636,6 +587,12 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
       <div className="fengshui-map-container">
         {/* Leaflet map */}
         <div ref={mapContainerRef} className="fengshui-leaflet-map" aria-label="地圖" />
+
+        {/* North indicator — fixed top-left, aligned with map north */}
+        <div className="map-north-indicator" aria-label="地圖正北方向">
+          <span className="map-north-arrow">↑</span>
+          <span className="map-north-label">北</span>
+        </div>
 
         {/* Luopan overlay — centred over the map, pointer-events:none so map stays interactive */}
         <div className="luopan-overlay">
@@ -676,19 +633,11 @@ export function FengshuiMapView({ chart }: FengshuiMapViewProps) {
             ↻
           </button>
           <span className="luopan-degree">{rotation}°</span>
-          <button
-            type="button"
-            className={`luopan-btn luopan-compass-btn${compassActive ? ' luopan-compass-btn--active' : ''}`}
-            onClick={toggleCompass}
-            title={compassActive ? '停止自動指北' : '啟動設備指北'}
-          >
-            🧭
-          </button>
         </div>
       </div>
 
       <p className="fengshui-map-tip">
-        拖移地圖使屋宅中心對齊羅盤中心，再旋轉羅盤使向首對齊建築面向。行動裝置可按 🧭 自動指北。
+        拖移地圖使屋宅中心對齊羅盤中心，旋轉羅盤使向首對齊建築朝向。羅盤正北對齊地圖正北。
       </p>
     </section>
   );
