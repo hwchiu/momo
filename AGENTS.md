@@ -93,6 +93,7 @@ tests/
 ### Imports
 
 Order imports as follows (separated by blank lines):
+
 1. React / framework imports
 2. Third-party library imports (`d3`, `astronomia/*`)
 3. Internal type imports (`../types/astro`)
@@ -100,6 +101,7 @@ Order imports as follows (separated by blank lines):
 5. CSS imports
 
 For `astronomia` (no type declarations), use `@ts-expect-error`:
+
 ```typescript
 // @ts-expect-error astronomia has no type declarations
 import * as julian from 'astronomia/julian';
@@ -147,16 +149,16 @@ import * as julian from 'astronomia/julian';
 8 house systems are supported, selectable at runtime via a dropdown.
 The user can switch systems instantly without re-submitting the form.
 
-| System | Key | Algorithm |
-|--------|-----|-----------|
-| Placidus | `Placidus` | Semi-arc trisection (default, most common) |
-| Whole Sign | `WholeSign` | Each sign = one house, cusp at 0° of sign |
-| Equal House | `EqualHouse` | ASC = House 1 cusp, each house +30° |
-| Porphyry | `Porphyry` | MC→ASC and ASC→IC arcs trisected |
-| Alcabitius | `Alcabitius` | Diurnal semi-arc trisection on RA |
-| Regiomontanus | `Regiomontanus` | Equator divided into 30° segments, projected to ecliptic |
-| Campanus | `Campanus` | Prime vertical divided into 30° arcs, projected to ecliptic |
-| Koch | `Koch` | MC semi-arc trisected by time |
+| System        | Key             | Algorithm                                                   |
+| ------------- | --------------- | ----------------------------------------------------------- |
+| Placidus      | `Placidus`      | Semi-arc trisection (default, most common)                  |
+| Whole Sign    | `WholeSign`     | Each sign = one house, cusp at 0° of sign                   |
+| Equal House   | `EqualHouse`    | ASC = House 1 cusp, each house +30°                         |
+| Porphyry      | `Porphyry`      | MC→ASC and ASC→IC arcs trisected                            |
+| Alcabitius    | `Alcabitius`    | Diurnal semi-arc trisection on RA                           |
+| Regiomontanus | `Regiomontanus` | Equator divided into 30° segments, projected to ecliptic    |
+| Campanus      | `Campanus`      | Prime vertical divided into 30° arcs, projected to ecliptic |
+| Koch          | `Koch`          | MC semi-arc trisected by time                               |
 
 Architecture: `calculateHouses()` is a dispatch function that calls the
 appropriate algorithm function based on the `HouseSystem` enum value.
@@ -188,13 +190,13 @@ and return `HouseCusp[]`.
 
 ## Key Dependencies
 
-| Package | Purpose | Notes |
-|---------|---------|-------|
-| `astronomia` | Planetary position calculations (VSOP87) | Pure JS, no types — use `@ts-expect-error` |
-| `d3` + `@types/d3` | SVG chart rendering | Imperative DOM via refs |
-| `react` / `react-dom` | UI framework | v19 |
-| `vitest` | Test runner | Configured in `vite.config.ts` |
-| `@testing-library/react` | Component testing | With `jest-dom` matchers |
+| Package                  | Purpose                                  | Notes                                      |
+| ------------------------ | ---------------------------------------- | ------------------------------------------ |
+| `astronomia`             | Planetary position calculations (VSOP87) | Pure JS, no types — use `@ts-expect-error` |
+| `d3` + `@types/d3`       | SVG chart rendering                      | Imperative DOM via refs                    |
+| `react` / `react-dom`    | UI framework                             | v19                                        |
+| `vitest`                 | Test runner                              | Configured in `vite.config.ts`             |
+| `@testing-library/react` | Component testing                        | With `jest-dom` matchers                   |
 
 ## External Services
 

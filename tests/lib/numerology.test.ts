@@ -63,7 +63,7 @@ describe('calcLifePath', () => {
     for (let m = 1; m <= 12; m++) {
       for (let d = 1; d <= 28; d++) {
         const lp = calcLifePath(1990, m, d);
-        expect([1,2,3,4,5,6,7,8,9,11,22,33]).toContain(lp);
+        expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33]).toContain(lp);
       }
     }
   });
@@ -99,8 +99,8 @@ describe('calcPersonalYear', () => {
     const py1 = calcPersonalYear(3, 14, 2024);
     const py2 = calcPersonalYear(3, 14, 2025);
     // They may or may not differ, but both should be valid numbers
-    expect([1,2,3,4,5,6,7,8,9,11,22,33]).toContain(py1);
-    expect([1,2,3,4,5,6,7,8,9,11,22,33]).toContain(py2);
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33]).toContain(py1);
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33]).toContain(py2);
   });
 });
 
@@ -165,7 +165,7 @@ describe('calcPinnacles', () => {
   it('pinnacle numbers are valid', () => {
     const p = calcPinnacles(1990, 5, 15, 5);
     p.forEach((pin) => {
-      expect([1,2,3,4,5,6,7,8,9,11,22,33]).toContain(pin.number);
+      expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33]).toContain(pin.number);
     });
   });
 

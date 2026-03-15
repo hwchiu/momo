@@ -18,7 +18,7 @@
 
 import { sunLongitude, dateToJDN } from './bazi';
 
-// @ts-expect-error – astronomia/moonposition has no TypeScript type definitions
+// @ts-expect-error no type declarations for astronomia/moonposition
 import * as MoonPos from 'astronomia/moonposition';
 
 const DEG = Math.PI / 180;

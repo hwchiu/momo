@@ -10,6 +10,7 @@
 ## 功能模組
 
 ### 西洋占星（Natal Chart）
+
 - 📍 地點自動補全（OpenStreetMap Nominatim）
 - 🔢 計算 10 大行星 + 冥王星 + 月交點的黃道座標
 - 🏛️ 支援 **8 種宮位系統**：Placidus、Koch、Equal House、Whole Sign、Campanus、Regiomontanus、Alcabitius、Porphyry（即時切換，無需重新提交）
@@ -18,36 +19,43 @@
 - ✨ 相位篩選（容許度、相位類型可自訂）
 
 ### 古典占星（Classical Astrology）
+
 - 🌡️ 力量計算（Essential Dignity、Planetary Strength）
 - ⚔️ 戰爭行星（Combust）、隱沒（Cazimi）、Out of Bounds 檢測
 - 🧭 東出/西沒（Oriental/Occidental）判斷
 
 ### 太陽回歸（Solar Return）
+
 - 🔄 計算年度太陽回歸時刻（UTC）
 - 📍 太陽回歸盤的行星位置、宮位、相位
 - 🎯 牛頓迭代算法精確計算，收斂誤差 < 0.0001°
 
 ### 年運預測（Annual Profections）
+
 - 📅 計算每年活躍宮位及宮主星
 - 🔀 支援 Day、Night 時間系統
 
 ### 中點/阿拉伯點（Midpoints & Arabic Parts）
+
 - 🎲 計算主要中點組合
 - 📍 中點樹（Midpoint Trees）分析
 - ✍️ 常見阿拉伯點：福點、死點、勝點等
 
 ### 印度占星（Vedic Astrology）
+
 - 🌟 Lahiri Ayanamsa 恆星座計算
 - 📐 南印度式星盤（South Indian Chart）
 - ⏰ 大運系統（Dasha）：Vimshottari、Ashtottari、Yogini
 - 🏠 拉西盤（Rashi Chart）+ 分宮圖（Navamsha、D10、D27 等）
 
 ### 八字風水
+
 - ⚱️ 四柱八字排盤（年月日時）
 - 🔥 天干地支、五行屬性、納音五行
 - 🎋 簡易命主分析
 
 ### 雙人合盤（Synastry）
+
 - 👥 輸入兩人出生資料，分別計算本命盤
 - 💫 列出所有跨盤相位（A→B 及 B→A）
 - 📊 相容性指標（基於相位統計）
@@ -57,16 +65,16 @@
 
 ## 技術棧
 
-| 項目 | 版本 | 用途 |
-|------|------|------|
-| React | 19 | UI 框架 |
-| TypeScript | 5.9 | 型別安全 |
-| Vite | 7 | 開發伺服器 + 打包 |
-| D3.js | 7 | SVG 星盤繪製 |
-| astronomia | 4.2 | VSOP87 行星計算 |
-| Vitest | 4 | 單元測試（268 個測試） |
-| @testing-library/react | 16.3 | 元件測試 |
-| ESLint + Prettier | 最新 | 程式碼品質 |
+| 項目                   | 版本 | 用途                   |
+| ---------------------- | ---- | ---------------------- |
+| React                  | 19   | UI 框架                |
+| TypeScript             | 5.9  | 型別安全               |
+| Vite                   | 7    | 開發伺服器 + 打包      |
+| D3.js                  | 7    | SVG 星盤繪製           |
+| astronomia             | 4.2  | VSOP87 行星計算        |
+| Vitest                 | 4    | 單元測試（268 個測試） |
+| @testing-library/react | 16.3 | 元件測試               |
+| ESLint + Prettier      | 最新 | 程式碼品質             |
 
 ---
 
@@ -183,17 +191,21 @@ App.tsx 呼叫對應計算函數
 ## 天文計算說明
 
 ### 坐標系統
+
 - **內部表示**：所有角度以**度（degrees）**表示（0–360）
 - **轉換**：從弧度轉換時使用 `normalizeDeg()`；`astronomia` 套件回傳弧度，邊界處一律乘以 `180 / Math.PI`
 - **精度**：VSOP87 行星資料透過 `getPlanets()` 單例（singleton）延遲載入；最大誤差 ~0.001°
 
 ### 特殊行星
+
 - **冥王星**：使用 `astronomia/pluto` 單獨計算（不在 VSOP87 內）
 - **月交點**：計算上升交點（True Node）與平均交點
 - **逆行偵測**：比較 JDE−1 與 JDE+1 的黃道經度
 
 ### 宮位系統
+
 8 種系統支援，使用者可即時切換（無需重新計算本命盤）：
+
 - **Placidus** (預設)：半弧三分法，古典占星最常用
 - **Koch**：MC 半弧三分法
 - **Equal House**：每宮 30°，ASC = 1 宮頭
@@ -201,6 +213,7 @@ App.tsx 呼叫對應計算函數
 - **Campanus**、**Regiomontanus**、**Alcabitius**、**Porphyry**：特殊投影系統
 
 ### 古典占星力量計算
+
 - **Essential Dignity**：王座（Rulership）、貴客（Exaltation）、黃昏之地（Detriment）、墮落（Fall）
 - **Accidental Strength**：宮位加分、角宮優勢、上升/下降劣勢
 - **Combust**（戰爭）：與太陽距離 < 8.5°
@@ -208,11 +221,13 @@ App.tsx 呼叫對應計算函數
 - **Out of Bounds**：赤緯 > 23°27′
 
 ### 印度占星
+
 - **Ayanamsa**：使用 Lahiri（最常用）；支援 Fagan-Bradley、DeLuce 等
 - **Dasha 系統**：Vimshottari（最常用，120 年周期）、Ashtottari（108 年）、Yogini（36 年）
 - **分宮圖**：Navamsha (D9, 精神婚姻)、D10 (職業)、D27 (微小事物) 等
 
 ### 太陽回歸計算
+
 - **算法**：Newton 風格迭代，從目標年份生日附近開始
 - **收斂條件**：太陽經度差 < 0.0001°（通常 3-5 次迭代）
 - **UTC 輸出**：回歸時刻以 UTC 表示
@@ -223,6 +238,7 @@ App.tsx 呼叫對應計算函數
 ## 外部服務
 
 ### OpenStreetMap Nominatim
+
 - **用途**：地點名稱 → 座標（地理編碼）
 - **特點**：無需 API 金鑰，免費開源
 - **頻率限制**：1 請求/秒（透過 600ms debounce 控制）
@@ -234,35 +250,42 @@ App.tsx 呼叫對應計算函數
 ## 程式碼風格指南
 
 ### TypeScript
+
 - **嚴格模式**（Strict Mode）啟用
 - **無未使用變數** (`noUnusedLocals`, `noUnusedParameters`)
 - **型別 imports**：`import type { Foo } from './bar'`（型別檔無法在執行期使用）
 - **Target**: ES2022
 
 ### 格式化 (Prettier)
+
 - 單引號、分號、尾隨逗號（`all`）
 - 列寬：100 字
 - 縮排：2 空格
 - 箭頭函數括號：總是 `(x) => ...`
 
 ### 檔案命名
+
 - **lib**：camelCase（`astro.ts`, `classical.ts`）
 - **components**：PascalCase（`NatalChart.tsx`, `BirthDataForm.tsx`）
 - **CSS 類別**：kebab-case（`birth-data-form`, `natal-chart-container`）
 
 ### 元件模式
+
 - **函數式元件**只（無 Class）
 - **Props 介面**定義在元件上方
 - **D3 操作**透過 `useRef` + `useEffect` 進行（命令式，不用 React vdom）
 
 ### 錯誤處理
+
 - UI 層包裹 try/catch（在 `App.tsx` 中）
 - 使用者訊息：繁體中文
 - 原始錯誤：`console.error()` 記錄
 - 型別守衛：`err instanceof Error` 才能存取 `.message`
 
 ### Astronomia 套件無型別
+
 所有 `import * from 'astronomia/*'` 使用 `@ts-expect-error` 標記：
+
 ```typescript
 // @ts-expect-error astronomia has no type declarations
 import * as julian from 'astronomia/julian';
@@ -273,6 +296,7 @@ import * as julian from 'astronomia/julian';
 ## 開發工作流
 
 ### 完整檢查清單
+
 ```bash
 # 啟動開發伺服器
 npm run dev
@@ -295,17 +319,20 @@ npm run preview             # 預覽打包結果
 ### 常見開發任務
 
 **新增占星功能（如新的宮位系統）**：
+
 1. 在 `src/types/astro.ts` 新增型別/列舉
 2. 在 `src/lib/astro.ts` 實現計算邏輯
 3. 在 `tests/lib/astro.test.ts` 新增單元測試
 4. 在 `src/components/ChartDetails.tsx` 新增 UI 表現
 
 **修復 linting 錯誤**：
+
 ```bash
 npm run lint -- --fix       # 自動修復可修復的錯誤
 ```
 
 **測試單一檔案**：
+
 ```bash
 npx vitest run tests/lib/astro.test.ts
 npx vitest tests/lib/astro.test.ts    # Watch 模式
@@ -330,8 +357,9 @@ npx vitest tests/lib/astro.test.ts    # Watch 模式
 5. 提交 Pull Request
 
 **提交前必須通過**：
+
 - `npm run lint` — ESLint 檢查
-- `npm run typecheck` — TypeScript 型別檢查  
+- `npm run typecheck` — TypeScript 型別檢查
 - `npm run test` — 所有測試通過
 - `npm run format:check` — Prettier 格式檢查
 
@@ -340,4 +368,3 @@ npx vitest tests/lib/astro.test.ts    # Watch 模式
 ## 授權
 
 MIT License
-

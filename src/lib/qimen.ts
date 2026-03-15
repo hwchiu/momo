@@ -127,10 +127,9 @@ function pentadYuan(yearYuan: 0 | 1 | 2, pentadIndexInYear: number): 0 | 1 | 2 {
 
 /**
  * Returns the day ganzhi cycle index (0–59) from a Julian Day Number.
- * Anchor: JDN 2451545 (J2000 = 2000-01-01) has day ganzhi index 10 (甲戌).
+ * Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); equivalent to offset +49.
  */
 function dayGanzhiIndex(jdn: number): number {
-  // Anchor: JDN 2415021 (1900-01-01) = 甲戌 (index 10); equivalent to offset +49
   return (((jdn - 2415021 + 10) % 60) + 60) % 60;
 }
 
@@ -307,12 +306,8 @@ export function calculateQiMen(dt: {
   const ju = juTable[tableRow][pYuan];
 
   // --- Ganzhi pillars ---
-  // Day pillar stays on the calendar day even at 子時 (23:00).
-  // Only the hour STEM uses the next day's stem at 子時 (per standard convention).
   const dayIdx = dayGanzhiIndex(jdn);
   const dayStem = dayIdx % 10;
-  // 子時跨日: at hour ≥ 23, hour stem is derived from the next calendar day's stem
-  const stemForHour = dt.hour >= 23 ? dayGanzhiIndex(jdn + 1) % 10 : dayStem;
   const dayBranch = dayIdx % 12;
 
   const yearIdx = yearGanzhiIndex(dt.year);
@@ -328,6 +323,10 @@ export function calculateQiMen(dt: {
   const monthBranch = (2 + solarMonthOffset) % 12; // 寅(2) for first solar month
 
   const hourBranch = hourBranchFromHour(dt.hour);
+  // Day pillar stays on the calendar day even at 子時 (23:00).
+  // Only the hour STEM uses the next day's stem at 子時 (per standard convention).
+  // 子時跨日: at hour ≥ 23, hour stem is derived from the next calendar day's stem
+  const stemForHour = dt.hour >= 23 ? dayGanzhiIndex(jdn + 1) % 10 : dayStem;
   const hourStem = hourStemFromDayStem(stemForHour, hourBranch);
 
   const pillarYear = makePillar(yearStem, yearBranch);

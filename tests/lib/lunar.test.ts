@@ -101,14 +101,14 @@ describe('gregorianToLunar — known dates', () => {
   it('Chinese New Year 2024-02-10 = 農曆正月初一', () => {
     const ld = gregorianToLunar(2024, 2, 10);
     expect(ld.lunarMonth).toBe(1); // 正月
-    expect(ld.lunarDay).toBe(1);   // 初一
+    expect(ld.lunarDay).toBe(1); // 初一
     expect(ld.isLeapMonth).toBe(false);
   });
 
   it('Mid-Autumn 2024-09-17 = 農曆八月十五', () => {
     const ld = gregorianToLunar(2024, 9, 17);
     expect(ld.lunarMonth).toBe(8); // 八月
-    expect(ld.lunarDay).toBe(15);  // 十五
+    expect(ld.lunarDay).toBe(15); // 十五
   });
 
   it('Chinese New Year 2023-01-22 = 農曆癸卯年正月初一', () => {

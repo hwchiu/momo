@@ -8,16 +8,24 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { findSolarReturnJDE, jdeToGregorian, calculateSolarReturn } from '../../src/lib/solarReturn';
+import {
+  findSolarReturnJDE,
+  jdeToGregorian,
+  calculateSolarReturn,
+} from '../../src/lib/solarReturn';
 import { birthDataToJDE, sunLongitudeAtJDE, calculateNatalChart } from '../../src/lib/astro';
 import { HouseSystem } from '../../src/types/astro';
 import type { BirthData } from '../../src/types/astro';
 
 // Known test subject: born 1990-03-20 12:00 UTC (near vernal equinox → Sun ≈ 0° Aries)
 const testBirthData: BirthData = {
-  year: 1990, month: 3, day: 20,
-  hour: 12, minute: 0,
-  latitude: 51.48, longitude: 0.0, // Greenwich
+  year: 1990,
+  month: 3,
+  day: 20,
+  hour: 12,
+  minute: 0,
+  latitude: 51.48,
+  longitude: 0.0, // Greenwich
   locationName: 'Greenwich',
 };
 

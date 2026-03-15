@@ -60,9 +60,7 @@ const createTestChart = (): NatalChart => ({
     descendant: 180,
     imumCoeli: 90,
   },
-  houses_cusps: [
-    0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
-  ],
+  houses_cusps: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
   isDaytime: true,
 });
 
@@ -77,7 +75,7 @@ describe('互融系統 (Reception System)', () => {
         180, // Venus 在 Libra 起點
         false,
         'Venus', // Venus 自己
-        true
+        true,
       );
 
       // Venus 在自己的星座中是有互融的
@@ -95,7 +93,7 @@ describe('互融系統 (Reception System)', () => {
         180, // Sun 在 Libra
         false,
         'Venus', // Venus 守護 Libra
-        true
+        true,
       );
 
       expect(reception).not.toBeNull();
@@ -115,7 +113,7 @@ describe('互融系統 (Reception System)', () => {
         270, // Mars 在 Capricorn 起點
         false,
         'Saturn', // Saturn 守護 Capricorn
-        true
+        true,
       );
 
       expect(reception).not.toBeNull();
@@ -132,7 +130,7 @@ describe('互融系統 (Reception System)', () => {
         15, // Mercury 在 Aries
         false,
         'Venus', // Venus 不守護 Aries
-        true
+        true,
       );
 
       expect(reception).toBeNull();
@@ -146,7 +144,7 @@ describe('互融系統 (Reception System)', () => {
         180, // Sun 在 Libra
         false, // 順行
         'Venus',
-        true
+        true,
       );
 
       const receptionRetrograde = calculateSingleReception(
@@ -154,7 +152,7 @@ describe('互融系統 (Reception System)', () => {
         180,
         true, // 逆行
         'Venus',
-        true
+        true,
       );
 
       expect(receptionPrograde).not.toBeNull();
@@ -190,12 +188,8 @@ describe('互融系統 (Reception System)', () => {
       for (const mr of matrix.mutualReceptions) {
         expect(mr.planetA).toBeDefined();
         expect(mr.planetB).toBeDefined();
-        expect(['domicile', 'exaltation', 'triplicity', 'terms', 'face']).toContain(
-          mr.levelAtoB
-        );
-        expect(['domicile', 'exaltation', 'triplicity', 'terms', 'face']).toContain(
-          mr.levelBtoA
-        );
+        expect(['domicile', 'exaltation', 'triplicity', 'terms', 'face']).toContain(mr.levelAtoB);
+        expect(['domicile', 'exaltation', 'triplicity', 'terms', 'face']).toContain(mr.levelBtoA);
         expect(mr.combinedStrength).toBeGreaterThan(0);
         expect(mr.combinedStrength).toBeLessThanOrEqual(100);
       }
@@ -225,7 +219,7 @@ describe('互融系統 (Reception System)', () => {
         false,
         aspect,
         matrix,
-        true
+        true,
       );
 
       expect(enhancement.baseStrength).toBeGreaterThan(0);
@@ -256,15 +250,13 @@ describe('互融系統 (Reception System)', () => {
         false,
         aspect,
         matrix,
-        true
+        true,
       );
 
       // 無互融的困難相位應該被阻擋
       // (但這取決於實際數據，可能不被阻擋)
       expect(enhancement.executability).toBeDefined();
-      expect(['high', 'medium', 'low', 'blocked']).toContain(
-        enhancement.executability
-      );
+      expect(['high', 'medium', 'low', 'blocked']).toContain(enhancement.executability);
     });
   });
 
@@ -290,7 +282,7 @@ describe('互融系統 (Reception System)', () => {
         0,
         false,
         aspect,
-        matrix
+        matrix,
       );
 
       expect(analysis.isDifficult).toBe(false);
@@ -318,14 +310,12 @@ describe('互融系統 (Reception System)', () => {
         0, // Venus 在 Aries，由 Mars 守護
         false,
         aspect,
-        matrix
+        matrix,
       );
 
       expect(analysis.isDifficult).toBe(true);
       // 結果取決於實際互融關係
-      expect(['可完全化解', '可部分改善', '有緩解', '無解']).toContain(
-        analysis.resolvability
-      );
+      expect(['可完全化解', '可部分改善', '有緩解', '無解']).toContain(analysis.resolvability);
     });
 
     it('應該識別無解的困難相位', () => {
@@ -348,7 +338,7 @@ describe('互融系統 (Reception System)', () => {
         330, // Pluto 在 Pisces
         false,
         aspect,
-        matrix
+        matrix,
       );
 
       expect(analysis.isDifficult).toBe(true);
@@ -363,7 +353,7 @@ describe('互融系統 (Reception System)', () => {
         0, // Aries 起點
         false,
         'Mars', // Mars 守護 Aries
-        true
+        true,
       );
 
       expect(reception).not.toBeNull();
@@ -378,7 +368,7 @@ describe('互融系統 (Reception System)', () => {
         359, // Pisces 終點附近
         false,
         'Jupiter', // Jupiter 守護 Pisces
-        true
+        true,
       );
 
       expect(reception).not.toBeNull();
@@ -392,9 +382,7 @@ describe('互融系統 (Reception System)', () => {
       const seen = new Set<string>();
       for (const mr of matrix.mutualReceptions) {
         const key =
-          mr.planetA < mr.planetB
-            ? `${mr.planetA}-${mr.planetB}`
-            : `${mr.planetB}-${mr.planetA}`;
+          mr.planetA < mr.planetB ? `${mr.planetA}-${mr.planetB}` : `${mr.planetB}-${mr.planetA}`;
         expect(seen.has(key)).toBe(false);
         seen.add(key);
       }

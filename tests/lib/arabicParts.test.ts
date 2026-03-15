@@ -17,13 +17,19 @@ import type { BirthData } from '../../src/types/astro';
 
 // Test data: we derive sect from the computed chart, not from assumptions
 const birthData: BirthData = {
-  year: 1985, month: 6, day: 21,
-  hour: 12, minute: 0,
-  latitude: 48.85, longitude: 2.35, // Paris
+  year: 1985,
+  month: 6,
+  day: 21,
+  hour: 12,
+  minute: 0,
+  latitude: 48.85,
+  longitude: 2.35, // Paris
   locationName: 'Paris',
 };
 
-function norm(d: number) { return ((d % 360) + 360) % 360; }
+function norm(d: number) {
+  return ((d % 360) + 360) % 360;
+}
 
 describe('calculateArabicParts', () => {
   const chart = calculateNatalChart(birthData, HouseSystem.Placidus);
@@ -103,9 +109,13 @@ describe('calculateArabicParts', () => {
 describe('calculateArabicParts (second chart — winter / Tokyo)', () => {
   it('works for a winter chart (Sun in Sagittarius) and returns 12 lots', () => {
     const winter: BirthData = {
-      year: 1990, month: 12, day: 1,
-      hour: 0, minute: 0,
-      latitude: 35.68, longitude: 139.69, // Tokyo
+      year: 1990,
+      month: 12,
+      day: 1,
+      hour: 0,
+      minute: 0,
+      latitude: 35.68,
+      longitude: 139.69, // Tokyo
       locationName: 'Tokyo',
     };
     const chart2 = calculateNatalChart(winter, HouseSystem.Placidus);

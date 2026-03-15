@@ -16,7 +16,13 @@ import {
   hourBranchFromHour,
   hourStemFromDayStem,
 } from '../../src/lib/qimen';
-import { YANG_JU_TABLE, YIN_JU_TABLE, SOLAR_TERM_NAMES, QIMEN_STARS, QIMEN_DOORS } from '../../src/types/qimen';
+import {
+  YANG_JU_TABLE,
+  YIN_JU_TABLE,
+  SOLAR_TERM_NAMES,
+  QIMEN_STARS,
+  QIMEN_DOORS,
+} from '../../src/types/qimen';
 
 function expectValidChart(chart: ReturnType<typeof calculateQiMen>) {
   expect(chart.palaces).toHaveLength(9);
@@ -184,9 +190,7 @@ describe('calculateQiMen — palace content', () => {
   });
 
   it('each non-center palace has a valid deity', () => {
-    const allDeities = [
-      '值符', '螣蛇', '太陰', '六合', '白虎', '勾陳', '玄武', '九地', '九天',
-    ];
+    const allDeities = ['值符', '螣蛇', '太陰', '六合', '白虎', '勾陳', '玄武', '九地', '九天'];
     for (const p of chart.palaces) {
       if (!p.isCenter) {
         expect(p.deity).not.toBeNull();
@@ -206,9 +210,7 @@ describe('calculateQiMen — palace content', () => {
       .filter((p) => !p.isCenter && p.door !== null)
       .map((p) => p.door!)
       .sort();
-    const expected = Object.values(QIMEN_DOORS)
-      .filter(Boolean)
-      .sort() as string[];
+    const expected = Object.values(QIMEN_DOORS).filter(Boolean).sort() as string[];
     expect(doors).toEqual(expected);
   });
 
@@ -284,8 +286,8 @@ describe('calculateQiMen — ju number', () => {
     // The ju depends on the pentad of the day, so hours within the same Chinese day
     // (0:00–22:59) should all yield the same ju.
     const hours = [0, 6, 12, 18, 22];
-    const jus = hours.map((h) =>
-      calculateQiMen({ year: 2026, month: 3, day: 10, hour: h, minute: 0 }).ju,
+    const jus = hours.map(
+      (h) => calculateQiMen({ year: 2026, month: 3, day: 10, hour: h, minute: 0 }).ju,
     );
     const unique = new Set(jus);
     expect(unique.size).toBe(1);
@@ -325,8 +327,8 @@ describe('calculateQiMen — 旬首 (xunShou)', () => {
   it('xunShou is stable across hours of the same day', () => {
     // 旬首 depends only on the day ganzhi index, not the hour
     const hours = [0, 6, 12, 18, 23];
-    const xuns = hours.map((h) =>
-      calculateQiMen({ year: 2026, month: 3, day: 10, hour: h, minute: 0 }).xunShou,
+    const xuns = hours.map(
+      (h) => calculateQiMen({ year: 2026, month: 3, day: 10, hour: h, minute: 0 }).xunShou,
     );
     const unique = new Set(xuns);
     expect(unique.size).toBe(1);

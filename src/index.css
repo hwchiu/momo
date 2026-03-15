@@ -1,50 +1,76 @@
-:root {
-  font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
-  line-height: 1.55;
-  font-weight: 400;
-  color: #222;
-  background-color: #f0f0f0;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
+/* Global base — dark cosmic theme */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background: #030810;
 }
 
 body {
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #f0f0f0;
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(232, 244, 255, 0.75);
+
+  /* Star-field background: 3 layers of radial dot patterns at different sizes */
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(79, 195, 247, 0.3) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
+  background-size:
+    120px 120px,
+    80px 80px,
+    200px 200px;
+  background-position:
+    0 0,
+    40px 40px,
+    60px 100px;
+  animation: star-drift 120s linear infinite;
 }
 
 #root {
-  width: 100%;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  color: #111;
-}
-
-input,
-select,
-button {
-  font-family: inherit;
-  font-size: inherit;
+  height: 100%;
 }
 
 a {
-  color: #1a5ca8;
+  color: #4fc3f7;
   text-decoration: none;
 }
-
 a:hover {
+  color: #81d4fa;
   text-decoration: underline;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.35);
+}
+
+/* Thin scrollbars for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 195, 247, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 195, 247, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none !important;
+  }
 }
